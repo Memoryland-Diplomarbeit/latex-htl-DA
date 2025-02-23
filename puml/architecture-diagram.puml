@@ -1,3 +1,30 @@
 @startuml
-abc--abc
+
+node "Azure" {
+    node "Azure Static WebApp" {
+        [Angular Frontend]
+    }
+
+    node "Azure AD B2C" {
+        [Benutzerverwaltung]
+    }
+
+    node "Azure WebApp" {
+        [C# Backend]
+    }
+
+    node "Azure Blob Storage" {
+        [Bildspeicher]
+    }
+
+    node "Azure PostgreSQL Database" {
+        [PostgreSQL Datenbank]
+    }
+}
+
+[Angular Frontend] --> [Azure AD B2C] : Authentifizierung
+[Angular Frontend] -l-> [C# Backend] : API-Aufrufe
+[C# Backend] -u-> [Azure Blob Storage] : Speichert/holt Bilder
+[C# Backend] -l-> [PostgreSQL Datenbank] : Speichert Metadaten
+
 @enduml

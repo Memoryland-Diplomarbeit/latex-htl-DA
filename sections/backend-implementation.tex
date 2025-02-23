@@ -1,6 +1,207 @@
 \setauthor{Arwed Schnalzenberger}
 
+\section{Einrichtung}
+
+\subsection{Einrichtung des Azure Blob Storage}
+
+Damit alles funktioniert und damit der häufige Zugriff auf die Bilder
+möglichst effizient ist, wurden folgende Einstellungen im Azure Portal
+konfiguriert. \footnote{Infos dazu, was Azure Blob Storage ist und anderes stammen von hier: \cite{MicrosoftCorporationd}}
+
+\subsubsection{SAS-Tokens}
+
+Um den Zugriff auf Bilder über Shared Access Signatures (SAS) zu ermöglichen, muss in 
+die Konfiguration ``Allow storage account key access'' aktiviert werden.
+\\
+SAS-Tokens ermöglichen es uns, bestimmte Zugriffsrechte zu definieren, wie zum Beispiel
+nur ein Lesezugriff. Das ermöglicht es unserem System, mittels Unity direkt auf die
+gespeicherten Bilder zuzugreifen.
+\\
+Mithilfe von SAS-Tokens die im Backend generiert und an Unity übergeben werden, 
+kann Unity nun auf die benötigten Bilder zugreifen, ohne vollständige Zugriffsdaten 
+des Storage Accounts zu benötigen. \footnote{Alle Informationen zu SAS-Tokens stammen von: \cite{MicrosoftCorporationa}}
+
+
+\subsubsection{Blob Access Tier}
+
+Um den häufigen Zugriff auf Bilder effizienter zu gestalten, sollte in der Konfiguration 
+des Blob Storage der Access Tier die Standardstufe auf ``Hot'' gesetzt werden.
+\\
+Ein Azure Blob Storage bietet verschiedene Speicherstufen, wie ``Hot'', ``Cool'', ``Cold'',
+oder ``Archive''.Cool ist zum Beispiel Geeignet für weniger häufige Zugriffe, und hat
+niedrigere Speicherkosten. 
+\\
+Für uns ist Hot geeignet, da mit dieser Einstellung die Bilder
+für den häufigen Zugriff mit schnelleren Abrufzeiten optimiert werden. Dies führt allerdings
+zu höheren Speicherkosten. \footnote{Alle Informationen zu Blob Access Tiers stammen von \cite{MicrosoftCorporationb}}
+
+
+\subsubsection{CORS-Header}
+
+CORS (Cross-Origin Resource Sharing) ist eine Sicherheitsfunktion moderner Webbrowser, 
+die den Zugriff auf Ressourcen zwischen verschiedenen Ursprüngen (Domains) einschränkt.
+Da Memoryland und Unity Zugriff auf Bilder aus dem Azure Blob Storage benötigen, müssen
+die folgenden CORS-Einstellungen für ``Blob-Services'' benötigt.
+\\
+Es müssen die Spalten ``Allowed Origins'', ``Allowed Headers'' und ``Exposed Headers''
+mit dem ``*'' Zeichen gefüllt werden, und Als ``Allowed Methods'', sollen ``Head'' und
+``GET'' angegeben werden. Dies erlaubt den Zugriff von beliebigen Ursprüngen, mit beliebigen
+Headern in der Anfrage. Weiters wird mit ``Exposed Headers'' eingestellt, dass alle 
+Antwort-Header für den Client sichtbar sind und die ``Allowed Methods'' beschränkt die 
+zulässigen HTTP-Methoden auf das Abrufen von Metadaten (HEAD) und das 
+Laden von Bildern (GET). ``Max Age: 0'', verhindert das Caching der CORS-Vorgaben 
+durch den Browser, sodass jede Anfrage die aktuellen Regeln berücksichtigt.
+\\
+Wenn alles eingestellt wurde, können nun Bilder aus dem Blob Storage ohne Einschränkungen 
+in Memoryland angezeigt werden. \footnote{Alle Informationen zu CORS für Azure BLob Storage stammen von \cite{MicrosoftCorporationc}}
+
+
+\subsection{Einrichtung von Azure PostgreSQL DB}
+
+``Azure Database for PostgreSQL'' ist ein Datenbankdienst von Microsoft Azure, 
+der auf dem Open-Source-Datenbanksystem PostgreSQL basiert \footnote{Weiter Infos zu Azure PostgreSQL: \cite{MicrosoftCorporationf}}. 
+Er bietet eine Lösung für Anwendungen, die eine relationale Datenbank benötigen.
+\\
+Die PostgreSQL Datenbank war eine schlüssige Entscheidung aufgrund der Erfahrung der Entwickler.
+\footnote{Flexible Server vs. Single Server: \cite{MicrosoftCorporatione}}
+
+\begin{table}[h t]
+    \centering
+    \caption{Vergleich: Flexible Server vs. Single Server}
+    \label{tab:azure-postgresql}
+    \begin{tabular}{lcc}
+    \hline
+    \textbf{Feature}                & \textbf{Single Server} & \textbf{Flexible Server} \\ \hline
+    \textbf{Betriebssystem}         & Windows                & Linux                    \\
+    \textbf{Maximale Speichergrö\ss{}e} & Bis zu 16 TB           & Bis zu 64 TB             \\
+    \textbf{Hochverfügbarkeit}      & Nein                   & Ja (Zonenredundant)      \\
+    \textbf{Kosten}                 & 1x                     & 2x (Compute + Storage)   \\ \hline
+    \end{tabular}
+\end{table}
+
+Flexible Server haben gegenüber Single Server Unterschiede. 
+Der wichtigste Grund für die Entscheidung war, dass Flexible Server auf Linux basiert, 
+während Single Server Windows verwendet. \footnote{Warum Linux wollten: \cite{hussain2015survey}}
+\\
+Au\ss{}erdem besitzen Flexible Servers eine grö\ss{}ere maximale Speichergrö\ss{}e, Zonenredundante Hochverfügbarkeit, 
+wodurch Ausfälle besser abgefangen werden können. Obwohl die Kosten etwas höher sein können, 
+sind Flexible Servers aufgrund dieser Punkte die bessere Wahl für unser Projekt.
+
+\subsection{Einrichtung von Azure AD B2C}
+
+Die Einrichtung von Azure AD B2C wurde anhand von Beispiel im folgenden MSAL-Beispiel
+für Angular durchgeführt \cite{MicrosoftCorporationh}. Zusätzlich diente wurde die folgende
+Website verwendet \cite{MicrosoftCorporationg}.
+\\
+Was ist \emph{Azure AD B2C} und warum verwenden wir es: Kapitel \ref{subsection:azure_ad_b2c}
+
+\subsection{Einrichtung von Azure WebApp}
+
+Die Einrichtung der Azure WebApp wurde mithilfe der folgenden Website erledigt 
+\cite{MicrosoftCorporationi}.
+\\
+Was ist \emph{Azure WebApp} und warum verwenden wir es: Kapitel \ref{subsection:azure_web_app}
+
+
+\subsection{Einrichtung von Azure Static WebApp}
+
+Die Azure WebApp wurde nicht speziell konfiguriert, es gibt aber einige wichtige Aspekte, 
+die vor dem Deployment der Angular Single Page Application beachtet werden müssen.  
+\\
+Damit die Static WebApp die Routen korrekt erkennt und an die Single Page Application 
+weiterleitet, anstatt ``\emph{404 Not Found}''-Fehler auszugeben, muss die folgende 
+Konfiguration \ref{lst:staticwebapp-config} in der Datei ``\emph{staticwebapp.config.json}'' hinterlegt werden. 
+Diese Datei muss sich im Verzeichnis des Angular-Projekts befinden -- in dieser Diplomarbeit
+also im Ordner ``\emph{memoryland}''. \footnote{Infos zu dem Code \ref{lst:staticwebapp-config} gibt es in diesem Video: \cite{MicrosoftCorporationj}}
+
+\begin{lstlisting}[numbers=left,caption={staticwebapp.config.json},label={lst:staticwebapp-config}]
+{
+    "navigationFallback": {
+        "rewrite": "/",
+        "exclude": [
+            "*.{png,jpg,jpeg,gif,ico,css,scss,svg,js}"
+        ]
+    }
+}
+\end{lstlisting}
+
+Was ist \emph{Azure Static WebApp} und warum verwenden wir es: Kapitel \ref{subsection:azure_static_web_app}
+
+
+\subsection{Einrichtung des Backends}
+
+Die Einrichtung des Backends für die Diplomarbeit erfordert die Konfiguration 
+der ``\emph{appsettings.json}'' Datei. In dieser Datei stehen mehrere Einstellungen,
+damit Memoryland auf die Unterschiedlichen Dienste zugreifen kann. Die Konfiguration 
+umfasst drei Hauptbereiche: Authentifizierung, Datenbank und den Azure Blob Storage.
+
+\subsubsection{Authentifizierung}
+
+Für die Authentifizierung wird Azure AD B2C genutzt, um die Benutzerverwaltung zu ermöglichen. 
+In der ``\emph{appsettings.json}'' Datei sind die entsprechenden Einstellungen wie in dem folgendem
+Beispiel \ref{lst:appsettings-auth-config} einzutragen. Hier werden unter anderem die Instance, ClientId und Domain des 
+Azure AD B2C Verzeichnisses angegeben. Der SignedOutCallbackPath gibt den Pfad an, der nach 
+der Abmeldung des Benutzers aufgerufen wird, und SignUpSignInPolicyId enthält den Namen ebenjener.
+\footnote{Alle Informationen zu den Einstellungen der Authentifizierung sind hier zu finden: \cite{MicrosoftCorporationk}}
+
+\begin{lstlisting}[numbers=left,caption={appsettings.json},label={lst:appsettings-auth-config}]
+{
+    "AzureAdB2C": {
+        "Instance": "",
+        "ClientId": "",
+        "Domain": "",
+        "SignedOutCallbackPath": "/signout/<SignUpSignInPolicyId>",
+        "SignUpSignInPolicyId": ""
+    }
+}
+\end{lstlisting}
+
+\subsubsection{Datenbank}
+
+Für die Konfiguration der Datenbank sind die entsprechenden Einstellungen wie in dem folgendem
+Beispiel \ref{lst:appsettings-db-config} ebenso in der Datei ``\emph{appsettings.json}'' 
+einzutragen. Es gibt sowohl eine Einstellung für den Deployment-Datenbankanschluss (Default) 
+als auch eine für den lokalen Anschluss (DefaultLocal), der für Test-Zwecke verwendet wird. 
+Die UseLocalDb Einstellung gibt an, ob eine lokale Datenbank verwendet werden soll, wobei
+\emph{false} bedeutet, dass die Deployment Datenbank verwendet werden soll.
+\footnote{Alle Informationen zu den Einstellungen der Azure Datenbank sind hier zu finden: \cite{MicrosoftCorporationl}}
+
+\begin{lstlisting}[numbers=left,caption={appsettings.json},label={lst:appsettings-db-config}]
+{
+    "UseLocalDb": false,
+    "ConnectionStrings": {
+        "Default": "",
+        "DefaultLocal": ""
+    }
+}
+\end{lstlisting}
+
+\subsubsection{Azure Blob Storage}
+
+Für die Konfiguration des Azure Blob Storage sind die entsprechenden Einstellungen wie in 
+dem folgendem Beispiel \ref{lst:appsettings-blob-storage-config} ebenso in der Datei 
+``\emph{appsettings.json}'' einzutragen. Diese Einstellung ist notwendig, um die 
+Anwendung mit dem Azure Blob Storage zu verbinden und den Zugriff auf Bilder und 
+andere Dateien sicherzustellen.
+\footnote{Alle Informationen zu den Einstellungen des Azure Blob Storage sind hier zu finden: \cite{MicrosoftCorporationm}}
+
+\begin{lstlisting}[numbers=left,caption={appsettings.json},label={lst:appsettings-blob-storage-config}]
+{
+    "ConnectionStrings": {
+        "BlobStorageDefault": "",
+    }
+}
+\end{lstlisting}
+
+
+\subsection{Einrichtung des Frontends}
+
+% Erklärung, der ganzen environment variablen usw. + github actions
+
+
 \section{Technologien}
+
+% what is it and why do we use it
 
 \subsection{.NET C\#}
 
@@ -9,16 +210,25 @@
 \subsection{REST}
 
 \subsection{Postgres-DB}
+\label{subsection:postgres_db}
 
 \subsection{Azure}
 
 \subsubsection{Blob Storage}
+\label{subsection:azure_blob_storage}
 
 \subsubsection{AD B2C}
+\label{subsection:azure_ad_b2c}
+
+https://learn.microsoft.com/en-us/azure/active-directory-b2c/overview
+
+https://learn.microsoft.com/en-us/azure/active-directory-b2c/
 
 \subsubsection{WebApp}
+\label{subsection:azure_web_app}
 
 \subsubsection{Static WebApp}
+\label{subsection:azure_static_web_app}
 
 \subsection{Rider}
 
@@ -31,5 +241,16 @@
 \section{Uploads}
 
 % Erklärung, wie genau das auch im Frontend läuft
+
+% videos referenzieren
+
+- 2 Teile: Postgres und BlogStorage
+- BlogStorage
+    - Pro User 1 Container
+    - Bilder werden mit ihren Ids gespeichert + nur admin hat zugriff
+    - Zugriff auf bilder erfolgt mit sas-tokens (was sind sas tokens)
+
+\subsection{Azure Blob-Storage Datenhaltung}
+\label{subsection:azure_blob_storage_datamodel}
 
 \section{Authentifizierung}
