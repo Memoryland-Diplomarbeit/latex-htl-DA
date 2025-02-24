@@ -23,8 +23,8 @@ PostgreSQL Datenbank.
 
 \subsection{Azure Blob Storage}
 
-Hier werden die Bilder der Benutzer gespeichert. Diese werden 
-ohne eine Struktur abgelegt, au\ss{}er dass für jeden Benutzer ein separater Container erstellt 
+Hier werden die Bilder der Benutzer:innen gespeichert. Diese werden 
+ohne eine Struktur abgelegt, au\ss{}er dass für jede/n Benutzer:in ein separater Container erstellt 
 wird. Somit wird der kostenpflichtige Zugriff auf den Blob Storage minimiert und die Verwaltung
 so einfach wie möglich gehalten.
 \footnote{Mehr Info dazu im Kapitel: \ref{subsection:azure_blob_storage_datamodel}}
@@ -42,7 +42,7 @@ Memoryland gehört, und wo diese im Memoryland platziert werden soll.
 
 \section{Benutzerverwaltung}
 
-Die Benutzerverwaltung erfolgt über Azure AD B2C. Die Benutzer authentifizieren sich 
+Die Benutzerverwaltung erfolgt über Azure AD B2C. Die Benutzer:innen authentifizieren sich 
 im Frontend mithilfe von MSAL (Microsoft Authentication Library), während das Backend 
 ihre Berechtigungen gegen Azure AD B2C überprüft.
 \footnote{Mehr Info zu Azure AD B2C im Kapitel: \ref{subsection:azure_ad_b2c}}
@@ -50,13 +50,13 @@ ihre Berechtigungen gegen Azure AD B2C überprüft.
 
 \section{Backend}
 
-Das Backend dient dazu, die Daten von Benutzern mit den erforderlichen Berechtigungen, 
-zu verwalten. Zu diesen Daten gehören unter anderem Memorylands, Alben und Bilder.
-\footnote{Mehr Info dazu im Kapitel: \ref{chapter:backend-implementation}}
+Das Backend dient dazu, die Daten von Benutzern und Benutzerinnen mit den erforderlichen
+Berechtigungen, zu verwalten. Zu diesen Daten gehören unter anderem Memorylands, 
+Alben und Bilder. \footnote{Mehr Info dazu im Kapitel: \ref{chapter:backend-implementation}}
 
 \section{Frontend}
 
-Das Frontend dient als Schnittstelle zum Benutzer und bietet eine grafische 
+Das Frontend dient als Schnittstelle zum Benutzer/zur Benutzerin und bietet eine grafische 
 Oberfläche zur Verwaltung ihrer Daten. Zudem ermöglicht es eine Darstellung 
 der gespeicherten Bilder und Memorylands.
 \footnote{Mehr Info dazu im Kapitel: \ref{chapter:frontend-implementation}}

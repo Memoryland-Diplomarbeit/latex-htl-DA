@@ -1,3 +1,63 @@
 @startuml
-abc--abc
+
+entity Users {
+    Id: bigint
+    Email: varchar2
+}
+
+entity PhotoAlbums {
+    Id: bigint
+    Name: varchar2
+    UserId: bigint
+}
+
+entity Photos {
+    Id: bigint
+    Name: varchar2
+    PhotoAlbumId: bigint
+}
+
+entity Memorylands {
+    Id: bigint
+    Name: varchar2
+    UserId: bigint
+    MemorylandTypeId: bigint
+}
+
+entity MemorylandTypes {
+    Id: bigint
+    Name: varchar2
+    Photoamount: integer
+}
+
+entity MemorylandConfigurations {
+    Id: bigint
+    Position: integer
+    MemorylandId: bigint
+    PhotoId:bigint
+}
+
+entity MemorylandTokens {
+    Id: bigint
+    Token: uuid
+    MemorylandId: bigint
+}
+
+entity Transactions {
+    Id: bigint
+    PhotoAlbumId: bigint
+    UserId: bigint
+}
+
+
+Users||-l-o{PhotoAlbums
+PhotoAlbums||--o{Photos
+Users||--o{Memorylands
+Memorylands}o-u-||MemorylandTypes
+Memorylands||-l-o{MemorylandConfigurations
+MemorylandConfigurations}o-l-||Photos
+Memorylands||--o|MemorylandTokens
+Users||-u-o|Transactions
+PhotoAlbums||-u-o|Transactions
+
 @enduml
