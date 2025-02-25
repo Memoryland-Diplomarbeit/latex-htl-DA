@@ -76,33 +76,114 @@ Die Wahl von MSAL basiert auf der umfassenden Unterstützung durch Microsoft und
 Integration in Azure-Dienste. Zudem wird MSAL in vielen verschiedenen Plattformen und 
 Architekturen unterstützt, was es zu einer flexiblen Lösung für verschiedene Anwendungsfälle 
 macht.
-\footnote{Alle Informationen zu MSAL stammen von: \cite{MicrosoftCorporationmsal}}
-
-
-\subsection{REST}
+\footnote{Alle Informationen zu MSAL stammen von: \cite{MicrosoftCorporationr}}
 
 \subsection{Postgres-DB}
 \label{subsection:postgres_db}
 
+PostgreSQL ist ein objektrelationales Open-Source-Datenbanksystem. Der Azure Database for 
+PostgreSQL-Dienst von Microsoft bietet eine verwaltete Lösung, bei der Microsoft sich 
+um Wartung, Sicherungen und Hochverfügbarkeit kümmert. Dies ermöglicht es Entwicklern, 
+sich auf die Entwicklung ihrer Anwendungen zu konzentrieren, anstatt sich um die 
+Infrastruktur kümmern zu müssen. Besonders im Zusammenhang mit Cloud-Anwendungen 
+bietet PostgreSQL in Azure Vorteile wie automatische Skalierbarkeit, hohe Verfügbarkeit 
+und integrierte Sicherheitsfunktionen.
+
+Für die Diplomarbeit wurde PostgreSQL aufgrund der Erfahrungen der Entwickler gewählt. 
+Die Nutzung von Azure Database for PostgreSQL erleichtert dabei die Verwaltung und 
+bietet eine skalierbare Lösung, die den Anforderungen des Projekts gerecht wird.
+\footnote{Alle Informationen zu MSAL stammen von: \cite{MicrosoftCorporations}}
+
 \subsection{Cloud-Dienste mit Azure}
+
+Azure bietet eine Vielzahl von Cloud-Diensten, die Entwicklern Tools und Infrastruktur 
+für ihre Anwendungen zur Verfügung stellen. Diese Dienste umfassen 
+unter anderem unterschiedliche Speicherlösungen für unterschiedliche Arten an Daten, 
+Identity-Management und Webhosting.
+\footnote{Alle Basis-Informationen zu Azure stammen von: \cite{MicrosoftCorporationt}}
 
 \subsubsection{Azure Blob Storage}
 \label{subsection:azure_blob_storage}
 
+Azure Blob Storage ist ein skalierbarer Speicherdienst. Er wird für unstrukturierte Daten, 
+wie Bilder und Videos oder anderem, verwendet, wobei er das Speichern großer Datenmengen 
+ermöglicht und eine kostengünstige Lösung für die Verwaltung und Sicherung von Dateien 
+in der Cloud bietet. 
+
+Die Wahl von Azure Blob Storage basiert auf der umfassenden Unterstützung durch Microsoft 
+in .Net C\# und der hohen Verfügbarkeit und Sicherheit. Zudem ist es vorgesehen, dass in Memoryland
+eine hohe Anzahl an Bildern gespeichert wird, wofür sich Azure Blob Storage eignet.
+\footnote{Alle Informationen zu Azure Blob Storage stammen von: \cite{MicrosoftCorporationu}}
+
 \subsubsection{Azure AD B2C}
 \label{subsection:azure_ad_b2c}
 
-https://learn.microsoft.com/en-us/azure/active-directory-b2c/overview
-
-https://learn.microsoft.com/en-us/azure/active-directory-b2c/
+Azure Active Directory B2C (Business to Consumer) ist ein Identity- und Zugriffsmanagement Dienst
+Für diese Diplomarbeit wurde Azure AD B2C gewählt, um die Authentifizierung der Benutzer 
+zentral zu verwalten. Da mit Azure AD B2C eine Integration mit anderen Azure Diensten, sowie mit
+.Net besser von Microsoft unterstützt wird, war eine nahtlose Integration mit Azure AD B2C 
+die optimale Lösung.
+\footnote{Alle Informationen zu Azure AD B2C stammen von: \cite{MicrosoftCorporationw} \cite{MicrosoftCorporationx}}
 
 \subsubsection{Azure WebApp}
 \label{subsection:azure_web_app}
 
+Azure App Service ist ein Dienst für das Hosting von Webanwendungen, REST-APIs und 
+Backends. Er unterstützt verschiedene Programmiersprachen, darunter .NET, Java, 
+Node.js, Python und PHP, und kann sowohl auf Windows- als auch auf Linux-basierten 
+Umgebungen betrieben werden. Hierbei ist eine Azure WebApp eine spezifische Form
+von Azure App Services.
+
+Durch Funktionen wie automatische Skalierung, Lastverteilung und integrierte 
+Sicherheitsmaßnahmen bietet Azure App Service eine stabile und zuverlässige 
+Plattform für Webanwendungen.
+
+Für diese Diplomarbeit wurde Azure App Service verwendet, um das Backend der 
+Anwendung bereitzustellen. Der Dienst ermöglicht eine einfache Bereitstellung 
+und Verwaltung der Web-API. Dank der automatischen Skalierung und Lastverteilung 
+stellt Azure App Service sicher, dass die Anwendung auch bei höherer Nutzung 
+performant bleibt.
+\footnote{Alle Informationen zu Azure WebApp stammen von: \cite{MicrosoftCorporationy}}
+
 \subsubsection{Azure Static WebApp}
 \label{subsection:azure_static_web_app}
+
+Azure Static Web Apps ist ein Cloud-Dienst zur Bereitstellung von Webanwendungen. 
+Azure Static Web Apps deployt Code-Änderungen aus einem Repository automatisch. Der Dienst 
+ist für Single-Page Applications (SPAs) optimiert und unterstützt Frameworks wie Angular, 
+React, Vue, Svelte und Blazor.
+
+Für diese Diplomarbeit wurde Azure Static Web Apps zur Bereitstellung des Frontens 
+eingesetzt. Der Dienst ermöglicht eine nahtlose Integration mit GitHub, sodass Änderungen 
+automatisch gebaut und veröffentlicht werden.
+\footnote{Alle Informationen zu Azure Static WebApp stammen von: \cite{MicrosoftCorporationz}}
 
 \subsection{JetBrains Rider}
 \label{subsection:jetbrains-rider}
 
+JetBrains Rider ist eine IDE (Integrated Development Environment) für die Entwicklung mit .Net. 
+Rider unterstützt unterschiedliche .NET Framework-, Mono- und .NET Core-Projekte und bietet 
+Unterstützung für Programmiersprachen wie C\#, VB.NET, F\#, ASP.NET, XAML, JavaScript, 
+TypeScript, HTML, CSS, SQL und JSON.
+
+Weiters besitzt Rider unterschiedliche Funktionen wie intelligenter Code-Vervollständigung, 
+Refactoring-Werkzeuge und Debugging-Features, die bei der Entwicklung helfen. 
+
+Für diese Diplomarbeit wurde JetBrains Rider als primäre Entwicklungsumgebung für die 
+Backend-Entwicklung mit C\# und Entity Framework Core verwendet. Die IDE erleichtert 
+die Arbeit mit .NET APIs und Datenbanken. Weiters wurde Rider aufgrund der 
+Erfahrungen der Entwickler gewählt
+\footnote{Alle Informationen zu JetBrains Rider stammen von: \cite{JetBrains}}
+
 \subsection{CI/CD mit GitHub Actions}
+
+GitHub Actions ist eine CI/CD-Plattform, die es ermöglicht, Build-, Test- und 
+Deployment Prozesse direkt in einem GitHub-Repository zu automatisieren. Workflows 
+werden in YAML-Dateien definiert und können bei bestimmten Ereignissen wie 
+Code-Commits, Pull Requests oder Releases automatisch ausgeführt werden.
+
+Für diese Diplomarbeit wurde GitHub Actions genutzt, um die automatische Bereitstellung 
+der Anwendung sicherzustellen. Für diese Aufgabe wurde GitHub aufgrund der Erfahrungen
+der Entwickler gewählt.
+\footnote{Alle Informationen zu GitHub Actions stammen von: \cite{GitHuba}}
+
