@@ -1,0 +1,108 @@
+\subsection{.NET mit C\#}
+
+C\# ist eine objektorientierte Programmiersprache, die speziell für die Entwicklung von 
+Anwendungen auf der .NET-Plattform optimiert wurde. Als eine der fünf beliebtesten 
+Programmiersprachen auf GitHub ist sie vollständig ``open-source''.
+
+C\# greif die Konzepte aus JavaScript, Java und C++ auf, was sie für Leute mit Kenntnissen
+in diesen Bereichen leichter zu lernen macht. Zu den zentralen Sprachmerkmalen gehören Generics, 
+Pattern Matching, asynchrone Programmierung und Records. Diese Funktionen ermöglichen eine 
+typsichere und strukturierte Entwicklung.
+
+Für die Arbeit mit C\# stehen verschiedene Entwicklungsumgebungen und Werkzeuge zur Verfügung. 
+Visual Studio bietet eine integrierte Entwicklungsumgebung mit umfangreichen Funktionen. 
+Visual Studio Code stellt eine leichtgewichtige Alternative mit Erweiterungsmöglichkeiten 
+dar. Zudem ermöglichen Kommandozeilen-Tools (CLI-Tools) eine flexible Nutzung. JetBrains Rider 
+ist eine weitere IDE, die speziell für .NET optimiert wurde und in diesem Projekt genutzt 
+wird. \ref{subsection:jetbrains-rider}
+
+In dieser Diplomarbeit wurde C\# für das REST-Backend verwendet. Die zentrale Datenverwaltung 
+erfolgte über Entity Framework Core mit einer PostgreSQL-Datenbank. Die Authentifizierung 
+wurde durch die Anbindung an Azure AD B2C mittels MSAL realisiert. REST-APIs wurden implementiert, 
+um die Kommunikation mit Unity und dem Frontend zu ermöglichen. Zusätzlich wurde Azure Blob 
+Storage zur Speicherung und Verwaltung von Bilddateien integriert.
+
+Die Wahl von C\# basiert auf zwei Faktoren. Die Sprache bietet eine direkte Integration mit 
+Microsoft-Diensten, einschließlich der genutzten Azure-Dienste. Zudem wird C\# am meisten im 
+Programmier-Zweig der HTL-Leonding unterrichtet, sodass bereits Vorkenntnisse vorhanden 
+waren, die in der Diplomarbeit genutzt werden konnten.
+\footnote{Alle Informationen zu C\# stammen von: \cite{MicrosoftCorporationo}}
+
+\subsection{Entity Framework Core}
+
+Entity Framework Core ist eine open-source Version des Entity Frameworks. Es dient 
+als objektrelationaler Mapper (O\slash RM) für .NET-Anwendungen. Entity Framework Core ermöglicht 
+die Arbeit mit relationalen Datenbanken unter Verwendung von .NET-Objekten und reduziert 
+dabei den Aufwand für manuelle Datenzugriffslogik.
+
+Der Datenzugriff erfolgt über ein Modell, das sich aus Entitätsklassen und einem 
+Kontextobjekt zusammensetzt, welches bei uns ``ApplicationDbContext'' heißt. Dieses Kontextobjekt 
+stellt eine Verbindung zur Datenbank her und verwaltet Datenbankabfragen sowie das Speichern 
+von Daten. Entity Framework Core unterstützt verschiedene Ansätze zur Modellerstellung, 
+darunter das Generieren eines Modells aus einer bestehenden Datenbank oder das manuelle 
+Erstellen eines Modells, das anschließend mithilfe von Entity Framework Migrations in 
+eine Datenbank überführt werden kann. In dieser Diplomarbeit wurde das Modell erstellt und dann
+in eine Datenbank überführt.
+
+Die Abfrage von Daten erfolgt über Language Integrated Query (LINQ). Änderungen an den Daten, 
+wie das Erstellen, Modifizieren oder Löschen von Entitäten, werden über den DBContext 
+vorgenommen und persistiert. Dabei stehen verschiedene Methoden zur Verfügung, 
+um Daten effizient zu verwalten.
+\footnote{Alle Informationen zu LINQ stammen von: \cite{MicrosoftCorporationq}}
+
+Bei der Nutzung von Entity Framework Core sind verschiedene Aspekte zu beachten. Ein 
+grundlegendes Verständnis relationaler Datenbanken ist erforderlich, um komplexe 
+Datenbankoperationen effizient zu gestalten. Die Performance kann durch gezielte 
+Optimierungen, wie den gezielten Einsatz von Indizes oder die Vermeidung von nicht 
+skalierbaren Abfragen, verbessert werden.
+\footnote{Alle Informationen zu Entity Framework Core stammen von: \cite{MicrosoftCorporationp}}
+
+
+\subsection{MSAL}
+
+MSAL (Microsoft Authentication Library) ermöglicht Entwicklern das Abrufen von Sicherheitstoken 
+von der Microsoft-Identity-Platform, um Benutzer zu authentifizieren und auf gesicherte Web-APIs 
+zuzugreifen. Sie kann verwendet werden, um sicheren Zugriff auf Microsoft Graph, andere 
+Microsoft-APIs, Drittanbieter-Web-APIs oder eigene Web-APIs bereitzustellen. MSAL unterstützt 
+viele verschiedene Anwendungsarchitekturen und Plattformen, darunter .NET, JavaScript, Java, 
+Python, Android und iOS.
+
+Für diese Diplomarbeit wurde MSAL verwendet, um eine benutzerdefinierte Authentifizierungslösung 
+für das Angular-Frontend zu implementieren, die eine sichere Anmeldung und den Zugriff auf 
+Web-APIs ermöglicht. Besonders hilfreich war MSAL bei der Anbindung an Azure AD B2C, da es 
+eine einfache Handhabung der Authentifizierung und Tokenverwaltung ermöglichte.
+
+Die Wahl von MSAL basiert auf der umfassenden Unterstützung durch Microsoft und der 
+Integration in Azure-Dienste. Zudem wird MSAL in vielen verschiedenen Plattformen und 
+Architekturen unterstützt, was es zu einer flexiblen Lösung für verschiedene Anwendungsfälle 
+macht.
+\footnote{Alle Informationen zu MSAL stammen von: \cite{MicrosoftCorporationmsal}}
+
+
+\subsection{REST}
+
+\subsection{Postgres-DB}
+\label{subsection:postgres_db}
+
+\subsection{Cloud-Dienste mit Azure}
+
+\subsubsection{Azure Blob Storage}
+\label{subsection:azure_blob_storage}
+
+\subsubsection{Azure AD B2C}
+\label{subsection:azure_ad_b2c}
+
+https://learn.microsoft.com/en-us/azure/active-directory-b2c/overview
+
+https://learn.microsoft.com/en-us/azure/active-directory-b2c/
+
+\subsubsection{Azure WebApp}
+\label{subsection:azure_web_app}
+
+\subsubsection{Azure Static WebApp}
+\label{subsection:azure_static_web_app}
+
+\subsection{JetBrains Rider}
+\label{subsection:jetbrains-rider}
+
+\subsection{CI/CD mit GitHub Actions}

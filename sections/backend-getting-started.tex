@@ -1,0 +1,301 @@
+\subsection{Einrichtung des Azure Blob Storage}
+
+Damit alles funktioniert und damit der häufige Zugriff auf die Bilder
+möglichst effizient ist, wurden folgende Einstellungen im Azure Portal
+konfiguriert. \footnote{Infos dazu, was Azure Blob Storage ist und anderes stammen von hier: \cite{MicrosoftCorporationd}}
+
+\subsubsection{SAS-Tokens}
+
+Um den Zugriff auf Bilder über Shared Access Signatures (SAS) zu ermöglichen, muss in 
+die Konfiguration ``Allow storage account key access'' aktiviert werden.
+
+SAS-Tokens ermöglichen es uns, bestimmte Zugriffsrechte zu definieren, wie zum Beispiel
+nur ein Lesezugriff. Das ermöglicht es unserem System, mittels Unity direkt auf die
+gespeicherten Bilder zuzugreifen.
+
+Mithilfe von SAS-Tokens die im Backend generiert und an Unity übergeben werden, 
+kann Unity nun auf die benötigten Bilder zugreifen, ohne vollständige Zugriffsdaten 
+des Storage Accounts zu benötigen. \footnote{Alle Informationen zu SAS-Tokens stammen von: \cite{MicrosoftCorporationa}}
+
+
+\subsubsection{Blob Access Tier}
+
+Um den häufigen Zugriff auf Bilder effizienter zu gestalten, sollte in der Konfiguration 
+des Blob Storage der Access Tier die Standardstufe auf ``Hot'' gesetzt werden.
+
+Ein Azure Blob Storage bietet verschiedene Speicherstufen, wie ``Hot'', ``Cool'', ``Cold'',
+oder ``Archive''.Cool ist zum Beispiel Geeignet für weniger häufige Zugriffe, und hat
+niedrigere Speicherkosten. 
+
+Für uns ist Hot geeignet, da mit dieser Einstellung die Bilder
+für den häufigen Zugriff mit schnelleren Abrufzeiten optimiert werden. Dies führt allerdings
+zu höheren Speicherkosten. \footnote{Alle Informationen zu Blob Access Tiers stammen von \cite{MicrosoftCorporationb}}
+
+
+\subsubsection{CORS-Header}
+
+CORS (Cross-Origin Resource Sharing) ist eine Sicherheitsfunktion moderner Webbrowser, 
+die den Zugriff auf Ressourcen zwischen verschiedenen Ursprüngen (Domains) einschränkt.
+Da Memoryland und Unity Zugriff auf Bilder aus dem Azure Blob Storage benötigen, müssen
+die folgenden CORS-Einstellungen für ``Blob-Services'' benötigt.
+
+Es müssen die Spalten ``Allowed Origins'', ``Allowed Headers'' und ``Exposed Headers''
+mit dem ``*'' Zeichen gefüllt werden, und Als ``Allowed Methods'', sollen ``Head'' und
+``GET'' angegeben werden. Dies erlaubt den Zugriff von beliebigen Ursprüngen, mit beliebigen
+Headern in der Anfrage. Weiters wird mit ``Exposed Headers'' eingestellt, dass alle 
+Antwort-Header für den Client sichtbar sind und die ``Allowed Methods'' beschränkt die 
+zulässigen HTTP-Methoden auf das Abrufen von Metadaten (HEAD) und das 
+Laden von Bildern (GET). ``Max Age: 0'', verhindert das Caching der CORS-Vorgaben 
+durch den Browser, sodass jede Anfrage die aktuellen Regeln berücksichtigt.
+
+Wenn alles eingestellt wurde, können nun Bilder aus dem Blob Storage ohne Einschränkungen 
+in Memoryland angezeigt werden. \footnote{Alle Informationen zu CORS für Azure BLob Storage stammen von \cite{MicrosoftCorporationc}}
+
+
+\subsection{Einrichtung von Azure PostgreSQL DB}
+
+``Azure Database for PostgreSQL'' ist ein Datenbankdienst von Microsoft Azure, 
+der auf dem Open-Source-Datenbanksystem PostgreSQL basiert \footnote{Weiter Infos zu Azure PostgreSQL: \cite{MicrosoftCorporationf}}. 
+Er bietet eine Lösung für Anwendungen, die eine relationale Datenbank benötigen.
+
+Die PostgreSQL Datenbank war eine schlüssige Entscheidung aufgrund der Erfahrung der Entwickler.
+\footnote{Flexible Server vs. Single Server: \cite{MicrosoftCorporatione}}
+
+\begin{table}[h t]
+    \centering
+    \caption{Vergleich: Flexible Server vs. Single Server}
+    \label{tab:azure-postgresql}
+    \begin{tabular}{lcc}
+    \hline
+    \textbf{Feature}                & \textbf{Single Server} & \textbf{Flexible Server} \\ \hline
+    \textbf{Betriebssystem}         & Windows                & Linux                    \\
+    \textbf{Maximale Speichergrö\ss{}e} & Bis zu 16 TB           & Bis zu 64 TB             \\
+    \textbf{Hochverfügbarkeit}      & Nein                   & Ja (Zonenredundant)      \\
+    \textbf{Kosten}                 & 1x                     & 2x (Compute + Storage)   \\ \hline
+    \end{tabular}
+\end{table}
+
+Flexible Server haben gegenüber Single Server Unterschiede. 
+Der wichtigste Grund für die Entscheidung war, dass Flexible Server auf Linux basiert, 
+während Single Server Windows verwendet. \footnote{Warum Linux wollten: \cite{hussain2015survey}}
+
+Au\ss{}erdem besitzen Flexible Servers eine grö\ss{}ere maximale Speichergrö\ss{}e, Zonenredundante Hochverfügbarkeit, 
+wodurch Ausfälle besser abgefangen werden können. Obwohl die Kosten etwas höher sein können, 
+sind Flexible Servers aufgrund dieser Punkte die bessere Wahl für unser Projekt.
+
+\subsection{Einrichtung von Azure AD B2C}
+
+Die Einrichtung von Azure AD B2C wurde anhand von Beispiel im folgenden MSAL-Beispiel
+für Angular durchgeführt \cite{MicrosoftCorporationh}. Zusätzlich diente wurde die folgende
+Website verwendet \cite{MicrosoftCorporationg}.
+\footnote{Was ist \emph{Azure AD B2C} und warum verwenden wir es: Kapitel \ref{subsection:azure_ad_b2c}}
+
+\subsection{Einrichtung von Azure WebApp}
+
+Die Einrichtung der Azure WebApp wurde mithilfe der folgenden Website erledigt 
+\cite{MicrosoftCorporationi}.
+\footnote{Was ist \emph{Azure WebApp} und warum verwenden wir es: Kapitel \ref{subsection:azure_web_app}}
+
+
+\subsection{Einrichtung von Azure Static WebApp}
+
+Die Azure WebApp wurde nicht speziell konfiguriert, es gibt aber einige wichtige Aspekte, 
+die vor dem Deployment der Angular Single Page Application beachtet werden müssen.  
+
+Damit die Static WebApp die Routen korrekt erkennt und an die Single Page Application 
+weiterleitet, anstatt ``\emph{404 Not Found}''-Fehler auszugeben, muss die folgende 
+Konfiguration \ref{lst:staticwebapp-config} in der Datei ``\emph{staticwebapp.config.json}'' hinterlegt werden. 
+Diese Datei muss sich im Verzeichnis des Angular-Projekts befinden -- in dieser Diplomarbeit
+also im Ordner ``\emph{memoryland}''. \footnote{Infos zu dem Code \ref{lst:staticwebapp-config} gibt es in diesem Video: \cite{MicrosoftCorporationj}}
+\footnote{Was ist \emph{Azure Static WebApp} und warum verwenden wir es: Kapitel \ref{subsection:azure_static_web_app}}
+
+\begin{lstlisting}[numbers=left,caption={staticwebapp.config.json},label={lst:staticwebapp-config}]
+{
+    "navigationFallback": {
+        "rewrite": "/",
+        "exclude": [
+            "*.{png,jpg,jpeg,gif,ico,css,scss,svg,js}"
+        ]
+    }
+}
+\end{lstlisting}
+
+
+\subsection{Einrichtung des Backends}
+
+Die Einrichtung des Backends für die Diplomarbeit erfordert die Konfiguration 
+der ``\emph{appsettings.json}'' Datei. In dieser Datei stehen mehrere Einstellungen,
+damit Memoryland auf die Unterschiedlichen Dienste zugreifen kann. Die Konfiguration 
+umfasst drei Hauptbereiche: Authentifizierung, Datenbank und den Azure Blob Storage.
+
+\subsubsection{Authentifizierung}
+
+Für die Authentifizierung wird Azure AD B2C genutzt, um die Benutzerverwaltung zu ermöglichen. 
+In der ``\emph{appsettings.json}'' Datei sind die entsprechenden Einstellungen wie in dem folgendem
+Beispiel \ref{lst:appsettings-auth-config} einzutragen. Hier werden unter anderem die Instance, ClientId und Domain des 
+Azure AD B2C Verzeichnisses angegeben. Der SignedOutCallbackPath gibt den Pfad an, der nach 
+der Abmeldung des Benutzers/der Benutzerin aufgerufen wird, und SignUpSignInPolicyId enthält 
+den Namen ebenjener. \footnote{Alle Informationen zu den Einstellungen der Authentifizierung sind hier zu finden: \cite{MicrosoftCorporationk}}
+
+\begin{lstlisting}[numbers=left,caption={appsettings.json},label={lst:appsettings-auth-config}]
+{
+    "AzureAdB2C": {
+        "Instance": "",
+        "ClientId": "",
+        "Domain": "",
+        "SignedOutCallbackPath": "/signout/<SignUpSignInPolicyId>",
+        "SignUpSignInPolicyId": ""
+    }
+}
+\end{lstlisting}
+
+\subsubsection{Datenbank}
+
+Für die Konfiguration der Datenbank sind die entsprechenden Einstellungen wie in dem folgendem
+Beispiel \ref{lst:appsettings-db-config} ebenso in der Datei ``\emph{appsettings.json}'' 
+einzutragen. Es gibt sowohl eine Einstellung für den Deployment-Datenbankanschluss (Default) 
+als auch eine für den lokalen Anschluss (DefaultLocal), der für Test-Zwecke verwendet wird. 
+Die UseLocalDb Einstellung gibt an, ob eine lokale Datenbank verwendet werden soll, wobei
+\emph{false} bedeutet, dass die Deployment Datenbank verwendet werden soll.
+\footnote{Alle Informationen zu den Einstellungen der Azure Datenbank sind hier zu finden: \cite{MicrosoftCorporationl}}
+
+\begin{lstlisting}[numbers=left,caption={appsettings.json},label={lst:appsettings-db-config}]
+{
+    "UseLocalDb": false,
+    "ConnectionStrings": {
+        "Default": "",
+        "DefaultLocal": ""
+    }
+}
+\end{lstlisting}
+
+\subsubsection{Azure Blob Storage}
+
+Für die Konfiguration des Azure Blob Storage sind die entsprechenden Einstellungen wie in 
+dem folgendem Beispiel \ref{lst:appsettings-blob-storage-config} ebenso in der Datei 
+``\emph{appsettings.json}'' einzutragen. Diese Einstellung ist notwendig, um die 
+Anwendung mit dem Azure Blob Storage zu verbinden und den Zugriff auf Bilder und 
+andere Dateien sicherzustellen.
+\footnote{Alle Informationen zu den Einstellungen des Azure Blob Storage sind hier zu finden: \cite{MicrosoftCorporationm}}
+
+\begin{lstlisting}[numbers=left,caption={appsettings.json},label={lst:appsettings-blob-storage-config}]
+{
+    "ConnectionStrings": {
+        "BlobStorageDefault": "",
+    }
+}
+\end{lstlisting}
+
+
+\subsection{Einrichtung des Frontends}
+
+Auch für das Frontend gibt es wichtige Einstellungen, damit die Single Page Application
+funktioniert. Hierbei steht die Konfiguration in der Datei ``\emph{environment.ts}''.
+Die Konfiguration ist für die Integration der Azure AD B2C Authentifizierung sowie die 
+Verbindung zum Backend und den APIs. Die Datei enthält alle wichtigen Daten für 
+die Authentifizierung und die Verbindung zum Backend. 
+
+Im Folgenden ist die Konfiguration beschrieben und in zwei Hauptkapitel unterteilt: 
+\emph{environment.ts}-Konfiguration und Deployment.
+
+
+\subsubsection{\emph{environment.ts}-Konfiguration}
+
+Für die Authentifizierung wird Azure AD B2C verwendet. Die Konfiguration umfasst 
+die folgende Definition \ref{lst:environment-ts} von Login- und Profil-Bearbeitungs-Flows.
+\footnote{Die Informationen zu den Einstellungen stammen alle aus den folgenden Links: \cite{MicrosoftCorporationh} \cite{MicrosoftCorporationg}}
+
+Userflows in Azure AD B2C sind vordefinierte, anpassbare Prozesse für häufige Benutzeraktionen 
+wie Anmeldung, Registrierung, Profilbearbeitung oder Passwortzurücksetzung. Sie ermöglichen 
+eine schnelle Konfiguration dieser Schritte, sodass Benutzer:innen nach Abschluss Zugriff auf 
+die Anwendung erhalten.
+\footnote{Die Informationen zu Userflows stammen alle aus dem folgenden Link: \cite{MicrosoftCorporationn}}
+
+\begin{table}[h t]
+  \centering
+  \caption{Erklärung der Werte von ``\emph{environment.ts}''}
+  \label{tab:environment-ts}
+  \begin{tabular}{|l|l|}
+  \hline
+  \textbf{Wert}   & \textbf{Erklärung}                                                  \\ \hline
+  signUpSignIn    & Der Name des Sign-Up/Sign-In Flows                                  \\ \hline
+  editProfile     & Der Name des Profilbearbeitungs-Flows                               \\ \hline
+  authority       & URL der Autorität, die für Authentifizierung genutzt wird           \\ \hline
+  authorityDomain & Der Domainname des B2C-Tenants                                      \\ \hline
+  clientId        & Die Client-ID der registrierten Anwendung                           \\ \hline
+  redirectUri     & URI, wohin nach erfolgreicher Authentifizierung weitergeleitet wird \\ \hline
+  scopes          & Liste von Berechtigungen, die die Anwendung benötigt                \\ \hline
+  uri             & Die URI des Backend-Servers                                         \\ \hline
+  \end{tabular}
+\end{table}
+
+\begin{lstlisting}[numbers=left,caption={environment.ts},label={lst:environment-ts}]
+const b2cPolicies = {
+  names: {
+    signUpSignIn: "<flow-name>",
+    editProfile: "<flow-name>"
+  },
+  authorities: {
+    signUpSignIn: {
+      authority: "https://<tenant-name>.b2clogin.com/
+        <tenant-name>.onmicrosoft.com/<flow-name>"
+    },
+    editProfile: {
+      authority: "https://<tenant-name>.b2clogin.com/
+        <tenant-name>.onmicrosoft.com/<flow-name>"
+    }
+  },
+  authorityDomain: "<tenant-name>.b2clogin.com"
+};
+    
+export const environment = {
+  production: false,
+  b2cPolicies: b2cPolicies,
+  msalConfig: {
+    auth: {
+      clientId: "<your-client-id>",
+      authority: b2cPolicies.authorities.signUpSignIn.authority,
+      knownAuthorities: [b2cPolicies.authorityDomain],
+      redirectUri: '/',
+    }
+  },
+  apiConfig: {
+    scopes: [
+      "https://<tenant-name>.onmicrosoft.com/<app-name>/<scope-name>",
+    ],
+    uri: "<backend-uri>"
+  }
+};    
+\end{lstlisting}
+
+Diese Konfiguration ermöglicht es, die Anwendung mit den Azure AD B2C 
+Flows zu verbinden und eine sichere Kommunikation mit dem Backend sicherzustellen.
+
+\subsubsection{Deployment}
+
+All diese Einstellungen werden auch in GitHub (https://github.com/) benötigt.
+Mithilfe von GitHub Actions \footnote{Alle Informationen zu GitHub stammen von hier: \cite{GitHuba}}
+wird unser Frontend bei einem Push oder einer Pull-Request auf den Branch Main, deployed.
+Dafür müssen jedoch die folgenden Variablen \ref{tab:github-secrets} mittels GitHub Secrets im GitHub Repo eingetragen werden.
+\footnote{Alle Informationen zu GitHub Secrets stammen von hier: \cite{GitHub}}
+
+\begin{table}[h t]
+    \centering
+    \caption{GitHub Secrets für das Deployment des Frontends}
+    \label{tab:github-secrets}
+    \begin{tabular}{|l|l|}
+    \hline
+    \textbf{GitHub Secret}              & \textbf{Beschreibung} \\ \hline
+    \texttt{B2C\_SIGNUP\_SIGNIN\_FLOW}   & Name des Sign-Up/Sign-In Flows \\ \hline
+    \texttt{B2C\_EDIT\_PROFILE\_FLOW}    & Name des Profilbearbeitungs-Flows \\ \hline
+    \texttt{B2C\_SIGNUP\_SIGNIN\_AUTHORITY} & Autoritäts-URL für den Sign-Up/Sign-In Flow \\ \hline
+    \texttt{B2C\_EDIT\_PROFILE\_AUTHORITY}  & Autoritäts-URL für den Profilbearbeitungs-Flow \\ \hline
+    \texttt{B2C\_AUTHORITY\_DOMAIN}      & Domain des B2C-Tenants \\ \hline
+    \texttt{CLIENT\_ID}                  & Client-ID der registrierten Anwendung \\ \hline
+    \texttt{SCOPE\_READ}                 & API-Berechtigung für Lesezugriff \\ \hline
+    \texttt{SCOPE\_WRITE}                & API-Berechtigung für Schreibzugriff \\ \hline
+    \texttt{BACKEND\_URI}                & URI des Backend-Servers \\ \hline
+    \end{tabular}
+    \caption{Verwendete GitHub Secrets für die Konfiguration}
+\end{table}
+
