@@ -272,6 +272,8 @@ unterschiedliche Funktionen bieten.
     \label{fig:all-worlds-menu}
 \end{wrapfigure}
 
+\subsection{Meine Erinnerungen}
+
 Der erste Abschnitt trägt die Bezeichnung ``Meine Erinnerungen''. Hier befindet 
 sich ein Button mit der Aufschrift ``Memoryland Erstellen''. Durch das Anklicken 
 dieses Buttons wird ein Pop-up-Fenster geöffnet, in dem verschiedene Einstellungen 
@@ -282,7 +284,94 @@ visuelle Darstellung der Bilder innerhalb des Memorylands. Zusätzlich ist ein
 Textfeld vorhanden, in das der gewünschte Name des Memorylands eingetragen werden 
 kann.
 
+\begin{wrapfigure}{r}{0.4\textwidth}
+    \centering
+    \includegraphics[scale=0.4]{pics/all_worlds_teil1_button.PNG}
+    \caption{Memoryland erstellen}
+    \label{fig:all-worlds-memoryland-erstellen}
+\end{wrapfigure}
 
+\subsection{Memorylands}
+
+Der zweite Abschnitt der Seite trägt den Namen ``Memorylands'' und dient der 
+Verwaltung bereits erstellter Memorylands. Um ein bestimmtes Memoryland schnell 
+zu finden, steht eine Suchleiste zur Verfügung. Durch das Eintippen eines Namens 
+oder einzelner Zeichen werden bereits während der Eingabe passende Ergebnisse 
+gefiltert und angezeigt. Direkt unterhalb dieser Suchleiste werden alle zuvor 
+erstellten Memorylands in einer strukturierten Übersicht dargestellt. Jedes 
+Memoryland wird dabei mit mehreren Informationen versehen. Dazu gehören der 
+Name des Memorylands, der gewählte Typ sowie die maximale Anzahl an Fotos, die 
+innerhalb dieses Memorylands gespeichert werden können. Zusätzlich befinden sich 
+neben diesen Informationen drei verschiedene Symbole, die für die Bearbeitung und 
+Verwaltung der Memorylands vorgesehen sind.
+
+\begin{figure} [h t]
+    \centering
+    \includegraphics[scale=0.8]{pics/all_worlds_teil2.PNG}
+    \caption{Memorylands Übersicht}
+    \label{fig:all-worlds-memorylands}
+\end{figure}
+
+Das mittlere Symbol ist ein Stift-Icon. Durch das Anklicken dieses Symbols wird 
+die Möglichkeit geboten, den Namen des Memorylands zu ändern. Ein Eingabefeld 
+erscheint, in das ein neuer Name eingetragen werden kann. Das nächste Symbol ist 
+ein Papierkorb-Icon. Wenn dieses Symbol betätigt wird, wird das Memoryland 
+unwiderruflich gelöscht. Eine zusätzliche Sicherheitsabfrage erfolgt dabei 
+nicht, sodass das Memoryland sofort aus der Liste entfernt wird. 
+
+Das forderste Symbol ist ein Schraubenschlüssel-Icon. Durch das Anklicken dieses 
+Symbols öffnet sich ein weiteres Pop-up-Fenster, das zusätzliche Bearbeitungsoptionen 
+bereitstellt. 
+
+\subsection{Memorylands editieren}
+
+In diesem Pop-up-Fenster kann ein bestehendes Fotoalbum aus der eigenen Sammlung 
+ausgewählt werden, aus dem Bilder in das Memoryland eingefügt werden sollen. Um 
+Bilder in das Memoryland zu integrieren, steht eine Drag-and-Drop-Funktion zur 
+Verfügung. 
+
+Bilder können aus einem oberen Bereich des Fensters in einen unteren 
+Bereich verschoben werden. Falls sich eine gro\ss{}e Anzahl an Bildern in dem 
+ausgewählten Album befindet, kann eine zusätzliche Suchleiste genutzt werden, 
+um gezielt nach bestimmten Bildern zu suchen.
+
+\begin{figure} [h t]
+    \centering
+    \includegraphics[scale=0.8]{pics/all_worlds_teil2_button.PNG}
+    \caption{Memorylands editieren}
+    \label{fig:all-worlds-memorylands-editieren}
+\end{figure}
+
+Nachdem ein Memoryland erstellt wurde, kann es über die Übersicht aufgerufen werden. 
+Sobald der Nutzer auf ein Memoryland klickt, erfolgt eine automatische Weiterleitung 
+zur Seite ``Explore Worlds''. Dort wird das ausgewählte Memoryland sofort geladen 
+und visuell dargestellt. Dies ermöglicht eine interaktive Betrachtung der gespeicherten 
+Erinnerungen innerhalb der gewählten Umgebung.
 
 \section{Explore Worlds}
+
+
+\section{Toasts}
+
+Toasts sind eine \emph{visuelle Rückmeldung} für Benutzer und zeigen an, ob eine Aktion 
+erfolgreich war, fehlgeschlagen ist oder allgemeine Informationen enthält.  
+
+Die Toast-Nachrichten erscheinen im oberen rechten Bereich der Website, jedoch 
+unterhalb des Headers. Sie bleiben für eine bestimmte Zeit sichtbar und verschwinden 
+automatisch. Alternativ können sie durch das Klicken auf ein ``X''-Symbol manuell 
+geschlossen werden.  
+
+Es gibt drei verschiedene Farbvarianten, die jeweils eine spezifische Bedeutung 
+haben. Ein grüner Toast signalisiert ``Success'' und zeigt an, dass eine Aktion 
+erfolgreich abgeschlossen wurde, beispielsweise die Erstellung eines Albums oder 
+eines Memorylands. Ein roter Toast steht für ``Error'' und bedeutet, dass während 
+eines Prozesses ein Fehler aufgetreten ist, wodurch der Vorgang unterbrochen oder 
+gestoppt wurde. Ein blauer Toast steht für ``Information'' und enthält eine neutrale 
+Nachricht, die lediglich eine Mitteilung darstellt, ohne dass es sich um eine 
+Erfolgsmeldung oder eine Fehlermeldung handelt.
+
+Durch die Farbkennzeichnung wird die Bedeutung der Toast-Nachricht sofort erkennbar. 
+Dies verbessert die Benutzerfreundlichkeit, da Informationen schnell erfasst werden 
+können, ohne dass zusätzliche Interaktionen erforderlich sind.
+
 
