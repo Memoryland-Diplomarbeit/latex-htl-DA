@@ -1,0 +1,210 @@
+In Memoryland wird eine Web-API eingesetzt, um die Verwaltung von Bildern, Alben
+und anderen Daten im Backend zu steuern. Die API übernimmt dabei die Speicherung, 
+Strukturierung und den Zugriff auf diese Daten, während das Frontend über die API 
+mit dem Backend kommuniziert.
+
+\subsection{Arbeiten mit C\#-Controllern}
+
+Die API wurde mittels einer C\# WebAPI mit Controllern entwickelt. Diese auf dem .NET-Framework
+basierende Technologie ermöglicht es uns RESTful-Endpunkte zu erstellen, über die das Frontend
+mit dem Backend kommunizieren kann. Controller helfen uns dabei die unterschiedlichen Funktionen
+des Backends in eigene Klassen zu unterteilen, was eine klarere Struktur ermöglicht.
+\footnote{Alle Infos zu C\# WebAPIs mit Controllern stammen von: \cite{MicrosoftCorporationaa}}
+
+Um Code-Verdoppelung zu vermeiden, wurde im Memoryland-Backend eine Basisklasse 
+für API-Controller implementiert. Von der Klasse ``\emph{ApiControllerBase}'' \ref{lst:api-controller-base} 
+erben alle anderen Controller, wodurch eine einheitliche Struktur sichergestellt und die Wartung 
+erleichtert wird.
+
+Die Base-Controller Klasse ist mit den zwei Attributen ``[ApiController]'' und 
+``[Route(``api/[controller]'')]'' versehen. Mit dem ``[ApiController]''-Attribut 
+erkennt das .Net-Framework die Klasse als API-Controller. Das 
+``[Route(``api/[controller]'')]''-Attribut hingegen legt die Basisroute für alle Endpunkte 
+der Controller fest, die von der ApiControllerBase erben. 
+Der Platzhalter \emph{controller} wird durch den Namen des jeweiligen Controllers ersetzt. 
+Beispielsweise erhält die UploadController-Klasse dadurch die Basisroute ``api/Upload''.
+
+\begin{lstlisting}[numbers=left,caption={APIControllerBase.cs},label={lst:api-controller-base}]
+using Microsoft.AspNetCore.Mvc;
+
+namespace WebApi.Controllers;
+    
+[ApiController]
+[Route("api/[controller]")]
+public class ApiControllerBase : ControllerBase { }    
+\end{lstlisting}
+
+\subsubsection{Probleme bei der Implementierung}
+
+Bei der Implementierung dieser Struktur kam es zu dem Problem, dass in ein paar Methodenrouten
+ein führende Schrägstrich ``\slash'' verwendet wurde. Dies überschreibt jedoch die definierte
+Basisroute des Controllers.
+
+Beispielsweise führt die Angabe ``[HttpPost(``/picture'')]'' dazu, dass die Route nicht 
+``api/Upload/picture'' lautet, sondern nur ``/picture''. Daher sollte in der Methodenroute 
+kein führender Schrägstrich ``\slash'' verwendet werden.
+
+Dies führte zu Problemen auch mit Swagger und OpenAPI, da diese Middleware versuchte, 
+die Methode dem entsprechenden Controller zuzuordnen. Da der Controller eine Basisroute 
+definiert hatte, jedoch die tatsächliche Route aufgrund des beschriebenen Problems nicht 
+in diese Struktur eingebunden war, warf die Middleware den Error. Dies führte dazu, 
+dass Swagger und OpenAPI die Methode nicht korrekt dokumentieren oder aufrufen konnten.
+
+\subsection{Endpunkte in C\# Controllern}
+
+Die Methode MyPostEndpointMethod \ref{lst:endpoint-example} stellt einen HTTP-POST-Endpunkt in einer Web-API bereit und
+wird als Beispiel für die folgende Erklärung der Implementierung von Endpunkten in C\# Controllern
+verwendet. Die Methode ist mit mehreren Attributen versehen, die Authentifizierung, 
+Autorisierung und die API Route steuern. Das ``[Authorize]''-Attribut stellt sicher, 
+dass nur authentifizierte Benutzer Zugriff auf die Methode erhalten, wobei es dafür
+die in der Datei ``Program.cs'' definierte Technologie verwendet. Zusätzlich überprüft 
+``[RequiredScope(``backend.write'')]'', ob der Benutzer über die notwendigen Berechtigungen 
+verfügt. Diese Überprüfung basiert auf OAuth 2.0 und OpenID Connect und stellt sicher, 
+dass nur Benutzer mit den nötigen Rechten (Scopes) bestimmte Operationen durchführen können. 
+
+Mit dem ``[Route(...)]''-Attribut wird die Route der Methode definiert. Hierbei können in
+geschwungenen Klammern ``\{ \}'' URL-Parameter definiert werden. Es können aber auch 
+Objekte im Body des HTTP-Aufrufs mitgegeben werden. Dafür benötigt man das 
+Attribut ``[FromBody]'' vor dem Parameter der Funktion setzen. Das JSON-Objekt wird dann
+automatisch in die Objekt-Instanz deserialisiert und kann dann normal genutzt werden. 
+
+Schlussendlich gibt die Methode dann ein Results-Objekt zurück, welches mehrere 
+mögliche Antworttypen umfasst. Diese Antworttypen beinhalten die HTTP-Status-Werte.
+Bei erfolgreicher Erstellung eines neuen Objekts wird also ein Created-Ergebnis zurückgegeben. 
+Dies entspricht dem Status-Code 201. Falls die Anfrage fehlerhafte oder unvollständige Daten 
+enthält, wird ein BadRequest<string> zurückgeliefert, welches auch zusätzliche Informationen
+im ``string''-Format enthalten kann. Ist die Verarbeitung erfolgreich, aber kein neues Objekt 
+erforderlich, wird stattdessen ein Ok<ReturnObj> zurückgegeben, welches wieder bestimmte
+Typen enthalten kann, wie eine Liste an Bildern.
+\footnote{Alle Informationen zur Implementierung von Endpunkten in C\# Controllern stammen von: \cite{MicrosoftCorporationaa} \cite{MicrosoftCorporationab}}
+
+\begin{lstlisting}[numbers=left,caption={Beispiel eines Endpunkts},label={lst:endpoint-example}]
+[HttpPost]
+[Authorize]
+[Route("mypath/{objId:long}")]
+[RequiredScope("backend.write")]
+public async Task<Results<Created, BadRequest<string>, Ok<ReturnObj>>> 
+    MyPostEndpointMethod(
+    long objId, 
+    [FromBody] ObjDto postObjDto)
+{
+    ...
+}
+\end{lstlisting}
+
+\subsection{API-Dokumentation mit Swagger und OpenApi}
+
+Für eine übersichtlichere Dokumentation der API, wurde Swagger und OpenAPI eingesetzt.
+OpenAPI ist eine Spezifikation zur Beschreibung und Dokumentationvon REST-APIs. Eine
+OpenAPI-Datei enthält alle Informationen zu der API, einschließlich der verfügbaren 
+Endpunkte, sowie der Ein- und Ausgaben. Diese JSON Spezifikation wird in diesem Projekt
+automatisch erstellt.
+
+Swagger ist eine Sammlung von Open-Source-Tools, die auf der OpenAPI Spezifikation 
+aufbauen. Für diese Projekt wurde die Swagger UI verwendet, welches OpenAPI-Definitionen 
+als interaktive Dokumentation darstellt, sodass API-Aufrufe direkt im Browser getestet 
+werden können.
+\footnote{Ein Beispiel einer Swagger-UI ist im Bild \ref{fig:swagger-ui-example} zu sehen.}
+
+Durch den Einsatz von Swagger und OpenAPI wurde die Nutzung der API erleichtert, 
+da die Entwickler die verfügbaren Endpunkte und deren Funktionalitäten direkt 
+einsehen und testen konnten. 
+\footnote{Alle Informationen zu Swagger und OpenAPI stammen von: \cite{SmartBearSoftware}}
+
+\subsection{Erklärung der Controller und ihrer Aufgaben}
+
+Die vier Controller in der API des Memoryland-Bakcends erfüllen jeweils spezifische 
+Aufgaben im Zusammenhang mit der Verwaltung von Fotos, Alben, Uploads und deren Transaktionen.
+
+\subsubsection{Album-Controller}
+
+Der AlbumController ist zuständig für die Verwaltung von Fotoalben. Dieser Controller 
+ermöglicht das Erstellen, Abrufen und Löschen von Alben, sowie das Zuweisen 
+von Fotos zu Alben.
+
+\begin{table}[h t]
+    \centering
+    \caption{Album Controller Endpunkte}
+    \label{tab:album-controller}
+    \begin{tabular}{|l|p{5cm}|l|p{5cm}|}
+    \hline
+    \textbf{Methode} & \textbf{Pfad} & \textbf{Authorized} & \textbf{Beschreibung} \\ \hline
+    GET & /api/PhotoAlbum\break{/\{albumId\}} & Ja & Ruft ein Fotoalbum mit der angegebenen ID ab. \\ \hline
+    GET & /api/PhotoAlbum & Ja & Ruft eine Liste aller Fotoalben ab. \\ \hline
+    PUT & /api/PhotoAlbum & Ja & Bearbeitet den Namen eines Fotoalbums. \\ \hline
+    POST & /api/PhotoAlbum\break{/\{albumName\}} & Ja & Erstellt ein neues Fotoalbum mit dem angegebenen Namen. \\ \hline
+    DELETE & /api/PhotoAlbum\break{/\{photoAlbumId\}} & Ja & Löscht ein Fotoalbum mit der angegebenen ID. \\ \hline
+    \end{tabular}
+\end{table}
+
+
+\subsubsection{Memoryland-Controller}
+
+Der MemorylandController ist für die Verwaltung und Interaktion mit Memorylands 
+verantwortlich. Dabei werden Memorylands, die Positionierung der Bilder in Memorylands
+und Tokens für den Zugriff auf Memorylands verwaltet.
+
+Konfigurationen von Memorylands sind hier beschrieben \ref{sec:memoryland-config}.
+
+\begin{table}[h t]
+    \centering
+    \caption{Memoryland Controller Endpunkte}
+    \label{tab:memoryland-controller}
+    \begin{tabular}{|l|p{5cm}|l|p{5cm}|}
+    \hline
+    \textbf{Methode} & \textbf{Pfad} & \textbf{Authorized} & \textbf{Beschreibung} \\ \hline
+    GET & /api/Memoryland/all & Ja & Gibt eine Liste aller Memorylands zurück. \\ \hline
+    GET & /api/Memoryland & Nein & Gibt eine Memoryland mit all dessen Bildern zurück. Dafür wird ein Token benötigt \\ \hline
+    PUT & /api/Memoryland & Ja & Bearbeitet den Namen eines Memorylands. \\ \hline
+    GET & /api/Memoryland/\{id\}\break/configuration & Ja & Gibt die Konfiguration für das angegebene Memoryland zurück. \\ \hline
+    GET & /api/Memoryland/types & Nein & Gibt die verfügbaren Typen für Memorylands zurück. \\ \hline
+    GET & /api/Memoryland/\{id\}\break/token & Ja & Gibt das Token für das angegebene Memoryland zurück. \\ \hline
+    POST & /api/Memoryland/\{id\}\break/token & Ja & Erstellt ein neues Token für das angegebene Memoryland. \\ \hline
+    POST & /api/Memoryland\break/\{memorylandName\}\break/{memorylandTypeId} & Ja & Erstellt ein Memoryland mit dem angegebenen Namen und Typ. \\ \hline
+    POST & /api/Memoryland\break/\{memorylandId\} & Ja & Erstellt eine Konfiguration für das Memoryland. \\ \hline
+    DELETE & /api/Memoryland\break/\{memorylandId\} & Ja & Löscht das angegebene Memoryland. \\ \hline
+    DELETE & /api/Memoryland/config\break/\{id\} & Ja & Löscht die angegebene Konfiguration eines Memorylands. \\ \hline
+    \end{tabular}
+\end{table}
+
+
+\subsubsection{Foto-Controller}
+
+Der FotoController ist für die Verwaltung von Fotos verantwortlich. Dies umfasst das 
+Abrufen, Erstellen und Löschen von Fotos, sowie das Verwalten der Fotodaten, die in 
+Alben gespeichert sind. \ref{tab:foto-controller}
+
+\begin{table}[h t]
+    \centering
+    \caption{Foto Controller Endpunkte}
+    \label{tab:foto-controller}
+    \begin{tabular}{|l|p{5cm}|l|p{5cm}|}
+    \hline
+    \textbf{Methode} & \textbf{Pfad} & \textbf{Authorized} & \textbf{Beschreibung} \\ \hline
+    GET & /api/Photo/\{albumId\}\break/\{photoName\} & Ja & Ruft ein Foto aus einem Album ab. \\ \hline
+    DELETE & /api/Photo/\{photoId\} & Ja & Löscht ein Foto mit der angegebenen ID. \\ \hline
+    PUT & /api/Photo & Ja & Bearbeitet den Namen eines Fotos. \\ \hline
+    \end{tabular}
+\end{table}
+
+
+\subsubsection{Upload-Controller}
+
+Der UploadController ist für das Hochladen von Fotos und das Öffnen von 
+Transaktionen zuständig. \ref{tab:upload-controller}
+
+\begin{table}[h t]
+    \centering
+    \caption{Upload Controller Endpunkte}
+    \label{tab:upload-controller}
+    \begin{tabular}{|l|p{5cm}|l|p{5cm}|}
+    \hline
+    \textbf{Methode} & \textbf{Pfad} & \textbf{Authorized} & \textbf{Beschreibung} \\ \hline
+    GET & /api/Upload/transaction & Ja & Ruft alle Upload-Transaktionen ab. \\ \hline
+    POST & /api/Upload/transaction & Ja & Erstellt eine neue Upload-Transaktion. \\ \hline
+    POST & /api/Upload/photo & Ja & Lädt ein Foto hoch. \\ \hline
+    DELETE & /api/Upload/transaction\break/\{transactionId\} & Ja & Löscht eine Upload-Transaktion mit der angegebenen ID. \\ \hline
+    \end{tabular}
+\end{table}
+
+
