@@ -6,17 +6,283 @@
 
 \subsection{WebStorm}
 
+
 \section{Header}
 
+\begin{figure} [h t]
+    \centering
+    \includegraphics[scale=0.5]{pics/header_login.PNG}
+    \caption{Header des Frontend}
+    \label{fig:header-frontend}
+\end{figure}
 
+Der Header einer mit Angular entwickelten Webanwendung enthält das Logo sowie 
+den Namen der Website. Durch Klicken auf das Logo oder den Namen wird der 
+Benutzer zur Hauptseite der Anwendung weitergeleitet.
+
+Zusätzlich sind Navigationslinks integriert, die den Benutzer zu verschiedenen 
+Bereichen der Website führen. Die verfügbaren Links umfassen ``Home'', ``Explore 
+Worlds'', ``All Worlds'', ``Memory Store'' und ``About'', diese werden später noch 
+genauer erklärt. Durch das Anklicken eines dieser Links wird die entsprechende 
+Seite aufgerufen. Die Seiten ``Explore Worlds'', ``All Worlds'' und ``Memory Store'' 
+jedoch sind nur dann zugänglich, wenn der Benutzer sich auf der Website 
+eingeloggt.
+
+
+\begin{figure} [h t]
+    \centering
+    \includegraphics[scale=0.4]{pics/benutzername_aendern.PNG}
+    \caption{Benutzername Ändern}
+    \label{fig:benutzername-aendern}
+\end{figure}
+
+Ein Login-Button ist ebenfalls Bestandteil des Headers. Falls ein Benutzer eingeloggt 
+ist, wird vor dem Login-Button ein zusätzlicher Button angezeigt, der den aktuellen 
+Benutzernamen als Label enthält. Ein Klick auf diesen Button führt zu einer separaten 
+Seite, auf der der Benutzername geändert werden kann.
+
+Die Änderung des Benutzernamens erfolgt durch direktes Bearbeiten eines Textfeldes. 
+Um die Änderung zu übernehmen oder zur vorherigen Seite zurückzukehren, steht ein 
+``Continue''-Button zur Verfügung. Dieser speichert die Anpassung und leitet den Benutzer 
+wieder auf die Website weiter. Um den vorherigen Benutzernamen jedoch beizubehalten 
+oder zur vorherigen Seite zurückzukehren, steht ein Cancel-Button zur Verfügung. 
+
+Der Header bleibt auf allen, mit Angular entwickelten, Seiten der Anwendung unverändert. 
+Diese Konsistenz gewährleistet eine einheitliche Benutzerführung und erleichtert die 
+Navigation innerhalb der Anwendung.
 
 
 \section{Home}
 
+Das Layout der Startseite ist zentriert ausgerichtet. Im oberen Bereich der Seite befindet 
+sich das Logo in gro\ss{}er Darstellung, ergänzt durch den Namen der Diplomarbeit. Direkt 
+darunter wird eine Willkommensnachricht angezeigt (siehe Abbildung \ref{fig:homepage}).
+
+\begin{figure} [h t]
+    \centering
+    \includegraphics[scale=0.4]{pics/home_page.PNG}
+    \caption{Homepage}
+    \label{fig:homepage}
+\end{figure}
+
+Am unteren Rand der Seite ist ein Link platziert, der zur Impressums- und 
+Nutzungsbedingungen-Seite führt. Diese Seite ist unter der Sektion ``About'' 
+näher erläutert. Alternativ kann dieselbe Seite über den About-Link im Header 
+aufgerufen werden.
+
 \section{About}
+
+Die About-Seite umfasst das Impressum sowie die Nutzungsbedingungen und ist zentriert 
+ausgerichtet.
+
+
+Das Impressum enthält die Namen der Entwickler und deren Zuständigkeitsbereiche 
+innerhalb der Website, insbesondere die Unterscheidung zwischen Frontend- und 
+Backend-Entwicklung. Zusätzlich sind die vollständige Adresse der Schule mit 
+Stra\ss{}enname, Hausnummer, Postleitzahl, Stadt und Land sowie die offiziellen 
+Kontaktdaten der Schule, einschlie\ss{}lich Telefonnummer und E-Mail-Adresse, 
+aufgeführt.
+
+\begin{figure} [h t]
+    \centering
+    \includegraphics[scale=0.4]{pics/About_page_Impressum.PNG}
+    \caption{About - Impressum}
+    \label{fig:about-page-impressum}
+\end{figure}
+
+
+
+\begin{figure} [h t]
+    \centering
+    \includegraphics[scale=0.8]{pics/About_page_Nutzungsbedingungen.PNG}
+    \caption{About - Nutzungsbedingungen}
+    \label{fig:about-page-nutzungsbedingungen}
+\end{figure}
+
+
+Die Nutzungsbedingungen beinhalten allgemeine Vorschriften und Vereinbarungen zur 
+Nutzung der Website. Sie umfassen spezifische Regelungen zu erlaubten und nicht 
+erlaubten Inhalten, die technische Verfügbarkeit der Plattform sowie Bestimmungen 
+zu unerwünschten Aktivitäten wie Spam, Flooding und Leeching. Zudem gibt es eine 
+Sektion zur Verarbeitung und Nutzung von Nutzerdaten, die den Umgang mit 
+personenbezogenen Informationen beschreibt.
+
+Die Betreiber einer Website, wie der hier beschriebenen, müssen sich gegen den 
+missbräuchlichen Umgang und die Verbreitung von verbotenen Materialien schützen. 
+Derartige Nutzungsbedingungen gehören also genauso zum Umfang eines derartigen Projektes
+wie die Implementierung selbst.
+
+
+
+
+
 
 \section{Memory Store}
 
+Der Memory Store ist in drei Abschnitte unterteilt und bietet verschiedene Funktionen 
+zur Verwaltung von Fotoalben und Bildern. Die Benutzeroberfläche ist so gestaltet, 
+dass alle wesentlichen Aktionen über interaktive Elemente, wie Buttons und 
+Suchleisten, zugänglich sind.
+
+\subsection{Meine Fotoalben - Das Menü}
+
+\begin{wrapfigure}{r}{0.4\textwidth}
+    \centering
+    \includegraphics[scale=0.8]{pics/memory_store_menu.PNG}
+    \caption{Memory Store Menü}
+    \label{fig:memory-store-menu}
+\end{wrapfigure}
+
+
+Dieser Abschnitt enthält mehrere Buttons zur Verwaltung und Organisation von Fotoalben 
+und hochzuladenen Bildern (siehe \ref{fig:memory-store-menu}).
+
+Der erste Button mit der Bezeichnung ``Album Erstellen'' öffnet ein Pop-up-Fenster, 
+in dem der Benutzer den Namen des neuen Albums in ein Textfeld eingeben kann. 
+Falls der Erstellungsprozess abgebrochen werden soll, kann entweder der 
+``Cancel''-Button oder das Schlie\ss{}symbol (X) oben rechts im Pop-up-Fenster gedrückt 
+werden. Nach der Eingabe des gewünschten Namens wird das Album durch Drücken 
+des ``Album Erstellen''-Buttons endgültig erstellt und der Liste der vorhandenen 
+Alben hinzugefügt.
+
+
+\subsubsection{Foto Hochladen}
+
+Der zweite Button mit der Bezeichnung ``Foto Hochladen'' ermöglicht das Hochladen 
+einzelner Bilder in zuvor erstellte Alben. Nach Betätigung dieses Buttons öffnet 
+sich ein Pop-up-Fenster, in dem zunächst ein Album aus einer Liste bestehender Alben 
+ausgewählt werden muss. Anschlie\ss{}end kann eine Datei vom eigenen Computer durch 
+Drücken des ``Browse''-Buttons ausgewählt werden. Sobald eine Datei ausgewählt wurde, 
+wird ihr Name in einem Textfeld angezeigt. Der Benutzer hat an dieser Stelle die 
+Möglichkeit, den Namen der Datei manuell zu ändern. Das Hochladen des ausgewählten 
+Bildes erfolgt schlie\ss{}lich durch Drücken des ``Foto Hochladen''-Buttons am unteren 
+Rand des Pop-ups (siehe \ref{fig:memory-store-foto-hochladen}).
+
+\begin{wrapfigure}{r}{0.4\textwidth}
+    \centering
+    \includegraphics[scale=0.4]{pics/memory_store_teil1_button2.PNG}
+    \caption{Memory Store - Foto Hochladen}
+    \label{fig:memory-store-foto-hochladen}
+\end{wrapfigure}
+
+
+\subsubsection{Album Hochladen}
+
+Der dritte Menüpunkt mit der Bezeichnung ``Album Hochladen'' ermöglicht das 
+Hochladen eines gesamten Albums bzw. eines lokalen Ordners mit mehreren Bildern. 
+Beim Anklicken öffnet sich ein Pop-up-Fenster, in dem zunächst ein Zielalbum aus 
+der Liste zuvor erstellter Alben ausgewählt werden muss. Anschlie\ss{}end kann ein 
+Album vom lokalen Computer über den ``Browse''-Button ausgewählt werden. Nach der 
+Auswahl wird angezeigt, wie viele Bilder sich in dem gewählten Album befinden. 
+Zusätzlich gibt es eine Checkbox, die – falls aktiviert – einen resumable Upload 
+ermöglicht. Diese Funktion erlaubt es, den Upload-Prozess bei einer Unterbrechung 
+fortzusetzen.
+
+\begin{wrapfigure}{r}{0.4\textwidth}
+    \centering
+    \includegraphics[scale=0.4]{pics/memory_store_teil1_button3.PNG}
+    \caption{Memory Store - Album Hochladen}
+    \label{fig:memory-store-album-hochladen}
+\end{wrapfigure}
+
+Nachdem der Benutzer den ``Fotos Hochladen''-Button betätigt, wird das aktuelle 
+Pop-up-Fenster durch ein neues ersetzt, das eine Fortschrittsanzeige (Progress Bar) 
+enthält. Diese zeigt an, wie viele der Bilder bereits hochgeladen wurden. Sobald 
+der Upload abgeschlossen ist, kann der Vorgang durch Drücken des ``Exit''-Buttons 
+beendet werden.
+
+Falls der Upload während des Prozesses unterbrochen wird, kann er später fortgesetzt 
+werden. Eine Unterbrechung erfolgt entweder durch das Drücken des ``Exit''-Buttons 
+oder durch das Klicken au\ss{}erhalb des Pop-ups. Voraussetzung für die Fortsetzung ist, 
+dass die resumable Upload-Funktion zuvor aktiviert wurde. In diesem Fall kann der 
+Upload über den vierten Button ``Resume Upload'' erneut gestartet werden. Um den 
+Upload fortzusetzen, muss das zuvor ausgewählte Album, von dem die Bilder stammen 
+(footnote siehe discord), erneut ausgewählt werden. Nach der Auswahl kann man den 
+Upload weiterführen. Während sich ein Upload im gestoppten Zustand befindet, ist das 
+Hochladen weiterer Alben nicht möglich bis der laufende Upload abgeschlossen wurde.
+
+\subsection{Alben}
+
+Dieser Abschnitt enthält eine Suchleiste, mit der der Benutzer nach einem bestimmten 
+Album suchen kann. Während der Eingabe von Zeichen oder Wörtern werden, automatisch 
+alle Alben angezeigt, die den eingegebenen Begriff enthalten. Diese Echtzeit-Suche 
+erleichtert die Navigation innerhalb der gespeicherten Alben.
+
+\begin{wrapfigure}{r}{0.4\textwidth}
+    \centering
+    \includegraphics[scale=0.5]{pics/memory_store_teil2.PNG}
+    \caption{Memory Store - Alben}
+    \label{fig:memory-store-alben}
+\end{wrapfigure}
+
+Direkt unter der Suchleiste befindet sich eine Liste aller vom Benutzer erstellten 
+Alben. Jedes Album wird mit seinem Namen angezeigt und hat zwei interaktive Symbole 
+neben sich.
+
+Das Stift-Symbol ermöglicht das Umbenennen des Albums. Durch Klicken auf das Symbol 
+öffnet sich ein Pop-up-Fenster mit einem Textfeld, in das der neue Name eingegeben 
+und bestätigt werden kann.
+
+Das Papierkorb-Symbol ermöglicht das Löschen des Albums. Sobald der Button gedrückt 
+wird, wird das Album ohne weitere Bestätigung gelöscht. Alle darin gespeicherten 
+Fotos werden damit ebenfalls entfernt.
+
+Falls ein Album durch Anklicken ausgewählt wird, erscheint sein Inhalt im dritten 
+Abschnitt, der die enthaltenen Fotos anzeigt.
+
+\subsection{Fotos}
+
+\begin{wrapfigure}{r}{0.4\textwidth}
+    \centering
+    \includegraphics[scale=0.4]{pics/memory_store_teil3.PNG}
+    \caption{Memory Store - Fotos}
+    \label{fig:memory-store-fotos}
+\end{wrapfigure}
+
+Im oberen Bereich befindet sich eine Suchleiste, die identisch zur Suchfunktion in 
+Abschnitt 2 arbeitet. Hier kann der Benutzer gezielt nach bestimmten Fotos innerhalb 
+des gewählten Albums suchen.
+
+Wenn kein Album in Abschnitt ``Alben'' ausgewählt wurde, bleibt dieser Bereich leer. 
+Sobald jedoch ein Album ausgewählt wurde, werden die darin enthaltenen Fotos im 
+unteren Bereich inklusive kleiner Vorschaubilder aufgelistet.
+
+Jedes Foto wird mit seinem Namen angezeigt und besitzt zwei interaktive Symbole direkt 
+daneben.
+
+Das Stift-Symbol ermöglicht das Umbenennen des Bildes. Durch Anklicken wird ein Textfeld 
+geöffnet, in das der neue Name eingetragen werden kann.
+
+Das Papierkorb-Symbol löscht das Foto dauerhaft. Das Bild wird nach Betätigung des Symbols 
+ohne weitere Bestätigung aus dem Album entfernt.
+
+Falls ein Foto durch Anklicken ausgewählt wird, öffnet sich eine Ansicht mit dem Bilde, 
+in der der Dateiname zusätzlich angezeigt wird. 
+
 \section{All Worlds}
 
+Die Erstellung und Verwaltung von Memorylands erfolgt ausschlie\ss{}lich auf der Seite 
+``All Worlds''. Diese Seite ist in zwei Hauptabschnitte unterteilt, die 
+unterschiedliche Funktionen bieten.
+
+\begin{wrapfigure}{r}{0.4\textwidth}
+    \centering
+    \includegraphics[scale=0.4]{pics/all_worlds_teil1.PNG}
+    \caption{All Worlds - Menü}
+    \label{fig:all-worlds-menu}
+\end{wrapfigure}
+
+Der erste Abschnitt trägt die Bezeichnung ``Meine Erinnerungen''. Hier befindet 
+sich ein Button mit der Aufschrift ``Memoryland Erstellen''. Durch das Anklicken 
+dieses Buttons wird ein Pop-up-Fenster geöffnet, in dem verschiedene Einstellungen 
+für das neue Memoryland vorgenommen werden können. Es enthält eine Auswahlmöglichkeit, 
+in der der gewünschte Typ des Memorylands bestimmt werden kann. Zur Verfügung stehen 
+zwei verschiedene Typen: ``Forest'' und ``Island''. Diese Typen definieren die 
+visuelle Darstellung der Bilder innerhalb des Memorylands. Zusätzlich ist ein 
+Textfeld vorhanden, in das der gewünschte Name des Memorylands eingetragen werden 
+kann.
+
+
+
 \section{Explore Worlds}
+
