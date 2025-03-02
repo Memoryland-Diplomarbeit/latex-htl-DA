@@ -75,6 +75,7 @@ Szene benötigt werden, ist es erforderlich, die Memoryland-Typen manuell in die
 einzutragen.
 
 \section{MemorylandConfigurations}
+\label{sec:memoryland-config}
 
 Diese Tabelle speichert die spezifischen Konfigurationen eines Memorylands, das heißt, 
 sie definiert, welche Fotos an welchen Positionen innerhalb eines Memorylands angezeigt werden. 
@@ -116,10 +117,10 @@ wie sie beispielsweise nach einer Reise oder einem Event anfallen, kann der Uplo
 durch verschiedene Faktoren unterbrochen werden -- sei es durch eine instabile 
 Internetverbindung, einen Verbindungsabbruch oder anderem. Um zu verhindern, dass 
 Benutzer:innen in solchen Fällen den gesamten Upload erneut starten müssen, wird ein 
-Mechanismus für „Resumable Uploads“ verwendet.
+Mechanismus für ``Resume Uploads'' verwendet.
 
-In dieser Diplomarbeit werden solche Upload-Vorgänge synonym als „Transaktionen“ und 
-„Resumable Uploads“ bezeichnet. Jede:r Benutzer:in kann zu einem bestimmten Zeitpunkt 
+In dieser Diplomarbeit werden solche Upload-Vorgänge synonym als ``Transaktionen'' und 
+``Resume Uploads'' bezeichnet. Jede:r Benutzer:in kann zu einem bestimmten Zeitpunkt 
 genau eine aktive Transaktion haben. In der Tabelle wird außerdem eine Referenz auf 
 das jeweilige Fotoalbum gespeichert, in das die Bilder hochgeladen werden. 
 Dies ermöglicht es, einen begonnenen Upload gezielt einem bestimmten Album zuzuordnen 
@@ -127,6 +128,7 @@ und den Prozess genau dort fortzusetzen, wo er unterbrochen wurde, was Benutzer:
 dabei helfen kann, sich daran zu erinnern, wofür der Upload gedacht war.
 
 \subsection{Probleme bei der Implementierung}
+\label{subsection:implementation-problems-resumable-upload}
 
 Ursprünglich war vorgesehen, zusätzlich den lokalen Dateipfad der hochgeladenen 
 Dateien in der Datenbank zu speichern. Dieses Feature konnte jedoch aufgrund von 
