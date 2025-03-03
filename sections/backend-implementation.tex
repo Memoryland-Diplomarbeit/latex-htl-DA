@@ -11,39 +11,512 @@
 
 \section{Integration von Azure Blob Storage}
 
-\section{Blob-Storage Verwaltung}
+Die Speicherung und Verwaltung von Bildern in der Memoryland Diplomarbeit erfolgt 
+mithilfe einer Kombination aus einer relationalen PostgreSQL Datenbank und einem 
+Azure Blob Storage Cloud-Speicher. Während PostgreSQL die Metadaten der Bilder 
+speichert, wie in welchem Album sich welches Bild befindet, werden die 
+eigentlichen Bilddateien in Azure Blob Storage abgelegt.
 
+Azure Blob Storage bietet also eine skalierbare Lösung für die Speicherung 
+von Bilddateien. Durch die Kombination mit PostgreSQL zur Speicherung von Strukturen 
+ist eine effizientere Verwaltung und ein einfacherer Zugriff möglich. Der Zugriff 
+über SAS-Tokens ermöglicht es außerdem, Bilder sicher und kontrolliert bereitzustellen, 
+ohne direkte Anmeldeinformationen preiszugeben.
+\footnote{Alle Informationen zu SAS-Tokens stammen von hier: \cite{MicrosoftCorporationa}}
+\footnote{Weiter Informationen zu Azure Blob Storage sind im Kapitel \ref{subsection:azure-blob-storage-getting-started}}
+\footnote{Weiter Informationen zu der PostgreSQL Datenbank-Struktur sind im Kapitel \ref{chapter:datamodel}}
 
-% videos referenzieren
+\section{Blob-Storage Bilder-Verwaltung}
 
-\cite{MicrosoftCorporationv}
-- 2 Teile: Postgres und BlogStorage
-- BlogStorage
-    - Pro User 1 Container
-    - Bilder werden mit ihren Ids gespeichert + nur admin hat zugriff
-    - Zugriff auf bilder erfolgt mit sas-tokens (was sind sas tokens)
+Im Blob Storage werden für jede:n Benutzer:in ein separater Blob-Container erstellt. 
+Die Bilder werden im Blob-Storage durch die in der PostgreSQL festgelegten eindeutigen
+Identifikationsnummer gespeichert, sodass es zu keinen Problemen kommen kann, wenn zwei
+Foto in unterschiedlichen Alben gleich heißen.
 
 \subsection{Azure Blob-Storage Datenhaltung}
 \label{subsection:azure_blob_storage_datamodel}
 
-\subsection{sas-token-generator-service}
+Die Speicherung erfolgt also in einer flachen Struktur innerhalb des 
+jeweiligen Benutzer:innen-Containers:
+
+/<userId>/\\
+ - <photoId>.jpg\\
+ - <photoId>.png\\
+ - ...\\
+
+Die Speicherung eines Bildes erfolgt über den BlobStoragePhotoService. 
+Dabei wird zunächst überprüft, ob der Container für den Benutzer existiert und falls dies 
+nicht der Fall ist, wird er erstellt. Anschließend wird das Bild hochgeladen.
+\ref{lst:blob-storage-photo-upload}
+\footnote{Alle Informationen zu dem Upload von Bildern auf Azure Blob Storage stammen von hier: \cite{MicrosoftCorporationac}}
+
+\begin{lstlisting}[numbers=left,caption={Foto Upload auf den Blob-Storage},label={lst:blob-storage-photo-upload}]
+public async Task UploadPhoto(
+    long userId, 
+    long photoId, 
+    string photoName, 
+    byte[] photoBytes)
+{
+    var containerClient = BlobSvcClient.GetBlobContainerClient(PadLong(userId));
+    await containerClient.CreateIfNotExistsAsync();
+    
+    var blobClient = containerClient.GetBlobClient(PadLong(photoId) + GetExtension(photoName));
+    
+    using var stream = new MemoryStream(photoBytes);
+    await blobClient.UploadAsync(stream, overwrite: true);
+    
+    await blobClient.SetHttpHeadersAsync(new BlobHttpHeaders
+    {
+        ContentDisposition = "inline",
+        ContentType = GetMimeType(photoName)
+    });
+}    
+\end{lstlisting}
+
+\subsubsection{Probleme bei der Implementierung}
+
+Der HTTP-Header ``\emph{Content-Disposition: inline}'' wurde spezifisch gesetzt,
+da es davor das Problem, dass Bilder automatisch im Browser heruntergeladen wurden.
+``\emph{inline}'' gibt an, dass eine Datei direkt im Browser angezeigt werden kann.
+\footnote{Alle Informationen}
+
+\subsection{Rotieren der Bilder bei der Speicherung}
+
+Beim Laden von PNG-Dateien in Unity trat das Problem auf, dass die Bildorientierung 
+nicht immer korrekt war. Dies lag daran, dass die in den EXIF-Daten gespeicherte 
+Rotationsinformation nicht durchgehend berücksichtigt wurde. Um die Bilder 
+korrekt darzustellen, wurde die folgende Methode implementiert, die die 
+EXIF-Rotationsdaten ausliest und das Bild entsprechend anpasst.
+
+Die Methode RotateImage lädt das Bild, wendet eine mögliche Rotation 
+basierend auf den EXIF-Daten an und speichert es anschließend im korrekten Format. 
+(Siehe Listing \ref{lst:method-rotate-image})
+
+\begin{lstlisting}[numbers=left,caption={Methode RotateImage},label={lst:method-rotate-image}]
+private static byte[] RotateImage(byte[] imageBytes)
+{
+    using var inputStream = new MemoryStream(imageBytes);
+    var options = new DecoderOptions();
+    using var image = Image.Load(options, inputStream);
+        
+    ApplyExifRotation(image);
+    
+    using var outputStream = new MemoryStream();
+    image.Save(outputStream, new SixLabors.ImageSharp.Formats.Jpeg.JpegEncoder());
+    return outputStream.ToArray();
+}    
+\end{lstlisting}
+
+Die Methode ApplyExifRotation überprüft, ob das Bild eine EXIF-Rotationsinformation enthält, 
+und wendet die entsprechende Transformation an. 
+(Siehe Listing \ref{lst:method-apply-exif-rotation})
+
+\begin{lstlisting}[numbers=left,caption={Methode ApplyExifRotation},label={lst:method-apply-exif-rotation}]
+    private static void ApplyExifRotation(Image image)
+    {
+        if (image.Metadata.ExifProfile == null) return; 
+        // Keine EXIF-Daten vorhanden
+                
+        image.Metadata.ExifProfile.TryGetValue(
+            ExifTag.Orientation, 
+            out var orientation);
+            
+        if (orientation == null) return; 
+        // Keine Orientierungsinformationen verfügbar
+            
+        switch (orientation.Value)
+        \{
+            case 2: // Horizontal spiegeln
+                image.Mutate(x => x.Flip(FlipMode.Horizontal));
+                break;
+            case 3: // 180 Grad drehen
+                image.Mutate(x => x.Rotate(RotateMode.Rotate180));
+                break;
+            ...
+        \}
+            
+        // Die Rotationsinformation wird nach der Korrektur entfernt, 
+        // um doppelte Anpassungen zu vermeiden
+        image.Metadata.ExifProfile.SetValue(ExifTag.Orientation, (ushort)1);
+    }    
+\end{lstlisting}
+
+\subsection{SAS-Token Generierung}
+
+Die Methode ``CreateUserDelegationSasBlob'' (Siehe Listing \ref{lst:sas-token-generator-service}) 
+erstellt ein Shared Access Signature (SAS)-Token für einen Azure Blob. Dieses Token ermöglicht 
+es, für eine bestimmte Zeit auf das Blob zuzugreifen, ohne die primären Zugangsdaten des 
+Azure Storage-Kontos preiszugeben. Die Methode erwartet zwei Parameter. Einen ``BlobClient'', 
+der auf das gewünschte Blob verweist, und einen ``accessKey'', der für die Signierung des 
+SAS-Tokens verwendet wird.
+
+Zunächst wird die Gültigkeit des SAS-Tokens festgelegt. Der Startzeitpunkt wird auf die 
+aktuelle UTC-Zeit gesetzt, und die Endzeit wird um 4 Stunden verlängert. Anschließend wird 
+ein ``BlobSasBuilder''-Objekt erstellt, dass dann schlussendlich für die Erstellung des
+SAS Tokens zuständig ist. Hierbei wird der ``BlobContainerName'' und der ``BlobName'' 
+vom ``BlobClient'' übernommen, um das Blob eindeutig zu identifizieren, zu welchem das 
+SAS-Token generiert werden soll. Zudem wird die Ressource auf ``b'' gesetzt, was aussagt, 
+dass es sich um einen SAS-Token für einen Blob handelt, und nicht um einen gesamten Container. 
+Die Berechtigungen für das Token werden so gesetzt, dass es Lese- und Schreibzugriff 
+auf das Blob gewährt.
+
+Ein weiteres Objekt, ``StorageSharedKeyCredential'', wird mit dem ``accountName'' und dem 
+``accessKey'' des Azure Storage-Kontos erzeugt. Dieses Credential wird genutzt, um das 
+SAS-Token zu signieren, sodass es nur für das spezifische Konto gültig ist.
+
+Mit einem ``BlobUriBuilder'' wird schließlich die vollständige URL erzeugt, die das Blob 
+und das SAS-Token enthält. Das Token wird als URL-Parameter angehängt, wodurch der Zugriff 
+auf das Blob mit den festgelegten Berechtigungen möglich ist.
+
+Am Ende gibt die Methode die vollständige URL zurück, die auf das Blob verweist und das 
+SAS-Token enthält. Diese URL kann dann verwendet werden, um sicher auf das Blob zuzugreifen, 
+ohne dass die Zugangsdaten des Azure Storage-Kontos benötigt werden.
+
+\begin{lstlisting}[numbers=left,caption={SasTokenGeneratorService},label={lst:sas-token-generator-service}]
+    private static double TokenLifeTimeInHours => 4;
+
+    public static Uri CreateUserDelegationSasBlob(
+        BlobClient blobClient,
+        string accessKey)
+    {
+        var tokenStartTime = DateTimeOffset.UtcNow;
+        var tokenEndTime = tokenStartTime
+            .AddHours(TokenLifeTimeInHours);
+        
+        var sasBuilder = new BlobSasBuilder()
+        {
+            BlobContainerName = blobClient.BlobContainerName,
+            BlobName = blobClient.Name,
+            Resource = "b", // Blob resource
+            StartsOn = tokenStartTime,
+            ExpiresOn = tokenEndTime
+        };
+
+        sasBuilder.SetPermissions(
+            BlobSasPermissions.Read | BlobSasPermissions.Write);
+
+        var blobSvcClient = blobClient
+            .GetParentBlobContainerClient()
+            .GetParentBlobServiceClient();
+        
+        var storageSharedKeyCredential = new StorageSharedKeyCredential(
+            blobSvcClient.AccountName,
+            accessKey);
+
+        var uriBuilder = new BlobUriBuilder(blobClient.Uri)
+        {
+            Sas = sasBuilder.ToSasQueryParameters(storageSharedKeyCredential)
+        };
+
+        return uriBuilder.ToUri();
+    }
+\end{lstlisting}
 
 \section{Uploads}
 
-% Erklärung, wie genau das auch im Frontend läuft
+\subsection{Uploads von einzelnen Fotos}
 
-\subsection{normale uploads von einzelnen fotos (endpoint)}
+Die Methode ``UploadPhoto'' (Siehe Listing \ref{lst:method-upload-photo}) ist eine Implementierung 
+eines HTTP-POST-Endpoints, der es einem:r Benutzer:in ermöglicht, ein Foto in ein bestimmtes 
+Album hochzuladen. Der Endpoint ist mit den Attributen ``[Authorize]'' und 
+``[RequiredScope(``backend.write'')]'' versehen, um sicherzustellen, dass nur authentifizierte 
+Benutzer mit der entsprechenden Berechtigung auf diese Route zugreifen können.
+
+Zunächst wird der Benutzer mit der Methode ``CheckIfUserAuthenticated'' (Siehe Listing 
+\ref{lst:method-check-user-auth}) überprüft, um sicherzustellen, dass der Benutzer 
+authentifiziert ist und keine Fehler bei der Authentifizierung aufgetreten sind. 
+Falls keine Email in den Claims angegeben ist, wird Unauthorized zurückgegeben. 
+Zusätzlich erstellt die Methode einen Benutzer in unserer Datenbank, falls
+der Benutzer noch nicht existiert.
+
+Anschließend wird überprüft, ob das angegebene Fotoalbum existiert. Wenn das 
+Album nicht existiert oder der Benutzer nicht der Eigentümer des Albums ist, 
+wird eine ``BadRequest''-Antwort mit einer entsprechenden Fehlermeldung zurückgegeben.
+
+Es folgt eine Validierung des Foto-Uploads. Zunächst wird geprüft, ob eine Bilddatei 
+erfolgreich übermittelt wurde. Falls das Bild leer ist, wird ebenfalls eine 
+``BadRequest''-Antwort gesendet. Dann wird geprüft, ob der Dateiname des Bildes 
+angegeben ist, ob er innerhalb der zulässigen Länge (zwischen 3 und 63 Zeichen) liegt 
+und ob er keine ungültigen Zeichen enthält. Wird einer dieser Prüfungen nicht bestanden, 
+wird eine entsprechende Fehlermeldung zurückgegeben.
+
+Darüber hinaus wird überprüft, ob bereits ein Foto mit dem gleichen Dateinamen im 
+angegebenen Album existiert. Falls dies der Fall ist, wird ebenfalls eine 
+``BadRequest''-Antwort mit der Info zurückgegeben, dass der Dateiname bereits vergeben ist.
+
+Wenn alle Validierungen erfolgreich sind, werden zunächst die Metadaten des Fotos in der
+PostgreSQL Datenbank gespeichert. Danach wird das Foto in ein Byte-Array umgewandelt und auf
+dem Blob Storage gespeichert.
+
+Abschließend gibt die Methode eine ``Created''-Antwort zurück, was anzeigt, dass das Foto 
+erfolgreich hochgeladen wurde.
+
+
+\begin{lstlisting}[numbers=left,caption={Methode UplaodPhoto},label={lst:method-upload-photo}]
+ 
+    [HttpPost]
+    [Route("photo")]
+    [Authorize]
+    [RequiredScope("backend.write")]
+    public async Task<Results<Created, BadRequest<string>, UnauthorizedHttpResult>> 
+    UploadPhoto([FromForm] PostPhotoDto<IFormFile> photoDto)
+    {
+        var user = await UserSvc.CheckIfUserAuthenticated(User.Claims, true);
+        
+        if (user == null) 
+            return TypedResults.Unauthorized();
+        
+        if (!Context.PhotoAlbums.Any(pa => 
+                pa.Id == photoDto.PhotoAlbumId &&
+                pa.UserId == user.Id))
+            return TypedResults.BadRequest("The photo album doesn't exist.");
+        
+        if (photoDto.Photo.Length == 0)
+            return TypedResults.BadRequest("No image file provided.");
+        
+        if (string.IsNullOrWhiteSpace(photoDto.FileName))
+            return TypedResults.BadRequest("FileName name is required");
+        
+        if (photoDto.FileName.Length < 3 || photoDto.FileName.Length > 63)
+            return TypedResults
+                .BadRequest("A FileName name can't be longer than 
+                    63 characters or shorter than 3");
+        
+        if (ContainerNameRegex.IsMatch(photoDto.FileName))
+            return TypedResults.BadRequest("FileName name contains invalid characters");
+        
+        var dbPhoto = Context.Photos
+            .Include(p => p.PhotoAlbum)
+            .FirstOrDefault(p =>
+                p.Name == photoDto.FileName &&
+                p.PhotoAlbumId == photoDto.PhotoAlbumId &&
+                p.PhotoAlbum.UserId == user.Id);
+        
+        if (dbPhoto != null) 
+            return TypedResults.BadRequest("FileName name already exists");
+        
+        byte[] photoData;
+        using (var memoryStream = new MemoryStream())
+        {
+            await photoDto.Photo.CopyToAsync(memoryStream);
+            photoData = memoryStream.ToArray();
+        }
+        
+        var photo = new Photo
+        {
+            Name = photoDto.FileName,
+            PhotoAlbumId = photoDto.PhotoAlbumId
+        };
+        
+        await Context.AddAsync(photo);
+        await Context.SaveChangesAsync();
+        
+        var album = Context.PhotoAlbums
+            .Include(photoAlbum => photoAlbum.User)
+            .FirstOrDefault(pa => pa.Id == photo.PhotoAlbumId);
+        
+        await PhotoSvc.UploadPhoto(
+            album!.User.Id,
+            photo.Id,
+            photo.Name,
+            photoData);
+        
+        return TypedResults.Created();
+    }
+\end{lstlisting}
+
+\begin{lstlisting}[numbers=left,caption={Methode CheckIfUserAuthenticated},label={lst:method-check-user-auth}]
+    public async Task<User?> CheckIfUserAuthenticated(
+        IEnumerable<Claim> claims, 
+        bool createUserIfNotExist = false)
+    {
+        var claimList = claims.ToList();
+        
+        var email = claimList
+            .FirstOrDefault(c => c.Type.Equals(
+                "emails", 
+                StringComparison.CurrentCultureIgnoreCase))
+            ?.Value;
+
+        if (email == null)
+            return null;
+
+        if (createUserIfNotExist)
+            return await CreateUserIfNotExist(claimList); 
+        
+        var user = await Context.Users
+            .FirstOrDefaultAsync(u => u.Email == email);
+
+        return user;
+    }
+\end{lstlisting}
 
 
 \subsection{Uploads mit Transaktionen}
 
+Wenn man für einen Upload-Prozess von mehreren Bildern eine Transaktion möchte, wird eine 
+``Transaktion'' für den Upload von Dateien erstellt, sodass, falls der Upload unterbrochen 
+wird, der Prozess später fortgesetzt werden kann, ohne dass bereits hochgeladene Dateien 
+erneut hochgeladen werden müssen. Dafür wird ein Transaktionsobjekt in der Datenbank 
+erstellt. (Siehe Kapitel \ref{chapter:datamodel}) Außerdem kann es pro Benutzer nur 
+eine offene Transaktion geben.
+
+Wenn ein Benutzer eine neue Upload-Transaktion startet, wird eine Transaktion in der 
+Datenbank erstellt. Diese Transaktion ist mit einem Fotoalbum des/r Benutzers:in und dem/r 
+Benutzer:in selbst verknüpft und stellt sicher, dass alle Fotos, die hochgeladen werden, 
+im Kontext dieses Albums gespeichert werden.
+
+Als nächsten können eine Reihe an Bildern nacheinnander hochgeladen werden. 
+Falls der Upload unterbrochen wird, weil beispielsweise die Verbindung abbricht oder der:die 
+Benutzer:in die Sitzung beendet, bleibt die Transaktion vorhanden. Später wird dann im Frontend
+überprüft, welche Fotos schon hochgeladen wurden und die Bilder, welche noch nicht hochgeladen 
+wurden, können sie in einem weiteren Upload-Versuch erneut hochgeladen werden.
+
+Zum Schluss wird dann die Transaktion in der Datenbank gelöscht, wodurch dann klar ist, dass
+die Transaktion abgeschlossen ist.
+
+\subsubsection{Implementierung der Transaktions-Verwaltungs-Endpoints}
+
+Dieser Endpoint (Sieh Listing \ref{lst:method-create-transaction}) ist für das Eröffnen einer neuen Transaktion zuständig. Es wird zunächst 
+geprüft, ob der:die Benutzer:in authentifiziert ist und wenn dies der Fall ist, wird überprüft, 
+ob der:die Benutzer:in bereits eine offene Transaktion hat. Falls ja, wird eine Fehlermeldung 
+zurückgegeben. Danach wird überprüft, ob das angegebene Fotoalbum existiert. Wenn das 
+Album nicht gefunden wird, gibt es eine BadRequest-Antwort. 
+
+Nachdem alle Validierungen erfolgreich sind, wird eine neue Transaktion in der 
+Datenbank erstellt und gespeichert, die mit dem Fotoalbum des/r Benutzers:in verknüpft ist.
+Schlussendlich, wenn die Transaktion erfolgreich erstellt wurde, erhält der:die Benutzer:in 
+eine Created-Antwort.
+
+\begin{lstlisting}[numbers=left,caption={Methode OpenTransaction},label={lst:method-create-transaction}]
+    [HttpPost]
+    [Authorize]
+    [Route("transaction")]
+    [RequiredScope("backend.write")]
+    public async Task<Results<Created, BadRequest<string>, UnauthorizedHttpResult>> OpenTransaction([FromBody] PostTransactionDto postTransactionDto)
+    {
+        // check if the user is authenticated without errors
+        var user = await UserSvc.CheckIfUserAuthenticated(User.Claims, true);
+        
+        // check if the user exists
+        if (user == null) 
+            // if user was not able created then the claims had an issue meaning unauthorized
+            return TypedResults.Unauthorized();
+        
+        // check if a transaction is already open
+        var dbTransaction = Context.Transactions
+            .FirstOrDefault(t => t.UserId == user.Id);
+        
+        if (dbTransaction is not null)
+            return TypedResults.BadRequest("A transaction already exists.");
+        
+        // check if the photoAlbum exists
+        var album = Context.PhotoAlbums
+            .FirstOrDefault(p => 
+                p.Id == postTransactionDto.DestAlbumId && 
+                p.UserId == user.Id);
+        
+        if (album is null)
+            return TypedResults.BadRequest("PhotoAlbum does not exist");
+
+        var transaction = new Transaction
+        {
+            PhotoAlbumId = postTransactionDto.DestAlbumId,
+            UserId = user.Id
+        };
+
+        await Context.Transactions.AddAsync(transaction);
+        await Context.SaveChangesAsync();
+        
+        return TypedResults.Created();
+    }
+\end{lstlisting}
+
+Dieser Endpoint (Sieh Listing \ref{lst:method-delete-transaction}) wird verwendet, um eine Transaktion zu löschen. Zunächst gibt es wieder eine
+Reihe an Validierungen. Es wird überprüft, ob der:die Benutzer:in authentifiziert ist. 
+Dann wird überprüft, ob eine Transaktion mit der angegebenen Id existiert und ob der:die 
+Benutzer:in der:die Besitzer:in dieser Transaktion ist. Falls die Transaktion gefunden 
+wird, wird sie aus der Datenbank entfernt und die Änderungen werden gespeichert.
+
+\begin{lstlisting}[numbers=left,caption={Methode DeleteTransactionById},label={lst:method-delete-transaction}]
+    [HttpDelete]
+    [Route("transaction/{transactionId:long}")]
+    [Authorize]
+    [RequiredScope("backend.write")]
+    public async Task<Results<Ok, UnauthorizedHttpResult>> DeleteTransactionById(long transactionId)
+    {
+        // check if the user is authenticated without errors
+        var user = await UserSvc.CheckIfUserAuthenticated(User.Claims);
+        
+        // check if the user exists
+        if (user == null)
+            return TypedResults.Unauthorized();
+        
+        // check if there are any transactions at all, for performance
+        if (!Context.Transactions.Any()) 
+            return TypedResults.Ok();
+        
+        // check if the transaction exists and if the user is the owner
+        var transaction = Context.Transactions
+            .FirstOrDefault(t => t.Id == transactionId && t.UserId == user.Id);
+        
+        if (transaction == null)
+            return TypedResults.Ok();
+        
+        Context.Transactions.Remove(transaction);
+        await Context.SaveChangesAsync();
+            
+        return TypedResults.Ok();
+    }
+
+\end{lstlisting}
 
 
 \section{Security}
 
+Memoryland verlässt sich auf Azure AD B2C zur Authentifizierung und einer 
+JWT-basierten Autorisierung für den API-Zugriff, um die Sicherheit der Daten
+der Benutzer:innen zu gewährleisten
+
 \subsection{Authentifizierung}
 
+Die Authentifizierung wird über Microsoft Identity Web und das JWT Bearer Token-Schema realisiert. 
+Dabei wird die Token-Validierung so konfiguriert, dass Azure AD B2C als Identitätsanbieter 
+genutzt wird. \ref{lst:auth-init}
+
+\begin{lstlisting}[numbers=left,caption={Authentifizierung-Initialisierung},label={lst:auth-init}]
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddMicrosoftIdentityWebApi(
+        options => 
+        {
+            builder.Configuration.Bind("AzureAdB2C", options);
+        },
+        options =>
+        {
+            builder.Configuration.Bind("AzureAdB2C", options);
+        });
+
+\end{lstlisting}
 
 \subsection{Autorisierung}
 
+Die Autorisierung erfolgt über die Middleware ``UseAuthorization()'', die sicherstellt, 
+dass nur authentifizierte Benutzer Zugriff auf geschützte API-Endpunkte haben. \ref{lst:auth-middleware-init}
+
+\begin{lstlisting}[numbers=left,caption={Autorisierungs Middleware Initialisierung},label={lst:auth-middleware-init}]
+app.UseAuthentication();
+app.UseAuthorization();    
+\end{lstlisting}
+
+Zusätzlich kann die Autorisierung dann für bestimmte Endpunkte über 
+das ``[Authorize]''-Attribut aktiviert werden. \ref{lst:authorite-attribute-example}
+
+\begin{lstlisting}[numbers=left,caption={Authorize-Attribut Beispiel},label={lst:authorite-attribute-example}]
+[Authorize]
+[HttpGet("secure-data")]
+public IActionResult GetSecureData()
+{
+    return Ok("This is protected data.");
+}    
+\end{lstlisting}
 
