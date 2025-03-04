@@ -23,6 +23,7 @@ node "Azure" {
 }
 
 [Angular Frontend] --> [Azure AD B2C] : Authentifizierung
+[C# Backend] --> [Azure AD B2C] : Token Validierung
 [Angular Frontend] -l-> [C# Backend] : API-Aufrufe
 [C# Backend] -u-> [Azure Blob Storage] : Speichert/holt Bilder
 [C# Backend] -l-> [PostgreSQL Datenbank] : Speichert Metadaten

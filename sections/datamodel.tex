@@ -8,24 +8,25 @@
 \end{figure}
 
 Die Datenbank besteht aus insgesamt acht Tabellen, die das Backend 
-für die Verwaltung von Benutzern, Fotoalben, deren Fotos und der 
+für die Verwaltung von Benutzern:innen, Fotoalben, deren Fotos und der 
 Memorylands benötigt.
 
 \section{Users}
 
-In der Tabelle ``Users'' werden Benutzer von Memoryland gespeichert, die sich über Azure AD B2C
-registriert haben. Dabei wird ein Benutzer wird mit deren Email automatisch gespeichert, sobald
+In der Tabelle ``Users'' werden Benutzer:innen von Memoryland gespeichert, die sich über Azure AD B2C
+registriert haben. Dabei wird ein:e Benutzer:in wird mit deren Email automatisch gespeichert, sobald
 er oder sie eine Aktion ausführt, die eine Speicherung im Backend erfordert. 
 
 Der Benutzername wird nicht gespeichert, da er im Backend nicht benötigt wird und eine 
 regelmäßige Aktualisierung bei Namensänderungen unnötigen Aufwand verursachen würde. Die 
-E-Mail spielt in Memoryland nur als eindeutige Identifikation eines Benutzers eine Rolle.
+E-Mail spielt in Memoryland nur als eindeutige Identifikation eines:r Benutzers:in eine Rolle.
 
 \section{PhotoAlbums}
 
-Diese Tabelle speichert die von Benutzern erstellten Fotoalben. Jedes Album ist eindeutig einem 
-Benutzer zugeordnet, wodurch sichergestellt wird, dass ausschließlich der jeweilige Besitzer 
-Zugriff darauf hat. Andere Benutzer können weder auf die Alben noch auf deren Inhalte zugreifen.
+Diese Tabelle speichert die von Benutzern:innen erstellten Fotoalben. Jedes Album ist eindeutig einem:r 
+Benutzer:in zugeordnet, wodurch sichergestellt wird, dass ausschließlich der jeweilige Besitzer 
+Zugriff darauf hat. Anderen Benutzer:innen ist der Zugriff auf die Alben und auf deren Inhalte
+nicht möglich.
 
 Die Alben selbst existieren als Einträge in der Datenbank, während die darin enthaltenen Fotos 
 im Azure Blob Storage gespeichert werden. Das Konzept der Fotoalben wird also nur in der Datenbank 
@@ -34,22 +35,22 @@ Diese Struktur dient dazu, den direkten Zugriff auf den Azure Blob Storage zu mi
 zu vereinfachen. Gleichzeitig ermöglicht sie dem Frontend eine sortierte und strukturierte 
 Anzeige der Fotoalben.
 
-Jeder Benutzer kann mehrere Fotoalben anlegen, wobei ein Album beliebig viele Fotos enthalten 
+Jede:r Benutzer:in kann mehrere Fotoalben anlegen, wobei ein Album beliebig viele Fotos enthalten 
 kann -- von keinem bis zu einer unbegrenzten Anzahl.
 
 \section{Photos}
 
 In dieser Tabelle werden die einzelnen Fotos mit Referenzen auf ihre jeweiligen Alben gespeichert. 
-Das verwalten einzelner Fotos ist ausschließlich dem Benutzer vorbehalten, dem dieses gehört. 
-Allerdings können Fotos anderen Benutzern innerhalb von Memorylands durch die Nutzung von 
+Das verwalten einzelner Fotos ist ausschließlich dem:r Benutzer:in vorbehalten, dem dieses gehört. 
+Allerdings können Fotos anderen Benutzern:innen innerhalb von Memorylands durch die Nutzung von 
 SAS-Tokens angezeigt werden.
 
 Jedes Foto gehört genau einem Album an, und innerhalb eines Albums darf kein weiteres 
 Foto denselben Namen tragen. Dies gewährleistet eine eindeutige Zuordnung der Dateien für die
-Benutzer.
+Benutzer:innen.
 
 Im Azure Blob Storage werden zur Identifikation nicht die Namen der Fotos, sondern die 
-eindeutigen Identifikationsnummern verwendet. Dies ermöglicht es, dass ein Benutzer mehrere
+eindeutigen Identifikationsnummern verwendet. Dies ermöglicht es, dass ein:e Benutzer:in mehrere
 Fotos mit identischen Namen besitzen kann, solange diese sich in unterschiedlichen Alben befinden.
 \footnote{Siehe die Fußnote: \ref{azure-blob-storage-note}}
 
@@ -61,12 +62,14 @@ Anzahl an Fotos, die darin enthalten sein können.
 
 Alle Benutzer:innen können mehrere Memorylands besitzen, die jeweils eine festgelegte Anzahl 
 von Fotos an bestimmten Positionen enthalten. Die Anzahl der erlaubten Fotos pro Memoryland
-hängt jeweils vom Memoryland-Typ ab.
+hängt jeweils vom Memoryland-Typ ab. (Siehe unten Kapitel \ref{sec:memoryland-types})
+\footnote{Mehr Infos dazu, warum die maximale Anzahl fix vorgegeben ist, im Kapitel Unity \ref{chapter:unity-implementation}}
 
 \section{MemorylandTypes}
+\label{sec:memoryland-types}
 
 Diese Tabelle definiert verschiedene Typen von Memorylands. Ein Memoryland-Typ 
-entspricht einer Szene in Unity und legt die maximale Anzahl an Fotos fest, die in 
+entspricht einer Szene in Unity (Siehe Kapitel \ref{chapter:unity-implementation}) und legt die maximale Anzahl an Fotos fest, die in 
 einem Memoryland gespeichert werden können.
 
 Da die Typen von den Unity-Szenen abhängen, die nur durch ein Deployment geändert werden 
