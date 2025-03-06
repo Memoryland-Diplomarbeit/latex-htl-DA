@@ -1,9 +1,9 @@
 \subsection{Einrichtung des Azure Blob Storage}
 \label{subsection:azure-blob-storage-getting-started}
 
-Damit alles funktioniert und damit der häufige Zugriff auf die Bilder
-möglichst effizient ist, wurden folgende Einstellungen im Azure Portal
-konfiguriert. \footnote{Infos dazu, was Azure Blob Storage ist und anderes stammen von hier: \cite{MicrosoftCorporationd}}
+Um die Effizienz bei häufigem Zugriff auf die Bilder möglichst effizient zu gestalten, 
+wurden im Azure-Portal die folgenden Einstellungen konfiguriert.
+\footnote{Infos dazu, was Azure Blob Storage ist und anderes stammen von hier: \cite{MicrosoftCorporationd}}
 
 \subsubsection{SAS-Tokens}
 
@@ -16,7 +16,15 @@ gespeicherten Bilder zuzugreifen.
 
 Mithilfe von SAS-Tokens die im Backend generiert und an Unity übergeben werden, 
 kann Unity nun auf die benötigten Bilder zugreifen, ohne vollständige Zugriffsdaten 
-des Storage Accounts zu benötigen. \footnote{Alle Informationen zu SAS-Tokens stammen von: \cite{MicrosoftCorporationa}}
+des Storage Accounts zu benötigen. 
+
+SAS-Tokens haben eine begrenzte Gültigkeitsdauer, was aus Sicherheitsgründen sinnvoll ist, 
+da so der Zugriff auf Ressourcen zeitlich eingeschränkt wird. Das Backend übernimmt hierbei
+die erneute Generierung dieser Tokens, sobald sie benötigt werden. Dadurch wird sichergestellt, 
+dass autorisierte Nutzer weiterhin auf die Ressourcen zugreifen können, ohne dass 
+langfristig gültige Tokens ein Sicherheitsrisiko darstellen.
+\footnote{Für Infos, wie Tokens generiert werden, siehe Kapitel \ref{subsection:sas-token-generation}}
+\footnote{Alle Informationen zu SAS-Tokens stammen von: \cite{MicrosoftCorporationa}}
 
 
 \subsubsection{Blob Access Tier}
@@ -25,12 +33,13 @@ Um den häufigen Zugriff auf Bilder effizienter zu gestalten, sollte in der Konf
 des Blob Storage der Access Tier die Standardstufe auf ``Hot'' gesetzt werden.
 
 Ein Azure Blob Storage bietet verschiedene Speicherstufen, wie ``Hot'', ``Cool'', ``Cold'',
-oder ``Archive''.Cool ist zum Beispiel Geeignet für weniger häufige Zugriffe, und hat
-niedrigere Speicherkosten. 
+oder ``Archive''.Cool ist zum Beispiel geeignet für weniger häufige Zugriffe, und hat
+niedrigere Speicherkosten, dafür aber höhere Zugriffskosten. 
 
-Für uns ist Hot geeignet, da mit dieser Einstellung die Bilder
-für den häufigen Zugriff mit schnelleren Abrufzeiten optimiert werden. Dies führt allerdings
-zu höheren Speicherkosten. \footnote{Alle Informationen zu Blob Access Tiers stammen von \cite{MicrosoftCorporationb}}
+Für uns ist Hot geeignet, da mit dieser Einstellung die Bilder für den häufigen 
+Zugriff mit schnelleren Abrufzeiten optimiert werden und die Zugriffskosten niedriger sind. 
+Dies führt allerdings zu höheren Speicherkosten. 
+\footnote{Alle Informationen zu Blob Access Tiers stammen von \cite{MicrosoftCorporationb}}
 
 
 \subsubsection{CORS-Header}
@@ -50,17 +59,18 @@ Laden von Bildern (GET). ``Max Age: 0'', verhindert das Caching der CORS-Vorgabe
 durch den Browser, sodass jede Anfrage die aktuellen Regeln berücksichtigt.
 
 Wenn alles eingestellt wurde, können nun Bilder aus dem Blob Storage ohne Einschränkungen 
-in Memoryland angezeigt werden. \footnote{Alle Informationen zu CORS für Azure BLob Storage stammen von \cite{MicrosoftCorporationc}}
+in Memoryland von überall auf der Welt angezeigt werden. 
+\footnote{Alle Informationen zu CORS für Azure Blob Storage stammen von \cite{MicrosoftCorporationc}}
 
 
 \subsection{Einrichtung von Azure PostgreSQL DB}
 
 ``Azure Database for PostgreSQL'' ist ein Datenbankdienst von Microsoft Azure, 
-der auf dem Open-Source-Datenbanksystem PostgreSQL basiert \footnote{Weiter Infos zu Azure PostgreSQL: \cite{MicrosoftCorporationf}}. 
+der auf dem Open-Source-Datenbanksystem PostgreSQL basiert 
+\footnote{Weiter Infos zu Azure PostgreSQL: \cite{MicrosoftCorporationf}}. 
 Er bietet eine Lösung für Anwendungen, die eine relationale Datenbank benötigen.
 
 Die PostgreSQL Datenbank war eine schlüssige Entscheidung aufgrund der Erfahrung der Entwickler.
-\footnote{Flexible Server vs. Single Server: \cite{MicrosoftCorporatione}}
 
 \begin{table}[h t]
     \centering
@@ -78,7 +88,9 @@ Die PostgreSQL Datenbank war eine schlüssige Entscheidung aufgrund der Erfahrun
 
 Flexible Server haben gegenüber Single Server Unterschiede. 
 Der wichtigste Grund für die Entscheidung war, dass Flexible Server auf Linux basiert, 
-während Single Server Windows verwendet. \footnote{Warum Linux wollten: \cite{hussain2015survey}}
+während Single Server Windows verwendet. 
+\footnote{Warum Linux als Server-Betriebssystem verwendet wurde: \cite{hussain2015survey}}
+\footnote{Alle Informationen zu ``Flexible Server vs. Single Server'': \cite{MicrosoftCorporatione}}
 
 Au\ss{}erdem besitzen Flexible Servers eine grö\ss{}ere maximale Speichergrö\ss{}e, Zonenredundante Hochverfügbarkeit, 
 wodurch Ausfälle besser abgefangen werden können. Obwohl die Kosten etwas höher sein können, 
@@ -86,8 +98,8 @@ sind Flexible Servers aufgrund dieser Punkte die bessere Wahl für unser Projekt
 
 \subsection{Einrichtung von Azure AD B2C}
 
-Die Einrichtung von Azure AD B2C wurde anhand von Beispiel im folgenden MSAL-Beispiel
-für Angular durchgeführt \cite{MicrosoftCorporationh}. Zusätzlich diente wurde die folgende
+Die Einrichtung von Azure AD B2C wurde anhand des Beispiels im folgenden MSAL-Beispiel-Projekt
+für Angular durchgeführt \cite{MicrosoftCorporationh}. Zusätzlich wurde die folgende
 Website verwendet \cite{MicrosoftCorporationg}.
 \footnote{Was ist \emph{Azure AD B2C} und warum verwenden wir es: Kapitel \ref{subsection:azure_ad_b2c}}
 
@@ -133,10 +145,11 @@ umfasst drei Hauptbereiche: Authentifizierung, Datenbank und den Azure Blob Stor
 
 Für die Authentifizierung wird Azure AD B2C genutzt, um die Benutzerverwaltung zu ermöglichen. 
 In der ``\emph{appsettings.json}'' Datei sind die entsprechenden Einstellungen wie in dem folgendem
-Beispiel \ref{lst:appsettings-auth-config} einzutragen. Hier werden unter anderem die Instance, ClientId und Domain des 
+Beispiel (siehe Listing \ref{lst:appsettings-auth-config}) einzutragen. Hier werden unter anderem die Instance, ClientId und Domain des 
 Azure AD B2C Verzeichnisses angegeben. Der SignedOutCallbackPath gibt den Pfad an, der nach 
-der Abmeldung des Benutzers/der Benutzerin aufgerufen wird, und SignUpSignInPolicyId enthält 
-den Namen ebenjener. \footnote{Alle Informationen zu den Einstellungen der Authentifizierung sind hier zu finden: \cite{MicrosoftCorporationk}}
+der Abmeldung des:der Benutzers:in aufgerufen wird, und SignUpSignInPolicyId enthält 
+den Namen der entsprechenden Policy. 
+\footnote{Alle Informationen zu den Einstellungen der Authentifizierung sind hier zu finden: \cite{MicrosoftCorporationk}}
 
 \begin{lstlisting}[numbers=left,caption={appsettings.json},label={lst:appsettings-auth-config}]
 {
@@ -153,7 +166,7 @@ den Namen ebenjener. \footnote{Alle Informationen zu den Einstellungen der Authe
 \subsubsection{Datenbank}
 
 Für die Konfiguration der Datenbank sind die entsprechenden Einstellungen wie in dem folgendem
-Beispiel \ref{lst:appsettings-db-config} ebenso in der Datei ``\emph{appsettings.json}'' 
+Beispiel (siehe Listing \ref{lst:appsettings-db-config}) ebenso in der Datei ``\emph{appsettings.json}'' 
 einzutragen. Es gibt sowohl eine Einstellung für den Deployment-Datenbankanschluss (Default) 
 als auch eine für den lokalen Anschluss (DefaultLocal), der für Test-Zwecke verwendet wird. 
 Die UseLocalDb Einstellung gibt an, ob eine lokale Datenbank verwendet werden soll, wobei
@@ -173,7 +186,7 @@ Die UseLocalDb Einstellung gibt an, ob eine lokale Datenbank verwendet werden so
 \subsubsection{Azure Blob Storage}
 
 Für die Konfiguration des Azure Blob Storage sind die entsprechenden Einstellungen wie in 
-dem folgendem Beispiel \ref{lst:appsettings-blob-storage-config} ebenso in der Datei 
+dem folgendem Beispiel (siehe Listing \ref{lst:appsettings-blob-storage-config}) ebenso in der Datei 
 ``\emph{appsettings.json}'' einzutragen. Diese Einstellung ist notwendig, um die 
 Anwendung mit dem Azure Blob Storage zu verbinden und den Zugriff auf Bilder und 
 andere Dateien sicherzustellen.
@@ -203,7 +216,7 @@ Im Folgenden ist die Konfiguration beschrieben und in zwei Hauptkapitel untertei
 \subsubsection{\emph{environment.ts}-Konfiguration}
 
 Für die Authentifizierung wird Azure AD B2C verwendet. Die Konfiguration umfasst 
-die folgende Definition \ref{lst:environment-ts} von Login- und Profil-Bearbeitungs-Flows.
+die folgende Definition (siehe Listing \ref{lst:environment-ts}) von Login- und Profil-Bearbeitungs-Flows.
 \footnote{Die Informationen zu den Einstellungen stammen alle aus den folgenden Links: \cite{MicrosoftCorporationh} \cite{MicrosoftCorporationg}}
 
 Userflows in Azure AD B2C sind vordefinierte, anpassbare Prozesse für häufige Benutzeraktionen 

@@ -12,7 +12,7 @@ des Backends in eigene Klassen zu unterteilen, was eine klarere Struktur ermögl
 \footnote{Alle Infos zu C\# WebAPIs mit Controllern stammen von: \cite{MicrosoftCorporationaa}}
 
 Um Code-Verdoppelung zu vermeiden, wurde im Memoryland-Backend eine Basisklasse 
-für API-Controller implementiert. Von der Klasse ``\emph{ApiControllerBase}'' \ref{lst:api-controller-base} 
+für API-Controller implementiert. Von der Klasse ``\emph{ApiControllerBase}'' (siehe Listing \ref{lst:api-controller-base}) 
 erben alle anderen Controller, wodurch eine einheitliche Struktur sichergestellt und die Wartung 
 erleichtert wird.
 
@@ -52,15 +52,16 @@ dass Swagger und OpenAPI die Methode nicht korrekt dokumentieren oder aufrufen k
 
 \subsection{Endpunkte in C\# Controllern}
 
-Die Methode MyPostEndpointMethod \ref{lst:endpoint-example} stellt einen HTTP-POST-Endpunkt in einer Web-API bereit und
+Die Methode MyPostEndpointMethod (siehe Listing \ref{lst:endpoint-example}) stellt einen HTTP-POST-Endpunkt in einer Web-API bereit und
 wird als Beispiel für die folgende Erklärung der Implementierung von Endpunkten in C\# Controllern
 verwendet. Die Methode ist mit mehreren Attributen versehen, die Authentifizierung, 
 Autorisierung und die API Route steuern. Das ``[Authorize]''-Attribut stellt sicher, 
-dass nur authentifizierte Benutzer Zugriff auf die Methode erhalten, wobei es dafür
+dass nur authentifizierte Benutzer:innen Zugriff auf die Methode erhalten, wobei es dafür
 die in der Datei ``Program.cs'' definierte Technologie verwendet. Zusätzlich überprüft 
-``[RequiredScope(``backend.write'')]'', ob der Benutzer über die notwendigen Berechtigungen 
+``[RequiredScope(``backend.write'')]'', ob der Benutzer:innen über die notwendigen Berechtigungen 
 verfügt. Diese Überprüfung basiert auf OAuth 2.0 und OpenID Connect und stellt sicher, 
-dass nur Benutzer mit den nötigen Rechten (Scopes) bestimmte Operationen durchführen können. 
+dass nur Benutzer:innen mit den nötigen Rechten (Scopes) bestimmte Operationen durchführen können. 
+(siehe Kapitel \ref{subsection:azure_ad_b2c})
 
 Mit dem ``[Route(...)]''-Attribut wird die Route der Methode definiert. Hierbei können in
 geschwungenen Klammern ``\{ \}'' URL-Parameter definiert werden. Es können aber auch 
@@ -99,11 +100,6 @@ OpenAPI ist eine Spezifikation zur Beschreibung und Dokumentationvon REST-APIs. 
 OpenAPI-Datei enthält alle Informationen zu der API, einschließlich der verfügbaren 
 Endpunkte, sowie der Ein- und Ausgaben. Diese JSON Spezifikation wird in diesem Projekt
 automatisch erstellt.
-
-Swagger ist eine Sammlung von Open-Source-Tools, die auf der OpenAPI Spezifikation 
-aufbauen. Für diese Projekt wurde die Swagger UI verwendet, welches OpenAPI-Definitionen 
-als interaktive Dokumentation darstellt, sodass API-Aufrufe direkt im Browser getestet 
-werden können.
 \footnote{Ein Beispiel einer Swagger-UI ist im Bild \ref{fig:swagger-ui-example} zu sehen.}
 
 Durch den Einsatz von Swagger und OpenAPI wurde die Nutzung der API erleichtert, 
@@ -120,7 +116,7 @@ Aufgaben im Zusammenhang mit der Verwaltung von Fotos, Alben, Uploads und deren 
 
 Der AlbumController ist zuständig für die Verwaltung von Fotoalben. Dieser Controller 
 ermöglicht das Erstellen, Abrufen und Löschen von Alben, sowie das Zuweisen 
-von Fotos zu Alben. \ref{tab:album-controller}
+von Fotos zu Alben. (siehe Tabelle \ref{tab:album-controller})
 
 \begin{table}[h t]
     \centering
@@ -142,9 +138,10 @@ von Fotos zu Alben. \ref{tab:album-controller}
 
 Der MemorylandController ist für die Verwaltung und Interaktion mit Memorylands 
 verantwortlich. Dabei werden Memorylands, die Positionierung der Bilder in Memorylands
-und Tokens für den Zugriff auf Memorylands verwaltet. \ref{tab:memoryland-controller}
+und Tokens für den Zugriff auf Memorylands verwaltet. (siehe Tabelle \ref{tab:memoryland-controller})
 
-Konfigurationen von Memorylands sind hier beschrieben \ref{sec:memoryland-config}.
+Worum es sich bei konfigurationen von Memorylands handelt, ist im Kapitel 
+\ref{sec:memoryland-config} beschrieben.
 
 \begin{table}[h t]
     \centering
@@ -154,10 +151,10 @@ Konfigurationen von Memorylands sind hier beschrieben \ref{sec:memoryland-config
     \hline
     \textbf{Methode} & \textbf{Pfad} & \textbf{Authorized} & \textbf{Beschreibung} \\ \hline
     GET & /api/Memoryland/all & Ja & Gibt eine Liste aller Memorylands zurück. \\ \hline
-    GET & /api/Memoryland & Nein & Gibt eine Memoryland mit all dessen Bildern zurück. Dafür wird ein Token benötigt \\ \hline
+    GET & /api/Memoryland & \textbf{Nein} & Gibt eine Memoryland mit all dessen Bildern zurück. Dafür wird ein Token benötigt \\ \hline
     PUT & /api/Memoryland & Ja & Bearbeitet den Namen eines Memorylands. \\ \hline
     GET & /api/Memoryland/\{id\}\break/configuration & Ja & Gibt die Konfiguration für das angegebene Memoryland zurück. \\ \hline
-    GET & /api/Memoryland/types & Nein & Gibt die verfügbaren Typen für Memorylands zurück. \\ \hline
+    GET & /api/Memoryland/types & \textbf{Nein} & Gibt die verfügbaren Typen für Memorylands zurück. \\ \hline
     GET & /api/Memoryland/\{id\}\break/token & Ja & Gibt das Token für das angegebene Memoryland zurück. \\ \hline
     POST & /api/Memoryland/\{id\}\break/token & Ja & Erstellt ein neues Token für das angegebene Memoryland. \\ \hline
     POST & /api/Memoryland\break/\{memorylandName\}\break/{memorylandTypeId} & Ja & Erstellt ein Memoryland mit dem angegebenen Namen und Typ. \\ \hline
@@ -172,7 +169,7 @@ Konfigurationen von Memorylands sind hier beschrieben \ref{sec:memoryland-config
 
 Der FotoController ist für die Verwaltung von Fotos verantwortlich. Dies umfasst das 
 Abrufen, Erstellen und Löschen von Fotos, sowie das Verwalten der Fotodaten, die in 
-Alben gespeichert sind. \ref{tab:foto-controller}
+Alben gespeichert sind. (siehe Tabelle \ref{tab:foto-controller})
 
 \begin{table}[h t]
     \centering
@@ -191,7 +188,7 @@ Alben gespeichert sind. \ref{tab:foto-controller}
 \subsubsection{Upload-Controller}
 
 Der UploadController ist für das Hochladen von Fotos und das Öffnen von 
-Transaktionen zuständig. \ref{tab:upload-controller}
+Transaktionen zuständig. (siehe Tabelle \ref{tab:upload-controller})
 
 \begin{table}[h t]
     \centering

@@ -20,7 +20,7 @@ eigentlichen Bilddateien in Azure Blob Storage abgelegt.
 Azure Blob Storage bietet also eine skalierbare Lösung für die Speicherung 
 von Bilddateien. Durch die Kombination mit PostgreSQL zur Speicherung von Strukturen 
 ist eine effizientere Verwaltung und ein einfacherer Zugriff möglich. Der Zugriff 
-über SAS-Tokens ermöglicht es außerdem, Bilder sicher und kontrolliert bereitzustellen, 
+über SAS-Tokens ermöglicht es au\ss{}erdem, Bilder sicher und kontrolliert bereitzustellen, 
 ohne direkte Anmeldeinformationen preiszugeben.
 \footnote{Alle Informationen zu SAS-Tokens stammen von hier: \cite{MicrosoftCorporationa}}
 \footnote{Weiter Informationen zu Azure Blob Storage sind im Kapitel \ref{subsection:azure-blob-storage-getting-started}}
@@ -31,7 +31,7 @@ ohne direkte Anmeldeinformationen preiszugeben.
 Im Blob Storage werden für jede:n Benutzer:in ein separater Blob-Container erstellt. 
 Die Bilder werden im Blob-Storage durch die in der PostgreSQL festgelegten eindeutigen
 Identifikationsnummer gespeichert, sodass es zu keinen Problemen kommen kann, wenn zwei
-Foto in unterschiedlichen Alben gleich heißen.
+Foto in unterschiedlichen Alben gleich hei\ss{}en.
 
 \subsection{Azure Blob-Storage Datenhaltung}
 \label{subsection:azure_blob_storage_datamodel}
@@ -45,9 +45,9 @@ jeweiligen Benutzer:innen-Containers:
  - ...\\
 
 Die Speicherung eines Bildes erfolgt über den BlobStoragePhotoService. 
-Dabei wird zunächst überprüft, ob der Container für den Benutzer existiert und falls dies 
-nicht der Fall ist, wird er erstellt. Anschließend wird das Bild hochgeladen.
-\ref{lst:blob-storage-photo-upload}
+Dabei wird zunächst überprüft, ob der Container für den:die Benutzer:in existiert und falls dies 
+nicht der Fall ist, wird er erstellt. Anschlie\ss{}end wird das Bild hochgeladen.
+(siehe Listing \ref{lst:blob-storage-photo-upload})
 \footnote{Alle Informationen zu dem Upload von Bildern auf Azure Blob Storage stammen von hier: \cite{MicrosoftCorporationac}}
 
 \begin{lstlisting}[numbers=left,caption={Foto Upload auf den Blob-Storage},label={lst:blob-storage-photo-upload}]
@@ -89,7 +89,7 @@ korrekt darzustellen, wurde die folgende Methode implementiert, die die
 EXIF-Rotationsdaten ausliest und das Bild entsprechend anpasst.
 
 Die Methode RotateImage lädt das Bild, wendet eine mögliche Rotation 
-basierend auf den EXIF-Daten an und speichert es anschließend im korrekten Format. 
+basierend auf den EXIF-Daten an und speichert es anschlie\ss{}end im korrekten Format. 
 (Siehe Listing \ref{lst:method-rotate-image})
 
 \begin{lstlisting}[numbers=left,caption={Methode RotateImage},label={lst:method-rotate-image}]
@@ -142,6 +142,7 @@ und wendet die entsprechende Transformation an.
 \end{lstlisting}
 
 \subsection{SAS-Token Generierung}
+\label{subsection:sas-token-generation}
 
 Die Methode ``CreateUserDelegationSasBlob'' (Siehe Listing \ref{lst:sas-token-generator-service}) 
 erstellt ein Shared Access Signature (SAS)-Token für einen Azure Blob. Dieses Token ermöglicht 
@@ -151,7 +152,7 @@ der auf das gewünschte Blob verweist, und einen ``accessKey'', der für die Sig
 SAS-Tokens verwendet wird.
 
 Zunächst wird die Gültigkeit des SAS-Tokens festgelegt. Der Startzeitpunkt wird auf die 
-aktuelle UTC-Zeit gesetzt, und die Endzeit wird um 4 Stunden verlängert. Anschließend wird 
+aktuelle UTC-Zeit gesetzt, und die Endzeit wird um 4 Stunden verlängert. Anschlie\ss{}end wird 
 ein ``BlobSasBuilder''-Objekt erstellt, dass dann schlussendlich für die Erstellung des
 SAS Tokens zuständig ist. Hierbei wird der ``BlobContainerName'' und der ``BlobName'' 
 vom ``BlobClient'' übernommen, um das Blob eindeutig zu identifizieren, zu welchem das 
@@ -164,7 +165,7 @@ Ein weiteres Objekt, ``StorageSharedKeyCredential'', wird mit dem ``accountName'
 ``accessKey'' des Azure Storage-Kontos erzeugt. Dieses Credential wird genutzt, um das 
 SAS-Token zu signieren, sodass es nur für das spezifische Konto gültig ist.
 
-Mit einem ``BlobUriBuilder'' wird schließlich die vollständige URL erzeugt, die das Blob 
+Mit einem ``BlobUriBuilder'' wird schlie\ss{}lich die vollständige URL erzeugt, die das Blob 
 und das SAS-Token enthält. Das Token wird als URL-Parameter angehängt, wodurch der Zugriff 
 auf das Blob mit den festgelegten Berechtigungen möglich ist.
 
@@ -220,17 +221,17 @@ Die Methode ``UploadPhoto'' (Siehe Listing \ref{lst:method-upload-photo}) ist ei
 eines HTTP-POST-Endpoints, der es einem:r Benutzer:in ermöglicht, ein Foto in ein bestimmtes 
 Album hochzuladen. Der Endpoint ist mit den Attributen ``[Authorize]'' und 
 ``[RequiredScope(``backend.write'')]'' versehen, um sicherzustellen, dass nur authentifizierte 
-Benutzer mit der entsprechenden Berechtigung auf diese Route zugreifen können.
+Benutzer:innen mit der entsprechenden Berechtigung auf diese Route zugreifen können.
 
-Zunächst wird der Benutzer mit der Methode ``CheckIfUserAuthenticated'' (Siehe Listing 
-\ref{lst:method-check-user-auth}) überprüft, um sicherzustellen, dass der Benutzer 
+Zunächst wird der:die Benutzer:in mit der Methode ``CheckIfUserAuthenticated'' (Siehe Listing 
+\ref{lst:method-check-user-auth}) überprüft, um sicherzustellen, dass der:die Benutzer:in 
 authentifiziert ist und keine Fehler bei der Authentifizierung aufgetreten sind. 
 Falls keine Email in den Claims angegeben ist, wird Unauthorized zurückgegeben. 
-Zusätzlich erstellt die Methode einen Benutzer in unserer Datenbank, falls
-der Benutzer noch nicht existiert.
+Zusätzlich erstellt die Methode einen:r Benutzer:in in unserer Datenbank, falls
+der:die Benutzer:in noch nicht existiert.
 
-Anschließend wird überprüft, ob das angegebene Fotoalbum existiert. Wenn das 
-Album nicht existiert oder der Benutzer nicht der Eigentümer des Albums ist, 
+Anschlie\ss{}end wird überprüft, ob das angegebene Fotoalbum existiert. Wenn das 
+Album nicht existiert oder der:die Benutzer:in nicht der Eigentümer des Albums ist, 
 wird eine ``BadRequest''-Antwort mit einer entsprechenden Fehlermeldung zurückgegeben.
 
 Es folgt eine Validierung des Foto-Uploads. Zunächst wird geprüft, ob eine Bilddatei 
@@ -248,7 +249,7 @@ Wenn alle Validierungen erfolgreich sind, werden zunächst die Metadaten des Fot
 PostgreSQL Datenbank gespeichert. Danach wird das Foto in ein Byte-Array umgewandelt und auf
 dem Blob Storage gespeichert.
 
-Abschließend gibt die Methode eine ``Created''-Antwort zurück, was anzeigt, dass das Foto 
+Abschlie\ss{}end gibt die Methode eine ``Created''-Antwort zurück, was anzeigt, dass das Foto 
 erfolgreich hochgeladen wurde.
 
 
@@ -358,10 +359,10 @@ Wenn man für einen Upload-Prozess von mehreren Bildern eine Transaktion möchte
 ``Transaktion'' für den Upload von Dateien erstellt, sodass, falls der Upload unterbrochen 
 wird, der Prozess später fortgesetzt werden kann, ohne dass bereits hochgeladene Dateien 
 erneut hochgeladen werden müssen. Dafür wird ein Transaktionsobjekt in der Datenbank 
-erstellt. (Siehe Kapitel \ref{chapter:datamodel}) Außerdem kann es pro Benutzer nur 
+erstellt. (Siehe Kapitel \ref{chapter:datamodel}) Au\ss{}erdem kann es pro Benutzer:in nur 
 eine offene Transaktion geben.
 
-Wenn ein Benutzer eine neue Upload-Transaktion startet, wird eine Transaktion in der 
+Wenn ein:e Benutzer:in eine neue Upload-Transaktion startet, wird eine Transaktion in der 
 Datenbank erstellt. Diese Transaktion ist mit einem Fotoalbum des/r Benutzers:in und dem/r 
 Benutzer:in selbst verknüpft und stellt sicher, dass alle Fotos, die hochgeladen werden, 
 im Kontext dieses Albums gespeichert werden.
@@ -477,13 +478,13 @@ wird, wird sie aus der Datenbank entfernt und die Änderungen werden gespeichert
 
 Memoryland verlässt sich auf Azure AD B2C zur Authentifizierung und einer 
 JWT-basierten Autorisierung für den API-Zugriff, um die Sicherheit der Daten
-der Benutzer:innen zu gewährleisten
+der Benutzer:innen zu gewährleisten.
 
 \subsection{Authentifizierung}
 
 Die Authentifizierung wird über Microsoft Identity Web und das JWT Bearer Token-Schema realisiert. 
 Dabei wird die Token-Validierung so konfiguriert, dass Azure AD B2C als Identitätsanbieter 
-genutzt wird. \ref{lst:auth-init}
+genutzt wird. (siehe Listing \ref{lst:auth-init})
 
 \begin{lstlisting}[numbers=left,caption={Authentifizierung-Initialisierung},label={lst:auth-init}]
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -502,7 +503,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 \subsection{Autorisierung}
 
 Die Autorisierung erfolgt über die Middleware ``UseAuthorization()'', die sicherstellt, 
-dass nur authentifizierte Benutzer Zugriff auf geschützte API-Endpunkte haben. \ref{lst:auth-middleware-init}
+dass nur authentifizierte Benutzer:innen Zugriff auf geschützte API-Endpunkte haben. 
+(siehe Listing \ref{lst:auth-middleware-init})
 
 \begin{lstlisting}[numbers=left,caption={Autorisierungs Middleware Initialisierung},label={lst:auth-middleware-init}]
 app.UseAuthentication();
@@ -510,7 +512,8 @@ app.UseAuthorization();
 \end{lstlisting}
 
 Zusätzlich kann die Autorisierung dann für bestimmte Endpunkte über 
-das ``[Authorize]''-Attribut aktiviert werden. \ref{lst:authorite-attribute-example}
+das ``[Authorize]''-Attribut aktiviert werden. 
+(siehe Listing \ref{lst:authorite-attribute-example})
 
 \begin{lstlisting}[numbers=left,caption={Authorize-Attribut Beispiel},label={lst:authorite-attribute-example}]
 [Authorize]
