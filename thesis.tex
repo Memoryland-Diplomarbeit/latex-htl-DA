@@ -22,8 +22,13 @@
 \author{\firstauthor, \secondauthor}
 \makeatother
 
+
+\input{glossary}
+
 \makeindex
+
 \makeglossaries
+
 \begin{document}
 \bstctlcite{IEEEexample:BSTcontrol}
 \newcommand{\reminder}[1]
@@ -98,27 +103,23 @@
 \end{spacing}
 \input{./sections/summary}
 
+\clearpage
+
 \pagenumbering{Roman}
 \setcounter{page}{\value{RPages}}
-\input{glossary}
+
 %\setlength{\glsdescwidth}{0.8\linewidth}
 \glsnogroupskiptrue
-\IfStrEq{\thesislang}{de}
-{
-	\printglossary[title=Glossar,toctitle=Glossar] %,style=long]
-}
-{
-	\printglossary[title=Glossary,toctitle=Glossary] %,style=long]
-}
+
+
+%\printglossary[type=\acronymtype]
+\printglossary[title=Glossar,toctitle=Glossar]%,style=long]
+
+
 \spacing{1}{
-\IfStrEq{\thesislang}{de}
-{
 	\bibliographystyle{ieeetrande}
-}
-{
-	\bibliographystyle{IEEEtran}
-}
-\bibliography{bib}
+
+	\bibliography{bib}
 }
 \listoffigures
 \listoftables
@@ -126,5 +127,6 @@
 \appendix
 \addchap{Anhang}
 \input{./sections/appendix}
+
 \end{document}
 

@@ -4,7 +4,7 @@
 
 \subsection{Unity}
 
-Unity ist eine leistungsstarke Laufzeit- und Entwicklungsumgebung (IDE) für Spiele, auch als Spiel-Engine (bzw. Gameengine) bekannt, die von Unity Technologies mit Hauptsitz in San Francisco entwickelt wurde. Diese vielseitige Plattform ermöglicht die Erstellung von Spielen und interaktiven 3D-Grafik-Anwendungen für verschiedene Zielplattformen, darunter PCs (Windows und Mac), Spielkonsolen, mobile Geräte und Webbrowser.\footnote{Alle Infos zu Unity stammen von: \cite{UnityDocs}}
+Unity ist eine leistungsstarke Laufzeit- und Entwicklungsumgebung (\Gls{ide}) für Spiele, auch als Spiel-Engine (bzw. Gameengine) bekannt, die von Unity Technologies mit Hauptsitz in San Francisco entwickelt wurde. Diese vielseitige Plattform ermöglicht die Erstellung von Spielen und interaktiven 3D-Grafik-Anwendungen für verschiedene Zielplattformen, darunter PCs (Windows und Mac), Spielkonsolen, mobile Geräte und Webbrowser.\footnote{Alle Infos zu Unity stammen von: \cite{UnityDocs}}
 
 \begin{figure} [h t]
     \centering
@@ -67,7 +67,7 @@ Die gewählten Einstellungen entsprechen den Empfehlungen der bereits erwähnten
 
 \section{Implementierung des Unity Projekts}
 
-Im ersten Schritt wurde versucht die .....
+Im ersten Schritt wurde versucht die ..... \emph{OFFEN} ... TODO
 
 
 
@@ -77,10 +77,70 @@ Im ersten Schritt wurde versucht die .....
 
 Es ist notwendig Daten vom Frontend mit Unity auszutauschen. Es gibt derzeit viele entsprechende Mechanismen. Die gewählte Methode vermeidet Verschränkungen zwischen der Implementierung des Frontend (und dessen Services in Richtung Backend) und der Implementierung von den Szenen in Unity.
 
-.....
+
+Für den gewählten Prozess der Übergabe der Parameter über den IFrame mit Hilfe von herkömmlichen Url-Parametern (siehe Listing \ref{lst:unity-url-parameter-in-action}) gab es bereits mehrere Realisierungen verfügbar. 
+
+
+\begin{lstlisting}[numbers=left,caption={IFrame for Unity in Frontend},label={lst:unity-url-parameter-in-action}]
+this.safeUrl = this.sanitizer
+          .bypassSecurityTrustResourceUrl(`/unity/index.html?token=${myToken}& server=${environment.apiConfig.uri}`);
+\end{lstlisting}
+
+Es wurde eine fortgeschrittene Entwicklung einer UrlParameter-Klasse aus dem Projekt übernommen und erweitert.\footnote{Der Originalcode wurde von \cite{UrlParameter} übernommen und um eine weitere Funktion erweitert.} Die enthaltenen Funktionen sahen nur nummerische Parameter vor und so war die gewählte Übergabe eines GUID-Token aus dem Frontend vorerst nicht möglich. Die Funktion ``GetString'' (siehe Listing \ref{lst:unity-url-parameter}) wurde daher in die Klasse ``DictionaryStringStringExt'' eingefügt. Es waren ansonsten keine weiteren Änderungen notwendig.
+
+Das vorhandene Singleton-Skript ermöglicht einen einfachen Zugriff auf alle URL-Parameter und -Komponenten in einer WebGL-Build-Anwendung. Es muss hierzu eine jslib-Datei verwendet werden, die den JavaScript-Teil aktiviert. Dieses Skript wird beim Importieren in ein Projekt automatisch eine jslib-Datei in den Plugins-Ordner extrahieren, die den Namen „URLParameters.jslib“ trägt.
+
+Um auf die verschiedenen URI-Teile zuzugreifen, kann man einfach die statischen Methoden dieser Klasse verwenden. Die verfügbaren Eigenschaften sind Protocol, Hostname, Port, Pathname, Search, Hash sowie Host, Origin und Href. Damit kann man mithilfe der Funktion ``URLParameters.GetSearchParameters()'' an beliebiger Stelle in Unity ein Dictionary mit den Url-Parametern laden.
+
+\begin{lstlisting}[numbers=left,caption={UrlParameter},label={lst:unity-url-parameter}]
+public static class DictionaryStringStringExt
+{
+    public static double GetDouble(this Dictionary<string, string> aDict, string aKey, double aDefault)
+    {
+        string str;
+        if (!aDict.TryGetValue(aKey, out str))
+            return aDefault;
+        double val;
+        if (!double.TryParse(str, NumberStyles.Float, CultureInfo.InvariantCulture, out val))
+            return aDefault;
+        return val;
+    }
+    public static int GetInt(this Dictionary<string, string> aDict, string aKey, int aDefault)
+    {
+        string str;
+        if (!aDict.TryGetValue(aKey, out str))
+            return aDefault;
+        int val;
+        if (!int.TryParse(str, NumberStyles.Integer, CultureInfo.InvariantCulture, out val))
+            return aDefault;
+        return val;
+    }
+    public static string GetString(this Dictionary<string, string> aDict, string aKey, string aDefault)
+    {
+        string str;
+        if (!aDict.TryGetValue(aKey, out str))
+            return aDefault;
+        return str;
+    }
+}
+\end{lstlisting}
 
 
 \subsection{Die Startup Szene}
+
+Die Szene ist bereits in Abbildung \ref{fig:unity-ide} zu sehen. Es wurde ein leeres Terrain gebaut und eine Unity UI darübergelegt.\footnote{Die dazu verwendete Technologie Unity UI Toolkit ist in \cite{UnityDocsUIToolkit} beschrieben.} Diese UI dient dazu den Nutzer zu informieren, dass nun die Bilder und die Szene geladen werden.
+
+
+
+
+\begin{figure} [h t]
+    \centering
+    \includegraphics[scale=0.12]{pics/unity-ui-builder.png}
+    \caption{Entwicklung in Unity: Der Unity UI Toolkit}
+    \label{fig:unity-ui-builder}
+\end{figure}
+
+
 
 
 .....
@@ -92,14 +152,89 @@ Es ist notwendig Daten vom Frontend mit Unity auszutauschen. Es gibt derzeit vie
 
 \subsection{Einfügen von Images}
 
+Am Beginn des Projektes wurden die Fotos als Texturen vom Backend erst nach dem Start der Szene geladen, also in Form eines Lazy-Load während die Szene bereits abläuft. Dies führte dazu, dass die ersten Fotos noch nicht fertig geladen waren und die Planes noch im Platzhalter-Modus (hier wurde eine blaue Farbe für das Plane gewählt) dargestellt wurden. Dieses Vorgehen war äußerst unpassend für das angestrebte Nutzererlebnis. 
+
+Das Laden der Fotos wurden daher im Rahmen einem weiteren Sprint im Code zeitlich vorverlegt und findet nun während des Startup in der Startup-Szene statt. Dazu wird der Nutzer im Rahmen der Startup-Szene im gewählten UI über den Ladeprozessfortschritt informiert.
+
+
+
+\begin{lstlisting}[numbers=left,caption={ImageLoader},label={lst:unity-image-loader}]
+\dots
+public class ImageLoader : MonoBehaviour
+{
+    public int urlID = 0;
+    public Renderer thisRenderer;
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        // the following will be called even before the load finished
+        thisRenderer.material.color = Color.blue;
+
+        StartCoroutine(LoadFromLikeCoroutine()); // execute the section independently
+    }
+
+\dots
+
+    // this section will be run independently
+    private IEnumerator LoadFromLikeCoroutine()
+    {
+	Texture myTexture = null;
+	
+        IEnumerator tgt = FindAnyObjectByType<SceneChanger>().GetOneTexture(urlID);
+        while (tgt.MoveNext()) 
+        {
+        	myTexture = (Texture)tgt.Current;
+        	yield return myTexture;
+        }
+        
+        if (myTexture == null) {
+        	yield return null;
+        }
+
+	if (myTexture == null) {
+            	thisRenderer.material.color = Color.red;          // set red
+		Debug.Log("Image NotFound!");
+		yield return null;
+	}
+	else 
+	{
+		Debug.Log("Loaded");
+		thisRenderer.material.color = Color.white;          // set white
+
+		float scale = 0.3f;
+
+		//thisRenderer.gameObject.
+		if (myTexture.height > myTexture.width)
+		{
+			float f = (float)myTexture.height / (float)myTexture.width * scale;
+			thisRenderer.transform.localScale = new Vector3(scale, scale, f);
+			//thisRenderer.material.SetTextureScale("_MainTex", new Vector2(1f, 0.5f));
+
+		}
+		else
+		{
+			//float f = ((float)myTexture.width * (float)0.5) / ((float)myTexture.height * (float)0.5);
+			float f = (float)myTexture.width / (float)myTexture.height * scale;
+			thisRenderer.transform.localScale = new Vector3(f, scale, scale);
+			//thisRenderer.material.SetTextureScale("_MainTex", new Vector2(0.5f, 1f));
+
+		}
+
+		thisRenderer.material.mainTexture = myTexture ;  // set loaded image
+	}
+    }
+}
+\end{lstlisting}
+
+
+
+
+\section{Erstellung von Szenen bzw. Memoryland-Typen}
+
 ......
 
 
-
-
-\section{Erstellung von neuen Memoryland-Typen}
-
-......
 
 \subsection{Die Wald-Szene}
 
