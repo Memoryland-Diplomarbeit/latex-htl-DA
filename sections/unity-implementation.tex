@@ -74,6 +74,7 @@ Im ersten Schritt wurde versucht die ..... \emph{OFFEN} ... TODO
 
 
 \subsection{Url-Parameter}
+\label{subsec:unity-url-parameter}
 
 Es ist notwendig Daten vom Frontend mit Unity auszutauschen. Es gibt derzeit viele entsprechende Mechanismen. Die gewählte Methode vermeidet Verschränkungen zwischen der Implementierung des Frontend (und dessen Services in Richtung Backend) und der Implementierung von den Szenen in Unity.
 
@@ -127,10 +128,7 @@ public static class DictionaryStringStringExt
 
 
 \subsection{Die Startup Szene}
-
-Die Szene ist bereits in Abbildung \ref{fig:unity-ide} zu sehen. Es wurde ein leeres Terrain gebaut und eine Unity UI darübergelegt.\footnote{Die dazu verwendete Technologie Unity UI Toolkit ist in \cite{UnityDocsUIToolkit} beschrieben.} Diese UI dient dazu den Nutzer zu informieren, dass nun die Bilder und die Szene geladen werden.
-
-
+\label{subsec:unity-startup-scene}
 
 
 \begin{figure} [h t]
@@ -141,25 +139,345 @@ Die Szene ist bereits in Abbildung \ref{fig:unity-ide} zu sehen. Es wurde ein le
 \end{figure}
 
 
+Die Szene ist bereits in Abbildung \ref{fig:unity-ide} zu sehen. Es wurde ein leeres Terrain gebaut und eine Unity UI darübergelegt.\footnote{Die dazu verwendete Technologie Unity UI Toolkit ist in \cite{UnityDocsUIToolkit} beschrieben.} Diese UI dient dazu den Nutzer zu informieren, dass nun die Bilder und die Szene geladen werden. Im Listing \ref{lst:unity-startup-document} sind die wesentlichen Codeteile enthalten. Die Methode ``OnEnable'' wird aufgerufen, wenn die Startup-Szene die UI aufruft, also zu Beginn des Memoryland. Es werden die UI Komponenten in die Membervariablen geladen und danach sofort die asynchrone Routine zur Überwachung der Fotobeladung im ``SceneChanger'' gestartet. 
 
 
-.....
+Die Während der ``SceneChanger'' (siehe unten) die Beladung der Texturen betreibt, wartet der ``StartupDocument''-UI bereit darauf, dass es diese Aufgabe abschlie\ss{}t. Diese Information wird mittels der asynchronen Funktion ``isValid'' überprüft. Sobald die Daten und Fotos geladen sind, steht dort der Szenenname zur Verfügung. Falls nun die Szene bekannt ist (derzeit nur ``forest'' oder ``island''), kann die Szene gestartet werden, ansosnten wird der Benutzer mittels des Informationsfeldes darauf hingewiesen, dass ein Fehler aufgetreten ist.
 
 
 
-% startup und load und unity ui toolkit und szenenwechsel
+\begin{lstlisting}[numbers=left,caption={StartupDocument für Unity UI Toolkit},label={lst:unity-startup-document}]
+....    
+    public class StartupDocument : MonoBehaviour
+    {
+        private Button _start;
+        private Label _loading;
+        private string chosenScene = null;
+           
+        //Add logic that interacts with the UI controls in the `OnEnable` methods
+        private void OnEnable()
+        {
+            // The UXML is already instantiated by the UIDocument component
+            var uiDocument = GetComponent<UIDocument>();
+    
+            _start = uiDocument.rootVisualElement.Q("start") as Button;
+            _start.SetEnabled(false);
+            _loading = uiDocument.rootVisualElement.Q("loading") as Label;
+            _start.RegisterCallback<ClickEvent>(PrintClickMessage);
+            
+            StartCoroutine(LoadFromLikeCoroutine());
+        }
+    
+        private IEnumerator LoadFromLikeCoroutine()
+        {
+            while (chosenScene == null) {
+            IEnumerator tgt = FindAnyObjectByType<SceneChanger>().IsValid();
+            while (tgt.MoveNext()) 
+            {
+                chosenScene = (string)tgt.Current;
+                yield return chosenScene;
+            }
+            }
+            
+            if (chosenScene != "ERROR") {
+                Debug.Log("Finished!");
+                _loading.text = "Finished Loading " + chosenScene;
+                _start.SetEnabled(true);
+                FindAnyObjectByType<SceneChanger>().StartThisNow();
+            }
+            else 
+            {
+                _loading.text = "Sorry, ERROR Loading this Memoryland. Possibly Token invalid!";
+                Debug.Log("ERROR loading");
+            }
+        }
+        ....
+    }        
+\end{lstlisting}
 
+
+Die Klasse ``SceneChanger'' existiert länger im Projekt. Zu Beginn hatte sie nur die Aufgabe den Szenenwechsel bereitzustellen, inzwischen hat sich das Aufgabengebiet auf das Laden aller Bestandteile der Szenen ausgeweitet. Sie hat daher drei Aufgaben: das \emph{Laden der Memoryland-Informationen} aus dem Backend, die Beladung der Texturenliste (also der \emph{Fotos}) und die Bereitstellung einer \emph{Szenen-Wechsel-Funktion}.
+
+Die Funktion ``Start'' lädt die URL-Parameter mit Hilfe der Klasse aus Abschnitt \ref{subsec:unity-url-parameter} in die enstprechenden statischen Membervariablen. Zu Testzwecken wurde ein ``fallbackResponse'' und ein dazugehöriger Parameter (``fallback'' == ``yes'') eingeführt, sodass Szenen zeitnah und während der Implementierung mit echten Bildern aus dem Backend getestet werden können.
+
+Nach der Beladung der Variablen werden diese verwendet, um die URL zum Aufruf des REST Backend mit dem Token\footnote{siehe dazu vor allem auch Abschnitt \ref{backend-memoryland-controller}} zusammenzusetzen. Die Verwendung des Token ermöglicht den Aufruf der Memorylands auch durch nicht-eingeloggte Benutzer.
+
+
+
+\begin{lstlisting}[numbers=left,caption={SceneChanger},label={lst:unity-scene-changer-start}]
+        ....
+        
+        public class SceneChanger : MonoBehaviour
+        {
+        
+            private static 
+                string fallbackResponse = @"
+                ....
+                ";
+        
+            private static string chosenScene = null;
+            private static string token = null;
+            private static string server = "https://app-memoryland.azurewebsites.net";
+            private static string fallback = "no";
+            private static Dictionary<int, string> allUrls = null;
+        
+            private static Dictionary<int, Texture> allTextures = new Dictionary<int, Texture> ();
+        
+            ....                
+        
+            // Start is called before the first frame update
+            IEnumerator Start()
+            {
+                // already loaded?
+                if (SceneChanger.token == null && SceneChanger.chosenScene == null) 
+                {
+                    // first load the given token
+                    Dictionary<string,string> paras =  URLParameters.GetSearchParameters();
+                    SceneChanger.token = paras.GetString("token", "");
+                    SceneChanger.server = paras.GetString("server", "https://app-memoryland.azurewebsites.net");
+                    
+                    if (Application.platform == RuntimePlatform.WebGLPlayer)
+                    {
+                        SceneChanger.fallback = paras.GetString("fallback", "no");
+                    }
+                    else
+                    {
+                        SceneChanger.fallback = paras.GetString("fallback", "no");
+                        SceneChanger.token = paras.GetString("token", "1920cf9e-b295-4c80-b347-75eff21a71f6");
+                    }
+                    
+                    Debug.Log("Parameter Value token = " + SceneChanger.token);
+                    Debug.Log("Parameter Value server = " + SceneChanger.server);
+                    Debug.Log("Parameter Value fallback = " + SceneChanger.fallback);
+                    
+                    if (SceneChanger.fallback == "yes")
+                    {
+                        yield return SetInternals(SceneChanger.fallbackResponse);
+                        Debug.LogError("Fallback is set => Using simulation init parameters to start with!");
+                    }
+                    else
+                    {
+                        // missing call to the url/backend
+                        string uri = SceneChanger.server+"/api/Memoryland?token=" + SceneChanger.token;
+                        string response = "";
+                        
+                        using (UnityWebRequest webRequest = UnityWebRequest.Get(uri))
+                        {
+                            yield return webRequest.SendWebRequest();
+                        
+                            switch (webRequest.result)
+                            {
+                            case UnityWebRequest.Result.ConnectionError:
+                            case UnityWebRequest.Result.DataProcessingError:
+                                Debug.LogError(SceneChanger.server + ": Error: " + webRequest.error);
+                                    SceneChanger.chosenScene = "ERROR";
+                                break;
+                            case UnityWebRequest.Result.ProtocolError:
+                                Debug.LogError(SceneChanger.server + ": HTTP Error: " + webRequest.error);
+                                    SceneChanger.chosenScene = "ERROR";
+                                break;
+                            case UnityWebRequest.Result.Success:
+                                Debug.Log(SceneChanger.server + ": Received: " + webRequest.downloadHandler.text);
+                                response = webRequest.downloadHandler.text;
+                                yield return SetInternals(response);
+                                break;
+                            default:
+                                Debug.LogError(SceneChanger.server + ": unknown " + webRequest.result.ToString());
+                                    SceneChanger.chosenScene = "ERROR";
+                                break;
+                            }
+                            }
+                        }
+                }		
+            }
+        ....
+        }
+\end{lstlisting}
+    
+
+Das Umwandeln des gelieferten JSON im Textformat übernimmt dann die Funktion ``SetInternals''. Es wurden einige serialisierbare Basisklassen für die im JSON enthaltenen Daten erstellt. Diese sind ``MemorylandType'', ``MemorylandConfiguration'' und ``Memoryland''. Die Funktion nimmt den gelieferten String und verwendet die Unity-Basisklasse ``JsonUtility'' um diesen zu C\# Objekten zu konvertieren.
+
+Danach wird sofort für jede gelieferte Foto-URL die asynchrone Funktion ``LoadTexture'' aufgerufen. Dies ermöglicht ein möglichst rasches Laden der Bilder bei einem verzerrungs- und störungsfreien Ansehen des Memorylands bzw. der entsprechenden Szene. 
+
+\begin{lstlisting}[numbers=left,caption={SceneChanger - SetInternals},label={lst:unity-scene-changer-set-internals}]
+    ....   
+    
+        [System.Serializable]
+        public class MemorylandType
+        {
+            public string name;
+            public int photoAmount;
+        }
+        
+        [System.Serializable]
+        public class MemorylandConfiguration
+        {
+            public int position;
+            public string photo;
+        }
+        
+        
+        [System.Serializable]
+        public class Memoryland
+        {
+            public long id;
+            public string name;
+            public MemorylandType memorylandType;
+            public List<MemorylandConfiguration> memorylandConfigurations;
+        
+            public static Memoryland CreateFromJSON(string jsonString)
+            {
+                return JsonUtility.FromJson<Memoryland>(jsonString);
+            }
+        }
+    ....
+    private IEnumerator SetInternals(string response) 
+    {
+        Debug.Log("setInternals now with ");
+        if (response != null) {
+        
+            Memoryland ml = null;
+            try {
+                ml = Memoryland.CreateFromJSON(response);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("Error Reading response! " + e.ToString());
+            }
+            
+            if (ml != null) 
+            {
+                if (ml.memorylandConfigurations != null) {
+                    SceneChanger.allUrls = new Dictionary<int, string>();
+                    foreach (MemorylandConfiguration item in ml.memorylandConfigurations) {
+                        Debug.Log("got one photo " + item.position.ToString());
+                        SceneChanger.allUrls[item.position] = item.photo;
+                        yield return LoadTexture(item.position, item.photo);
+                    }
+                }
+
+                // always set the pics first
+                if (ml.memorylandType != null && ml.memorylandType.name != null ) {
+                    SceneChanger.chosenScene = ml.memorylandType.name;
+                    Debug.Log("Got Scene from response: " + chosenScene);
+                }
+            }
+        }
+        
+        if (SceneChanger.allUrls == null) 
+        {
+            SceneChanger.chosenScene = "ERROR";
+            Debug.LogError("no URLs loaded!");
+        }
+    }    
+\end{lstlisting}
+    
+Die Bilder bzw. Fotos werden vom Backend in Form von URLs mit SAS-Tokens (mit beschränkter Gültigkeit\footnote{siehe dazu vor allem Abschnitt \ref{subsection:sas-token-generation}}) beim Call gegen das REST Backend geliefert. Diese Bilder werden sofort als Texturen in den Speicher geladen um Verzögerungen und fehlende Darstellungen zu vermeiden. Dies übernimmt die in Listing \ref{lst:unity-scene-changer-load-texture} enthaltene Funktion ``LoadTexture''. Es wird dazu - wie oben für den Call ins Backend - die Unity Basisklasse ``UnityWebRequest'' verwendet.
+
+
+\begin{lstlisting}[numbers=left,caption={SceneChanger - LoadTexture},label={lst:unity-scene-changer-load-texture}]
+  
+    IEnumerator LoadTexture (int id, string uri)
+    {
+        Debug.Log("Load Photo " + id.ToString() + " with " + uri);
+        Texture myTexture = null;
+        using (UnityWebRequest imageRequest = UnityWebRequestTexture.GetTexture(uri))
+        {
+            yield return imageRequest.SendWebRequest();
+            
+            switch (imageRequest.result)
+            {
+            case UnityWebRequest.Result.ConnectionError:
+            case UnityWebRequest.Result.DataProcessingError:
+                Debug.LogError("Photo Error: " + imageRequest.error);
+                break;
+            case UnityWebRequest.Result.ProtocolError:
+                Debug.LogError("Photo HTTP Error: " + imageRequest.error);
+                break;
+            case UnityWebRequest.Result.Success:
+                Debug.Log("Received Photo " + id.ToString() + " with " + uri);
+                //
+                myTexture = DownloadHandlerTexture.GetContent(imageRequest);
+                SceneChanger.allTextures[id] = myTexture;
+                break;
+            default:
+                Debug.LogError("Photo unknown result: " + imageRequest.result.ToString());
+                break;
+            }	    
+        }
+            yield return "Loaded";
+    }
+\end{lstlisting}
+    
+
+Schlussendlich bleibt die letzte Funktion des SceneChanger, welche schon von Beginn bestanden hatte: der Szenenwechsel mithilfe von ``StartThisNow''. Sie wird mit Hilfe der Standard-Unity Funktionalität von SceneManager abgebildet. Es wird zusätzlich überprüft, ob diese Szene überhaupt im WebGL Build existiert.\footnote{Die Build-Settings von WebGL können der Abbildung \ref{fig:unity-build-settings} entnommen werden. Dort steht auch eine Liste der enthaltenen Szenen.} Die weiteren Funktionen ``isValid'' und ``GetOneTexture'' werden von anderen Klassen verwendet um die aktuelle Szene bzw. einzelne Fotos (bereits als Texturen) abzurufen.
+
+
+\begin{lstlisting}[numbers=left,caption={SceneChanger},label={lst:unity-scene-changer-public}]
+....
+    public class SceneChanger : MonoBehaviour
+    {
+        ....
+        
+        private void ChangeScene(string sceneName)
+        {
+            if (SceneManager.GetActiveScene().name == sceneName + "Scene" || (sceneName == "ERROR"))
+            {
+                Debug.Log("Scene " + sceneName + " already active!");
+            }
+            else 
+            {
+                Debug.Log("Change Scene to " + sceneName);
+                SceneManager.LoadScene (sceneName + "Scene");
+            }
+        }
+        ....
+        public IEnumerator GetOneTexture(int position)
+        {
+            if (SceneChanger.allUrls == null || SceneChanger.chosenScene == null) // not finished call to backend
+                yield return null;
+                
+            if (SceneChanger.allTextures.ContainsKey(position)) {
+                yield return SceneChanger.allTextures[position];
+            }
+            else 
+            {
+                Debug.Log(position.ToString() + " NOT FOUND in MemoryLand!");
+                yield return null;
+            }
+        }
+    
+        ....    
+        public IEnumerator IsValid()
+        {
+            if (SceneChanger.chosenScene == null) // not finished call to backend
+                yield return null;
+                
+            yield return (SceneChanger.chosenScene);
+        }
+    
+        public void StartThisNow()
+        {
+            // now change scene
+            ChangeScene(SceneChanger.chosenScene);
+        }
+    
+        ....
+    }
+\end{lstlisting}
 
 \subsection{Einfügen von Images}
+\label{subsec:unity-image-loader}
 
 Am Beginn des Projektes wurden die Fotos als Texturen vom Backend erst nach dem Start der Szene geladen, also in Form eines Lazy-Load während die Szene bereits abläuft. Dies führte dazu, dass die ersten Fotos noch nicht fertig geladen waren und die Planes noch im Platzhalter-Modus (hier wurde eine blaue Farbe für das Plane gewählt) dargestellt wurden. Dieses Vorgehen war äußerst unpassend für das angestrebte Nutzererlebnis. 
 
-Das Laden der Fotos wurden daher im Rahmen einem weiteren Sprint im Code zeitlich vorverlegt und findet nun während des Startup in der Startup-Szene statt. Dazu wird der Nutzer im Rahmen der Startup-Szene im gewählten UI über den Ladeprozessfortschritt informiert.
+Das Laden der Fotos wurden daher im Rahmen einem weiteren Sprint im Code zeitlich vorverlegt und findet nun während des Startup in der Startup-Szene statt. Dazu wird der Nutzer im Rahmen der Startup-Szene (siehe Abschnitt \ref{subsec:unity-startup-scene}) im gewählten UI über den Ladeprozessfortschritt informiert.
 
+Der hier beschriebene ``ImageLoader'' hat damit nur noch die Aufgabe die entsprechende Texture vom ``SceneChanger'' (siehe Abschnitt \ref{subsec:unity-startup-scene}) zu laden und dann das Format des Plane anzupassen. Die Bilder würden ansonsten verzerrt angezeigt. Dazu wird mit Hilfe eines Vector3 Objekts die Größe und damit Verzerrung des Planes eingestellt. Aufrecht stehende Bilder können in Unity nicht gedreht werden (EXIF-Informationen werden ignoriert), daher musste dies bereits vom Backend übernommen werden.\footnote{siehe hierzu vor allem Abschnitt \ref{subsec:backend-rotate-pictures}} 
 
 
 \begin{lstlisting}[numbers=left,caption={ImageLoader},label={lst:unity-image-loader}]
-\dots
+....
 public class ImageLoader : MonoBehaviour
 {
     public int urlID = 0;
@@ -174,7 +492,7 @@ public class ImageLoader : MonoBehaviour
         StartCoroutine(LoadFromLikeCoroutine()); // execute the section independently
     }
 
-\dots
+....
 
     // this section will be run independently
     private IEnumerator LoadFromLikeCoroutine()
@@ -232,8 +550,13 @@ public class ImageLoader : MonoBehaviour
 
 \section{Erstellung von Szenen bzw. Memoryland-Typen}
 
-......
+Das Projekt enthält bereits zwei vordefinierte Szenen:
 
+\begin{itemize}
+    \item Erster Punkt
+    \item Zweiter Punkt
+    \item Dritter Punkt
+\end{itemize}
 
 
 \subsection{Die Wald-Szene}
