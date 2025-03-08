@@ -204,7 +204,7 @@ Nach der Beladung der Variablen werden diese verwendet, um die URL zum Aufruf de
 
 
 
-\begin{lstlisting}[numbers=left,caption={SceneChanger},label={lst:unity-scene-changer-start}]
+\begin{lstlisting}[numbers=left,caption={SceneChanger - Start},label={lst:unity-scene-changer-start}]
         ....
         
         public class SceneChanger : MonoBehaviour
@@ -553,22 +553,47 @@ public class ImageLoader : MonoBehaviour
 Das Projekt enthält bereits zwei vordefinierte Szenen:
 
 \begin{itemize}
-    \item Erster Punkt
-    \item Zweiter Punkt
-    \item Dritter Punkt
+    \item Die Wald-Szene (MemorylandType == ``forest'') mit 10 Bildern
+    \item Die Insel-Szene (MemorylandType == ``island'') mit 10 Bildern
 \end{itemize}
 
+
+\subsection{Der Dolly Track}
+
+..... \emph{WEITER}
 
 \subsection{Die Wald-Szene}
 
 Die Erstellung der Wald-Szene war am schwierigsten, da die ersten Entwürfe und die Ideenfindung über diese Szene erfolgte. Es wurde versucht einerseits eine ansprechende und umfangreiche Waldumgebung zu erzeugen. Die Idee, die hinter einer Waldumgebung stand, ist die Darstellung von Fotos und Erinnerungen aus einer Wanderung im Grünen.
 
-Diese Wanderungserinnerung ließ sich für die Autoren am klarsten durch einen Wald abrufen. Ein Wald mit vielen verschiedenen Bäumen und Blumen. Die Szene wurde also entsprechend aufgebaut. Dabei wurde zuerst teilweise auf Beispiele aus dem Unterricht zurückgegriffen. Diese waren aber leider zu detailreich, um auch wirklich auf allen Zielplattformen dargestellt werden zu können. Die Anzahl der Details wurde daher reduziert und auf  .....
+
+
+\begin{figure} [h t]
+    \centering
+    \includegraphics[scale=0.15]{pics/unity-edit-forest.png}
+    \caption{Entwicklung in Unity: Die Wald Szene}
+    \label{fig:unity-edit-forest}
+\end{figure}
+
+
+Diese Wanderungserinnerung ließ sich für die Autoren am klarsten durch einen Wald abrufen. Ein Wald mit vielen verschiedenen Bäumen und Blumen. Die Szene wurde also entsprechend aufgebaut. Dabei wurde zuerst teilweise auf Beispiele aus dem Unterricht zurückgegriffen. Diese waren aber leider zu detailreich, um auch wirklich auf allen Zielplattformen dargestellt werden zu können. Die Anzahl der Details wurde daher reduziert.
+
+Die Wanderung selbst wird durch die Verwendung des Konzepts des Dolly Track (siehe oben) durchgeführt. Die Nutzer erleben einen Waldspaziergang mit Bäumen und Blumen, während sie an den Bildern vorüberschreiten.
 
 
 \subsection{Die Insel-Szene}
 
 Nachdem die umfangreichen Tests der Integration der Unity WebGL in das Frontend und das laufende Backend erfolgreich waren, stand nun der Weg offen für die Entwicklung einer weiteren Ferien-Umgebungs-Szene. Die   
+
+
+\begin{figure} [h t]
+    \centering
+    \includegraphics[scale=0.15]{pics/unity-edit-island.png}
+    \caption{Entwicklung in Unity: Die Insel Szene}
+    \label{fig:unity-edit-island}
+\end{figure}
+
+
 
 \subsection{Erweiterbarkeit}
 \label{subsec:unity-erweiterbarkeit}
