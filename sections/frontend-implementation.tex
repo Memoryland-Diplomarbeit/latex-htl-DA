@@ -12,7 +12,7 @@
 
 \section{Benutzeroberfläche}
 
-\section{Header}
+\subsection{Header}
 
 \begin{figure} [h t]
     \centering
@@ -57,7 +57,7 @@ Diese Konsistenz gewährleistet eine einheitliche Benutzerführung und erleichte
 Navigation innerhalb der Anwendung.
 
 
-\section{Home}
+\subsection{Home}
 
 Das Layout der Startseite ist zentriert ausgerichtet. Im oberen Bereich der Seite befindet 
 sich das Logo in gro\ss{}er Darstellung, ergänzt durch den Namen der Diplomarbeit. Direkt 
@@ -75,7 +75,7 @@ Nutzungsbedingungen-Seite führt. Diese Seite ist unter der Sektion ``About''
 näher erläutert. Alternativ kann dieselbe Seite über den About-Link im Header 
 aufgerufen werden.
 
-\section{About}
+\subsection{About}
 
 Die About-Seite umfasst das Impressum sowie die Nutzungsbedingungen und ist zentriert 
 ausgerichtet.
@@ -122,14 +122,14 @@ wie die Implementierung selbst.
 
 
 
-\section{Memory Store}
+\subsection{Memory Store}
 
 Der Memory Store ist in drei Abschnitte unterteilt und bietet verschiedene Funktionen 
 zur Verwaltung von Fotoalben und Bildern. Die Benutzeroberfläche ist so gestaltet, 
 dass alle wesentlichen Aktionen über interaktive Elemente, wie Buttons und 
 Suchleisten, zugänglich sind.
 
-\subsection{Meine Fotoalben - Das Menü}
+\subsubsection{Meine Fotoalben - Das Menü}
 
 \begin{wrapfigure}{r}{0.4\textwidth}
     \centering
@@ -151,7 +151,7 @@ des ``Album Erstellen''-Buttons endgültig erstellt und der Liste der vorhandene
 Alben hinzugefügt.
 
 
-\subsubsection{Foto Hochladen}
+\emph{Foto Hochladen}
 
 Der zweite Button mit der Bezeichnung ``Foto Hochladen'' ermöglicht das Hochladen 
 einzelner Bilder in zuvor erstellte Alben. Nach Betätigung dieses Buttons öffnet 
@@ -171,7 +171,8 @@ Rand des Pop-ups (siehe \ref{fig:memory-store-foto-hochladen}).
 \end{wrapfigure}
 
 
-\subsubsection{Album Hochladen}
+\emph{Album Hochladen}
+
 
 Der dritte Menüpunkt mit der Bezeichnung ``Album Hochladen'' ermöglicht das 
 Hochladen eines gesamten Albums bzw. eines lokalen Ordners mit mehreren Bildern. 
@@ -206,7 +207,7 @@ Upload fortzusetzen, muss das zuvor ausgewählte Album, von dem die Bilder stamm
 Upload weiterführen. Während sich ein Upload im gestoppten Zustand befindet, ist das 
 Hochladen weiterer Alben nicht möglich bis der laufende Upload abgeschlossen wurde.
 
-\subsection{Alben}
+\subsubsection{Alben}
 
 Dieser Abschnitt enthält eine Suchleiste, mit der der Benutzer nach einem bestimmten 
 Album suchen kann. Während der Eingabe von Zeichen oder Wörtern werden, automatisch 
@@ -235,7 +236,7 @@ Fotos werden damit ebenfalls entfernt.
 Falls ein Album durch Anklicken ausgewählt wird, erscheint sein Inhalt im dritten 
 Abschnitt, der die enthaltenen Fotos anzeigt.
 
-\subsection{Fotos}
+\subsubsection{Fotos}
 
 \begin{figure} [h t]
     \centering
@@ -264,7 +265,7 @@ ohne weitere Bestätigung aus dem Album entfernt.
 Falls ein Foto durch Anklicken ausgewählt wird, öffnet sich eine Ansicht mit dem Bilde, 
 in der der Dateiname zusätzlich angezeigt wird. 
 
-\section{All Worlds}
+\subsection{All Worlds}
 
 Die Erstellung und Verwaltung von Memorylands erfolgt ausschlie\ss{}lich auf der Seite 
 ``All Worlds''. Diese Seite ist in zwei Hauptabschnitte unterteilt, die 
@@ -277,7 +278,7 @@ unterschiedliche Funktionen bieten.
     \label{fig:all-worlds-menu}
 \end{wrapfigure}
 
-\subsection{Meine Erinnerungen}
+\subsubsection{Meine Erinnerungen}
 
 Der erste Abschnitt trägt die Bezeichnung ``Meine Erinnerungen''. Hier befindet 
 sich ein Button mit der Aufschrift ``Memoryland Erstellen''. Durch das Anklicken 
@@ -296,7 +297,7 @@ kann.
     \label{fig:all-worlds-memoryland-erstellen}
 \end{wrapfigure}
 
-\subsection{Memorylands}
+\subsubsection{Memorylands}
 
 Der zweite Abschnitt der Seite trägt den Namen ``Memorylands'' und dient der 
 Verwaltung bereits erstellter Memorylands. Um ein bestimmtes Memoryland schnell 
@@ -328,7 +329,7 @@ Das forderste Symbol ist ein Schraubenschlüssel-Icon. Durch das Anklicken diese
 Symbols öffnet sich ein weiteres Pop-up-Fenster, das zusätzliche Bearbeitungsoptionen 
 bereitstellt. 
 
-\subsection{Memorylands editieren}
+\subsubsection{Memorylands editieren}
 
 In diesem Pop-up-Fenster kann ein bestehendes Fotoalbum aus der eigenen Sammlung 
 ausgewählt werden, aus dem Bilder in das Memoryland eingefügt werden sollen. Um 
@@ -347,7 +348,7 @@ um gezielt nach bestimmten Bildern zu suchen.
     \label{fig:all-worlds-memorylands-editieren}
 \end{figure}
 
-\section{Explore Worlds}
+\subsection{Explore Worlds}
 
 
 \begin{figure} [h t]
@@ -404,7 +405,7 @@ Erinnerungen innerhalb der gewählten Umgebung.
 
 
 
-\section{Toasts}
+\subsection{Toasts}
 
 Toasts sind eine \emph{visuelle Rückmeldung} für Benutzer und zeigen an, ob eine Aktion 
 erfolgreich war, fehlgeschlagen ist oder allgemeine Informationen enthält.  
@@ -426,5 +427,10 @@ Erfolgsmeldung oder eine Fehlermeldung handelt.
 Durch die Farbkennzeichnung wird die Bedeutung der Toast-Nachricht sofort erkennbar. 
 Dies verbessert die Benutzerfreundlichkeit, da Informationen schnell erfasst werden 
 können, ohne dass zusätzliche Interaktionen erforderlich sind.
+
+
+
+
+
 
 
