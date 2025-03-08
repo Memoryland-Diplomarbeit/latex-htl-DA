@@ -46,7 +46,7 @@ Unity bietet eine besondere Form des Build an: WebGL. Unity WebGL ermöglicht da
     \caption{Entwicklung in Unity: Die Unity Build Settings}
     \label{fig:unity-build-settings}
 
-
+    \vspace{1cm}
 
     \centering
     \includegraphics[scale=0.09]{pics/unity-build-webgl-settings.png}
@@ -58,8 +58,11 @@ Unity bietet eine besondere Form des Build an: WebGL. Unity WebGL ermöglicht da
 
 WebGL (Web Graphics Library) ist eine JavaScript-API, die 3D-Grafiken im Browser rendern kann. Sie basiert dabei auf OpenGL, einer ``shading language'', welche die Beschreibung einer virutellen Umgebung übernimmt. Unity nutzt diese API, um die für Webbrowser optimierte Ausführung von Inhalten zu ermöglichen. WebGL in Unity unterstützt viele gängige Plattformen wie Desktop-Browser (Chrome, Firefox, Safari, etc.) und erlaubt es diesem Projekt die Anwendung Memoryland schnell und einfach online zu verbreiten.
 
-Das Projekt wurde mit den in der Abbildung \ref{fig:unity-build-settings} dargestellten Einstellungen für Unity WebGL entwickelt und der erzeugte JavaScript Code wurde in das Frontend\footnote{siehe Abschnitt \ref{sec:frontend-integration-webgl}}
 
+Das Projekt wurde mit den in den Abbildungen \ref{fig:unity-build-settings} und \ref{fig:unity-build-webgl-settings} dargestellten Einstellungen für Unity WebGL entwickelt und der erzeugte JavaScript Code wurde in das Frontend\footnote{im Verzeichnis ``./unity'' siehe Abschnitt \ref{sec:frontend-integration-webgl}} integriert.
+
+
+Die gewählten Einstellungen entsprechen den Empfehlungen der bereits erwähnten Beschreibungen zu Unity WebGL und insbesondere das ``Data Caching'' wurde eingestellt. Leider funktioniert in diesem Projekt derzeit das gewählte Caching nicht perfekt. Unity WebGL lädt die Datendatei laufend neu und dies ist laut verschiedenen Quellen im Netz derzeit ein Fehler in der gewählten Umgebung, der in naher Zukunft behoben werden soll.\footnote{Hauptquellen: \cite{UnityDocsDataCachingIssue} und \cite{UnityDocsDataCachingIssue2}}
 
 
 \section{Implementierung des Unity Projekts}
@@ -72,7 +75,7 @@ Im ersten Schritt wurde versucht die .....
 
 \subsection{Url-Parameter}
 
-
+Es ist notwendig Daten vom Frontend mit Unity auszutauschen. Es gibt derzeit viele entsprechende Mechanismen. Die gewählte Methode vermeidet Verschränkungen zwischen der Implementierung des Frontend (und dessen Services in Richtung Backend) und der Implementierung von den Szenen in Unity.
 
 .....
 
@@ -110,6 +113,7 @@ Diese Wanderungserinnerung ließ sich für die Autoren am klarsten durch einen W
 Nachdem die umfangreichen Tests der Integration der Unity WebGL in das Frontend und das laufende Backend erfolgreich waren, stand nun der Weg offen für die Entwicklung einer weiteren Ferien-Umgebungs-Szene. Die   
 
 \subsection{Erweiterbarkeit}
+\label{subsec:unity-erweiterbarkeit}
 
 Nach dem vorliegenden Konzept kann nun um beliebige Szenen erweitert werden. Die Szenen müssen mehreren Entwicklungsanforderungen und Grundkonzepten folgen. Die größte Freiheit besteht jedoch darin, dass die Szenen zukünftig auch so programmiert werden können, dass man sich beispielsweise selbständig durch die Szene beweigen könnte.
 
