@@ -1,32 +1,203 @@
 \subsection{Redux-Architektur und seine drei Prinzipien}
 
-% Links und info unter: https://2324-4bhif-wmc.github.io/2324-4bhif-wmc-lecture-notes/#_mvvm
+Die steigende Komplexität von SPAs (Single-Page-Anwendungen) führt zu einer zunehmenden Herausforderung 
+beim Zustandsmanagement. Ungeregelte Zustandsänderungen können dazu führen, dass zum Beispiel ein Teil
+des Programmes die Änderungen mitbekommt, ein anderer Teil jedoch nicht. Redux adressiert diese Problematiken 
+durch drei grundlegende Prinzipien:
 
-\subsection{WebAPI Client Service}
-% explain web api (explain toastservice?)
+\textbf{Single Source of Truth:} Der gesamte Anwendungszustand wird in einem einzigen, zentralen ``Store'' als 
+Objekt gespeichert. Dies erleichtert die Serialisierung, Wiederherstellung und Übertragung des Zustands zwischen 
+Server und Client. Zudem ermöglicht es eine vereinfachte Fehlersuche und Debugging. Durch die zentrale Speicherung 
+werden auch komplexe Funktionen wie Undo/Redo leichter implementierbar. (siehe Listing \ref{lst:single-source-of-truth})
+
+\begin{lstlisting}[numbers=left,caption={Single Source of Truth Implementierung in Memoryland},label={lst:single-source-of-truth}]
+    export interface Model {
+        ...
+        memorylands: Memoryland[];
+        searchConfigList: string;
+        uploadAlbumModel: UploadAlbumModel;
+        transaction: Transaction | undefined;
+        loadingAlbums: boolean;
+        ...
+    }
+    ...
+    export const store = new BehaviorSubject<Model>(initialState);
+\end{lstlisting}
+
+\textbf{State ist unveränderlich:} Änderungen am Zustand erfolgen ausschließlich über Aktionen. Eine Aktion 
+ist ein Objekt, das beschreibt, welche Änderung stattfinden soll. Dadurch wird sichergestellt, dass weder die 
+Benutzeroberfläche noch Netzwerk-Callbacks direkt auf den Zustand zugreifen. Dies minimiert potenzielle Race 
+Conditions. Da Aktionen einfache Objekte sind, lassen sie sich protokollieren, speichern und für Debugging-Zwecke 
+erneut abspielen. (siehe Listing \ref{lst:state-management})
+
+\textbf{Zustandsänderungen durch reine Funktionen:} Änderungen am Zustand erfolgen durch sogenannte Reducer. 
+Diese sind reine Funktionen, die den vorherigen Zustand und eine Aktion als Eingabe erhalten und daraus einen 
+neuen Zustand ableiten. Der vorherige Zustand wird nicht direkt verändert. Reducer können modular aufgebaut 
+werden, sodass einzelne Teile des Zustands unabhängig verwaltet werden. (siehe Listing \ref{lst:state-management})
+
+\begin{lstlisting}[numbers=left,caption={State ist unveränderlich Implementierung in Memoryland},label={lst:state-management}]
+    export function set(recipe: (model: Draft<Model>) => void) {
+        const nextState = produce(store.value, recipe);
+        store.next(nextState);
+    }
+
+    set(model => {
+        model.selectedMemorylandType = id;
+    });
+\end{lstlisting}
+
+Durch diese Prinzipien wird eine nachvollziehbare Zustandsverwaltung ermöglicht.
+\footnote{Alle Informationen zu der Redux-Architektur und seinen drei Prinzipien stammen von \cite{DAR} \& \cite{DARa}}
 
 \subsection{Image Previews}
-% explain image cropper -> preview image
+Die Methode ``createImagePreview'' (siehe Listing \ref{lst:method-create-image-preview}) ermöglicht die Erzeugung 
+einer Image-Preview mit einem festen Seitenverhältnis von 16:9. Dabei wird das ursprüngliche Bild in ein 
+``canvas''-Element gezeichnet und auf eine feste Größe skaliert. Die Methode gibt eine ``Promise<string>'' zurück, 
+die nach erfolgreicher Verarbeitung eine Data-URL des generierten Bildes liefert.
 
-\subsection{All Worlds Component}
-% explain memoryland all worlds component
-% create memoryland modal
+Data-URLs ermöglichen das Einbetten kleiner Dateien direkt in Dokumente mit dem Präfix data:. Sie bestehen 
+aus einem MIME-Typ, optional einem base64-Token für binäre Daten und den eigentlichen Daten. Diese URLs sind 
+besonders nützlich für das Einfügen von Text, Bildern oder HTML-Inhalten in Webseiten. Bei uns dienen sie dazu,
+dass wir die Previews nicht ständig neu generieren müssen. 
+\footnote{Alle Informationen zu Data-URLs stammen von \cite{MozillaFoundationa}}
 
-\subsection{Edit Memoryland Config Component}
-% explain edit memoryland config component
+Zunächst wird ein ``Image''-Objekt erstellt, das die Bildquelle (``imageUrl'') lädt. Nach dem Laden des Bildes wird ein 
+``canvas''-Element erzeugt, dessen Kontext (``ctx'') für das Zeichnen erforderlich ist. Falls dieser nicht verfügbar 
+ist, wird die Promise mit einer Fehlermeldung abgelehnt.
 
-\subsection{Explore Worlds Component}
-% explain memoryland explore worlds component
+Das Bild wird basierend auf dem Zielseitenverhältnis (16:9) zugeschnitten. Falls das ursprüngliche Bild ein anderes 
+Seitenverhältnis hat, werden entweder Breite oder Höhe entsprechend angepasst, sodass das Bild möglichst viel vom 
+ursprünglichen Inhalt beibehält. Dies erfolgt durch Berechnung eines geeigneten Ausschnitts (``cropWidth'' und ``cropHeight'') 
+sowie eines Offsets (``offsetX'', ``offsetY''), um das Bild mittig zu beschneiden.
 
-\subsection{Memoryland List Component}
+Anschließend wird das Bild in den ``canvas'' gezeichnet und die erzeugte Vorschau in das gewünschte Format 
+(``image/png'' oder ``image/jpeg'') konvertiert. Das Ergebnis wird als Data-URL zurückgegeben. Falls ein Fehler 
+auftritt, etwa beim Laden des Bildes, wird die Promise entsprechend abgelehnt.
 
-% explain memoryland list component
+Diese Methode ermöglicht eine einheitliche Bildvorschau mit festem Seitenverhältnis, was es Memoryland-Benutzer:innen
+leichter macht, das Programm zu bedienen und ihre Bilder zu erkennen.
+
+\begin{lstlisting}[numbers=left,caption={Methode createImagePreview},label={lst:method-create-image-preview}]
+    private readonly height: number = 9*6;
+    private readonly width: number = 16*6;
+  
+    createImagePreview(imageUrl: string, isJpg: boolean): Promise<string> {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = 'Anonymous';
+        img.src = imageUrl;
+        img.onload = () => {
+          const canvas = document
+            .createElement('canvas');
+  
+          const ctx = canvas
+            .getContext('2d');
+  
+          if (!ctx) {
+            reject('Error getting canvas context');
+            return;
+          }
+  
+          canvas.width = this.width;
+          canvas.height = this.height;
+  
+          const targetAspectRatio = 16 / 9;
+          const imgAspectRatio = img.width / img.height;
+  
+          let cropWidth = img.width;
+          let cropHeight = img.height;
+          let offsetX = 0;
+          let offsetY = 0;
+  
+          if (imgAspectRatio > targetAspectRatio) {
+            cropHeight = img.height;
+            cropWidth = img.height * targetAspectRatio;
+            offsetX = (img.width - cropWidth) / 2;
+          } else {
+            cropWidth = img.width;
+            cropHeight = img.width / targetAspectRatio;
+            offsetY = (img.height - cropHeight) / 2;
+          }
+  
+          ctx.drawImage(
+            img,
+            offsetX,
+            offsetY,
+            cropWidth,
+            cropHeight,
+            0,
+            0,
+            this.width,
+            this.height
+          );
+  
+          let contentType: string = 'image/png';
+  
+          if (isJpg) {
+            contentType = 'image/jpeg';
+          }
+  
+          const previewDataUrl = canvas
+            .toDataURL(contentType);
+  
+          resolve(previewDataUrl);
+        };
+        img.onerror = reject;
+      });
+    }
+\end{lstlisting}
 
 \subsection{Integration der Unity WebGL}
 \label{sec:frontend-integration-webgl}
 
-% integration des code im Verzeichnis ./unity
-% integration als iframe in den code der entsprechenden seite
+Im Projekt wurden die kompilierten Unity WebGL-Dateien im public-Ordner der Angular-Anwendung abgelegt. Der 
+public-Ordner dient dazu, statische Dateien wie Bilder, CSS-Dateien oder JavaScript-Dateien zu speichern, 
+die vom Entwicklungsserver als solche bereitgestellt und unverändert in das Build-Verzeichnis übernommen werden. 
+Diese Struktur ermöglicht es, dass sämtliche erforderlichen Assets, die für die Ausführung der Anwendung notwendig 
+sind, ohne weitere Modifikationen verwendet werden. Die Unity WebGL-Dateien befinden sich dabei im Unterordner 
+./unity, welcher die index.html-Datei zusammen mit den dazugehörigen JavaScript- und Mediendateien enthält.
+\footnote{Alle Informationen zur Struktur von Angular und zum public-Ordner Folder stammen von \cite{Google}}
 
+Für den Zugriff auf die Unity-Anwendung innerhalb der Angular-Anwendung wird das iframe-Element verwendet. (siehe Listing \ref{lst:unity-iframe-html-code}) 
+Das iframe-Tag lädt die index.html-Datei des Unity-Projekts, welche sich im ./unity-Ordner des public-Verzeichnisses 
+befindet. Diese Vorgehensweise erlaubt es, die Unity-Anwendung in die Benutzeroberfläche der Angular-Anwendung zu 
+integrieren, ohne dass eine vollständige Umstrukturierung oder umfangreiche Anpassungen erforderlich sind. Durch 
+die Verwendung von iframes wird der Unity-Inhalt isoliert von der Hauptanwendung geladen, wodurch eine klare 
+Trennung zwischen der Angular-Frontend-Anwendung und dem Unity-WebGL-Projekt besteht. Diese Methode hat den 
+Vorteil, dass die Unity-Anwendung unabhängig von der Angular-Struktur läuft, was eine einfache Handhabung und 
+Wartung des Projekts ermöglicht.
+\footnote{Alle Informationen zu Iframes stammen von \cite{MozillaFoundationb}}
+
+\begin{lstlisting}[numbers=left,caption={Iframe-Zugriff auf Unity},label={lst:unity-iframe-html-code}]
+<iframe
+    width="100%"
+    height="700"
+    [src]="safeUrl">
+</iframe>
+\end{lstlisting}
+
+Die safeUrl-Variable (siehe Listing \ref{lst:unity-iframe-html-code}) ist ein SafeResourceUrl-Typ, 
+welcher von Angulars DomSanitizer zur sicheren Handhabung von URLs verwendet wird. In der Klasse 
+ExploreWorldsPageComponent wird safeUrl als null initialisiert und später gesetzt, sobald ein 
+gültiger Token erhalten wird.
+
+Wenn es Änderungen des Tokens gibt, wird eine URL mit dem erhaltenen Token erstellt. Diese URL wird durch den 
+DomSanitizer verarbeitet, um sie sicher zu machen, bevor sie in das iframe eingefügt wird. Dabei wird 
+überprüft, ob der Token gültig ist. Wenn ja, wird die URL mit dem Token und dem Server-URI gebaut und durch 
+bypassSecurityTrustResourceUrl als sichere URL markiert. Diese Methode ist erforderlich, da Angular URLs, 
+die in einem iframe eingebettet werden, aus Sicherheitsgründen standardmäßig nicht vertraut. (siehe Listing \ref{lst:url-sanitizer-code})
+
+\begin{lstlisting}[numbers=left,caption={URL Sanitizer},label={lst:url-sanitizer-code}]
+    this.token.subscribe(token => {
+        let myToken = token.token;
+      
+        if (myToken !== null && myToken !== undefined && myToken !== "") {
+          this.safeUrl = this.sanitizer
+            .bypassSecurityTrustResourceUrl(`/unity/index.html?token=${myToken}&server=${environment.apiConfig.uri}`);
+        } else {
+          this.safeUrl = null;
+        }
+      });      
+\end{lstlisting}
 
 
