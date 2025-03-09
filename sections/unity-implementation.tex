@@ -4,7 +4,7 @@
 
 \subsection{Unity}
 
-Unity ist eine leistungsstarke Laufzeit- und Entwicklungsumgebung (\Gls{ide}) für Spiele, auch als Spiel-Engine (bzw. Gameengine) bekannt, die von Unity Technologies mit Hauptsitz in San Francisco entwickelt wurde. Diese vielseitige Plattform ermöglicht die Erstellung von Spielen und interaktiven 3D-Grafik-Anwendungen für verschiedene Zielplattformen, darunter PCs (Windows und Mac), Spielkonsolen, mobile Geräte und Webbrowser.\footnote{Alle Infos zu Unity stammen von: \cite{UnityDocs}}
+\textbf{Unity} ist eine Entwicklungsumgebung (\Gls{ide}) für Spiele, auch als \textbf{Spiel-Engine (bzw. Gameengine)} bekannt, die von Unity Technologies mit Hauptsitz in San Francisco entwickelt wurde. Diese vielseitige Plattform ermöglicht die Erstellung von Spielen und interaktiven 3D-Grafik-Anwendungen für verschiedene Zielplattformen, darunter PCs (Windows und Mac), Spielkonsolen, mobile Geräte und Webbrowser.\footnote{Alle Infos zu Unity stammen von: \cite{UnityDocs}}
 
 \begin{figure} [h t]
     \centering
@@ -14,31 +14,32 @@ Unity ist eine leistungsstarke Laufzeit- und Entwicklungsumgebung (\Gls{ide}) f�
 \end{figure}
 
 
+Über den \textbf{Unity-Hub} (siehe \ref{fig:unity-hub}) steigt man in den Unity Editor (die IDE, siehe \ref{fig:unity-ide}) ein. Diese Umgebung ist gängigen 3D-Animationsprogrammen und 3D-Entwicklungs-umgebungen nachempfunden. Die Ansicht in der Mitte stellt die aktuelle Sicht auf die Szene dar. Alle gewählten und in der Szene platzierten Objekte befinden sich links in der Hierarchie. Diese wird vor allem für die Auswahl der zu ändernden Objekte verwendet. Auf der rechten Seite befindet sich der Inspektor. Mit seiner Hilfe verändert man einzelne Attribute der sogenannten GameObjects. Es gibt einfach zu ändernde Attribute und veränderliche bzw. durch Programme veränderte Attribute. Die Kombination aus beidem macht Unity so mächtig.\footnote{Alle Infos zum Unity Editor finden sich auch in \cite{UnityDocsEditor}}
+
+
 \begin{figure} [h t]
     \centering
-    \includegraphics[scale=0.12]{pics/unity-ide.png}
+    \includegraphics[scale=0.1]{pics/unity-ide.png}
     \caption{Entwicklung in Unity: Die Unity IDE}
     \label{fig:unity-ide}
 \end{figure}
 
 
-Über den Unity-Hub (siehe \ref{fig:unity-hub}) steigt man in den Unity Editor (die IDE, siehe \ref{fig:unity-ide}) ein. Diese Umgebung ist gängigen 3D-Animationsprogrammen und 3D-Entwicklungs-umgebungen nachempfunden. Die Ansicht in der Mitte stellt die aktuelle Sicht auf die Szene dar. Alle gewählten und in der Szene platzierten Objekte befinden sich links in der Hierarchie. Diese wird vor allem für die Auswahl der zu ändernden Objekte verwendet. Auf der rechten Seite befindet sich der Inspektor. Mit seiner Hilfe verändert man einzelne Attribute der sogenannten GameObjects. Es gibt einfach zu ändernde Attribute und veränderliche bzw. durch Programme veränderte Attribute. Die Kombination aus beidem macht Unity so mächtig.\footnote{Alle Infos zum Unity Editor finden sich auch in \cite{UnityDocsEditor}}
 
-
-Der Entschluss diese Technologie zu verwenden fiel vor allem, weil diese Technologie bereits frühzeitig in unserem Lehrplan enthalten ist und damit umfangreiche Kenntnisse vorhanden waren. Der andere, wesentliche Grund liegt in der Erweiterbarkeit der Umgebung die man in Unity schafft. Die Entwicklungsumgebung ist dergestalt, dass man von Beginn an mit mehreren Scenen im Entwurf gearbeitet hat. Jede Szene (Scene) in Unity spiegelt dabei einen Memorylandtype\footnote{siehe dazu vor allem Abschnitt \ref{sec:memoryland-types}}
+Der Entschluss diese Technologie zu verwenden fiel vor allem, weil diese Technologie bereits frühzeitig in unserem Lehrplan enthalten ist und damit umfangreiche Kenntnisse vorhanden waren. Der andere, wesentliche Grund liegt in der \textbf{Erweiterbarkeit} der Umgebung die man in Unity schafft. Die Entwicklungsumgebung ist dergestalt, dass man von Beginn an mit mehreren Scenen im Entwurf gearbeitet hat. Jede Szene (Scene) in Unity spiegelt dabei einen Memorylandtype\footnote{siehe dazu vor allem Abschnitt \ref{sec:memoryland-types}}
 
 
 
 \subsection{Visual Studio 2022 und Code}
 
-Der Unity Editor integriert sich mit verschiedenen Source Code Editoren. Die Entwicklung der entsprechenden Klassen weiter unten erfolgte teils in Windows mit Visual Studio 2022 und später auch unter Ubuntu mit Visual Studio Code und anderen Editoren. Die Editoren unterscheiden sich in der Unterstützung der entsprechenden Intellisense und Syntax-Erkennung. Generell ist aber zu sagen, dass die Entwicklung unter Windows angenehmer ist, da hier die volle Bandbreite einer Umgebung zur Verfügung steht, die einerseits die Bibliotheken kennt und die Syntax prüft.
+Der \textbf{Unity Editor} integriert sich mit verschiedenen Source Code Editoren (\Glspl{ide}). Die Entwicklung der entsprechenden Klassen weiter unten erfolgte teils in Windows mit Visual Studio 2022 und später auch unter Ubuntu mit Visual Studio Code und anderen Editoren. Die Editoren unterscheiden sich in der Unterstützung der entsprechenden Intellisense und Syntax-Erkennung. Generell ist aber zu sagen, dass die Entwicklung unter Windows angenehmer ist, da hier die volle Bandbreite einer Umgebung zur Verfügung steht, die einerseits die Bibliotheken kennt und die Syntax prüft.
 
 
 
 \section{Unity WebGL}
 \label{sec:unity-webgl}
 
-Unity bietet eine besondere Form des Build an: WebGL. Unity WebGL ermöglicht damit die Spiele und interaktiven Anwendungen, die man mit Unity erstellt hat, direkt im Webbrowser aufzurufen, ohne dass zusätzliche Plugins oder Software installiert werden müsste.\footnote{Alle Infos zu Unity WebGL stammen von \cite{UnityDocsWebGL} bzw. \cite{WebGL}}
+\textbf{Unity} bietet eine besondere Form des Build an: WebGL. \textbf{Unity WebGL} ermöglicht damit die Spiele und interaktiven Anwendungen, die man mit Unity erstellt hat, direkt im Webbrowser aufzurufen, ohne dass zusätzliche Plugins oder Software installiert werden müsste.\footnote{Alle Infos zu Unity WebGL stammen von \cite{UnityDocsWebGL} bzw. \cite{WebGL}}
 
 
 \begin{wrapfigure}{r}{0.5\textwidth}
@@ -57,10 +58,10 @@ Unity bietet eine besondere Form des Build an: WebGL. Unity WebGL ermöglicht da
 
 
 
-WebGL (Web Graphics Library) ist eine JavaScript-API, die 3D-Grafiken im Browser rendern kann. Sie basiert dabei auf OpenGL, einer ``shading language'', welche die Beschreibung einer virutellen Umgebung übernimmt. Unity nutzt diese API, um die für Webbrowser optimierte Ausführung von Inhalten zu ermöglichen. WebGL in Unity unterstützt viele gängige Plattformen wie Desktop-Browser (Chrome, Firefox, Safari, etc.) und erlaubt es diesem Projekt die Anwendung Memoryland schnell und einfach online zu verbreiten.
+\textbf{WebGL (Web Graphics Library)} ist eine JavaScript-API, die 3D-Grafiken im Browser rendern kann. Sie basiert dabei auf OpenGL, einer ``shading language'', welche die Beschreibung einer virutellen Umgebung übernimmt. Unity nutzt diese API, um die für Webbrowser optimierte Ausführung von Inhalten zu ermöglichen. WebGL in Unity unterstützt viele gängige Plattformen wie Desktop-Browser (Chrome, Firefox, Safari, etc.) und erlaubt es diesem Projekt die Anwendung Memoryland schnell und einfach online zu verbreiten.
 
 
-Das Projekt wurde mit den in den Abbildungen \ref{fig:unity-build-settings} und \ref{fig:unity-build-webgl-settings} dargestellten Einstellungen für Unity WebGL entwickelt und der erzeugte JavaScript Code wurde in das Frontend\footnote{im Verzeichnis ``./unity'' siehe Abschnitt \ref{sec:frontend-integration-webgl}} integriert.
+Das Projekt wurde mit den in den Abbildungen \ref{fig:unity-build-settings} und \ref{fig:unity-build-webgl-settings} dargestellten \textbf{Einstellungen} für Unity WebGL entwickelt und der erzeugte JavaScript Code wurde in das Frontend\footnote{im Verzeichnis ``./unity'' siehe Abschnitt \ref{sec:frontend-integration-webgl}} integriert.
 
 
 Die gewählten Einstellungen entsprechen den Empfehlungen der bereits erwähnten Beschreibungen zu Unity WebGL und insbesondere das ``Data Caching'' wurde eingestellt. Leider funktioniert in diesem Projekt derzeit das gewählte Caching nicht perfekt. Unity WebGL lädt die Datendatei laufend neu und dies ist laut verschiedenen Quellen im Netz derzeit ein Fehler in der gewählten Umgebung, der in naher Zukunft behoben werden soll.\footnote{Hauptquellen: \cite{UnityDocsDataCachingIssue} und \cite{UnityDocsDataCachingIssue2}}
@@ -77,7 +78,7 @@ Im ersten Schritt wurde versucht die ..... \emph{OFFEN} ... WEITER, TODO
 \subsection{Url-Parameter}
 \label{subsec:unity-url-parameter}
 
-Es ist notwendig Daten vom Frontend mit Unity auszutauschen. Es gibt derzeit viele entsprechende Mechanismen. Die gewählte Methode vermeidet Verschränkungen zwischen der Implementierung des Frontend (und dessen Services in Richtung Backend) und der Implementierung von den Szenen in Unity.
+Es ist notwendig \emph{Daten vom Frontend mit Unity} auszutauschen. Es gibt derzeit viele entsprechende Mechanismen. Die gewählte \textbf{Methode über URL-Parameter} vermeidet Verschränkungen zwischen der Implementierung des Frontend (und dessen Services in Richtung Backend) und der Implementierung von den Szenen in Unity.
 
 
 Für den gewählten Prozess der \emph{Übergabe der Parameter} über den IFrame mit Hilfe von herkömmlichen Url-Parametern (siehe Listing \ref{lst:unity-url-parameter-in-action}) gab es bereits mehrere Realisierungen verfügbar. Diese verwendeten alle eine Form der Verschränkung von JavaScript Code mit Unity C\# Code. 
