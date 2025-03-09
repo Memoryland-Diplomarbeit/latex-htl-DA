@@ -69,8 +69,7 @@ Die gewählten Einstellungen entsprechen den Empfehlungen der bereits erwähnten
 
 \section{Implementierung des Unity Projekts}
 
-Die Entwicklung des Unity Projektes ist der grö\ss{}
-
+Die Entwicklung des \textbf{Unity Projektes} ist der grö\ss{}te Teil der Frontend Entwicklung. Die Umsetzung enthielt einerseits den Datenaustausch zwischen Unity und dem Frontend, Unity und dem Backend, Unity und dem Azure Storage und zu guter Letzt, die Darstellung der gewünschten Szenen. Die Memorylands sollten detailreich aber nicht langsam, ansehnlich aber nicht zu realistisch und auch einfach zu bedienen sein. Wenn der Nutzer ein Memoryland seinem digital-ungeübten Verwandten schickt, soll dieser sich einfach zurücklehen können und das Erlebnis genie\ss{}en.
 
 
 
@@ -606,6 +605,24 @@ Mehrere Palmen (``Palm Trees'') und Steine wurden auf der Insel in verschiedenen
 
 
 Die Wanderung selbst wird durch die Verwendung des Konzepts des Dolly Track (siehe Abschnitt \ref{subsec:unity-dolly-track}) durchgeführt. Die Nutzer erleben einen Inselspaziergang mit Sonne, Strand und Meer, während sie an den Bildern ihrer Erinnerungen vorüberschreiten.
+
+
+\begin{figure} [h t]
+    \centering
+    \includegraphics[scale=0.15]{pics/unity-island-light-setting.png}
+    \caption{Die Panels und die Spotlights in der Hierarchie}
+    \label{fig:unity-island-light-setting}
+
+    \vspace{1cm}
+
+    \centering
+    \includegraphics[scale=0.15]{pics/unity-island-light-setting-detail.png}
+    \caption{Spezielle Einstellungen für die Spotlights}
+    \label{fig:unity-island-light-setting-detail}
+\end{figure}
+
+
+Durch das spezielle Setting im Sonnenuntergang war es zusätzlich notwendig die Bilder \textbf{extra zu beleuchten}. Diese Beleuchtung wurde durch einzelne Spotlights realisiert. Die Planes für die Bilder wurden einer eigenen Layer hinzugefügt und die Spotlights beleuchten nur Elemente dieser Layer. Die beiden Abbildungen \ref{fig:unity-island-light-setting} und \ref{unity-island-light-setting-detail} zeigen die dafür gewählten Einstellungen.
 
 
 \subsection{Erweiterbarkeit}
