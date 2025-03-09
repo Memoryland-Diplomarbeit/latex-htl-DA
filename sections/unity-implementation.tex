@@ -563,21 +563,30 @@ Das Projekt enthält bereits zwei vordefinierte Szenen:
 \subsection{Der Dolly Track}
 \label{subsec:unity-dolly-track}
 
-Ein Dolly Track ist ein Hilfsmittel, um den automatischen Durchlauf durch die Szene zu gestalten. Der gewählte Durchlauf bei der Insel-Szene kann in der Abbildung \ref{fig:unity-dolly-track} betrachtet werden.
+Ein \textbf{Dolly Track} ist ein Hilfsmittel, um den automatischen Durchlauf durch die Szene zu gestalten. Der gewählte Durchlauf bei der Insel-Szene kann in der Abbildung \ref{fig:unity-dolly-track} betrachtet werden.
 
 
 \begin{figure} [h t]
     \centering
     \includegraphics[scale=0.15]{pics/unity-dolly-track.png}
-    \caption{Entwicklung in Unity: Die Insel Szene}
+    \caption{Entwicklung in Unity: Der Dolly Track}
     \label{fig:unity-dolly-track}
 \end{figure}
 
+Der gewählte Dolly Track in der Abbildung besteht aus \textbf{8 Punkten}, von 0 bis 7 durchnummeriert und diese sind in allen drei Dimensionen spezifiziert. Diese Punkte werden mit einem Spline verbunden. Das stellt nun einen möglichen Weg dar, den die Kamera befahren kann. 
 
 
-..... \emph{OFFEN} WEITER, TODO
+\begin{wrapfigure}{r}{0.5\textwidth}
+    \centering
+    \includegraphics[scale=0.15]{pics/unity-cinemachine-dolly-cart.png}
+    \caption{Entwicklung in Unity: Die Cinemachine Dolly Cart}
+    \label{fig:unity-cinemachine-dolly-cart}
+\end{wrapfigure}
 
 
+Diesem Objekt wird nun ein Objekt vom Typ \textbf{Cinemachine Dolly Cart} angehängt und dieses so konfiguriert, dass es den Dolly Track abschreitet. Die Konfiguration lässt dabei nur eine Einheitsgeschwindigkeit (``Speed'') zu, dies ist für die ersten Szenen völlig ausreichend. Die Abbildung \ref{fig:unity-cinemachine-dolly-cart} enthält die entsprechende Konfiguration.
+
+Am Ende reicht es dem Pfad eine \textbf{Virtuelle Kamera} anzuhängen, die der aktuellen Position einfach folgt. Diese Kamera muss ``Live'' geschalten werden, alle anderen Einstellungen bleiben beim Standard.
 
 
 
@@ -646,8 +655,8 @@ Nach dem vorliegenden Konzept kann nun um beliebige Szenen erweitert werden. Die
 
 Erste Voraussetzung ist die \textbf{Darstellung der Bilder} mit Hilfe der bereits erwähnten Planes. Diese Planes verwenden das Script ``ImageLoader''\footnote{siehe dazu \ref{subsec:unity-image-loader}}, um die dann bereits geladenen Texturen aus dem SceneChanger zu holen. Damit ist der Aufwand gering, um mehr oder auch weniger Bilder in einer Szene zu integrieren.
 
-Die zweite Voraussetzung ist die Integration der Startup
+Die zweite Voraussetzung ist die Integration der \textbf{``SceneChanger'' Prefab}\footnote{siehe auch \ref{subsec:unity-startup-scene}} welche benötigt wird, damit die zuvor geladenen Texturen auch in der aktuellen Szene zur Verfügung stehen.
 
+Die dritte und letzte Voraussetzung sind zwei einfache Schritte. Die Szene muss der Namenskonvention entsprechend aus dem technischen Namen des MemorylandTyps und dem Text \textbf{``Scene''} bestehen. Also beispielsweise ``mountainScene'', um eine Szene in einer Berglandschaft zu benennen. Diese Szene muss schlussendlich im Unity WebGL Build in den Settings\footnote{siehe hierzu \ref{sec:unity-webgl} und Abbildung \ref{fig:unity-build-settings} oben} hinzugefügt werden, damit es im Build auch enthalten ist, sodass die ``StartupScene'' sie aktivieren kann.
 
-..... \emph{OFFEN} WEITER, TODO
 
