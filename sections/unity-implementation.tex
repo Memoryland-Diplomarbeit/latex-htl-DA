@@ -563,6 +563,18 @@ Das Projekt enthält bereits zwei vordefinierte Szenen:
 \subsection{Der Dolly Track}
 \label{subsec:unity-dolly-track}
 
+Ein Dolly Track ist ein Hilfsmittel, um den automatischen Durchlauf durch die Szene zu gestalten. Der gewählte Durchlauf bei der Insel-Szene kann in der Abbildung \ref{fig:unity-dolly-track} betrachtet werden.
+
+
+\begin{figure} [h t]
+    \centering
+    \includegraphics[scale=0.15]{pics/unity-dolly-track.png}
+    \caption{Entwicklung in Unity: Die Insel Szene}
+    \label{fig:unity-dolly-track}
+\end{figure}
+
+
+
 ..... \emph{OFFEN} WEITER, TODO
 
 
@@ -592,9 +604,6 @@ Die Wanderung selbst wird durch die Verwendung des Konzepts des \textbf{Dolly Tr
 
 Nachdem die umfangreichen Tests der Integration der Unity WebGL in das Frontend und das laufende Backend erfolgreich waren, stand nun der Weg offen für die Entwicklung einer \textbf{weiteren Ferien-Umgebungs-Szene}. Die \textbf{Insel-Szene} war mit dem Erlebnis einer \textbf{sandigen Insel mit Sonne, Strand und Meer bei Sonnenuntergang} für die Entwickler die logischste Wahl.   
 
-Mehrere Palmen (``Palm Trees'') und Steine wurden auf der Insel in verschiedenen Winkeln und Punkten so platziert, dass der Eindruck einer Südseeinsel entsteht. Die Sonne wurde so platziert, dass es sich um einen Sonnenauf- bzw. -untergang handeln könnte. Einige kleinere Elemente, wie bspw. dürre Gräser wurden in der nähe des Meeres platziert. Das Meer selbst ist auch ein umfangreiches Prefab namens ``Detailed Water''. 
-
-
 
 \begin{figure} [h t]
     \centering
@@ -604,10 +613,10 @@ Mehrere Palmen (``Palm Trees'') und Steine wurden auf der Insel in verschiedenen
 \end{figure}
 
 
-Die Wanderung selbst wird durch die Verwendung des Konzepts des Dolly Track (siehe Abschnitt \ref{subsec:unity-dolly-track}) durchgeführt. Die Nutzer erleben einen Inselspaziergang mit Sonne, Strand und Meer, während sie an den Bildern ihrer Erinnerungen vorüberschreiten.
+Mehrere Palmen (``Palm Trees'') und Steine wurden auf der Insel in verschiedenen Winkeln und Punkten so platziert, dass der Eindruck einer Südseeinsel entsteht. Die Sonne wurde so platziert, dass es sich um einen Sonnenauf- bzw. -untergang handeln könnte. Einige kleinere Elemente, wie bspw. dürre Gräser wurden in der nähe des Meeres platziert. Das Meer selbst ist auch ein umfangreiches Prefab namens ``Detailed Water''. 
 
 
-\begin{figure} [h t]
+\begin{wrapfigure}{r}{0.5\textwidth}
     \centering
     \includegraphics[scale=0.15]{pics/unity-island-light-setting.png}
     \caption{Die Panels und die Spotlights in der Hierarchie}
@@ -619,7 +628,12 @@ Die Wanderung selbst wird durch die Verwendung des Konzepts des Dolly Track (sie
     \includegraphics[scale=0.15]{pics/unity-island-light-setting-detail.png}
     \caption{Spezielle Einstellungen für die Spotlights}
     \label{fig:unity-island-light-setting-detail}
-\end{figure}
+\end{wrapfigure}
+
+
+
+Die Wanderung selbst wird durch die Verwendung des Konzepts des Dolly Track (siehe Abschnitt \ref{subsec:unity-dolly-track}) durchgeführt. Die Nutzer erleben einen Inselspaziergang mit Sonne, Strand und Meer, während sie an den Bildern ihrer Erinnerungen vorüberschreiten.
+
 
 
 Durch das spezielle Setting im Sonnenuntergang war es zusätzlich notwendig die Bilder \textbf{extra zu beleuchten}. Diese Beleuchtung wurde durch einzelne Spotlights realisiert. Die Planes für die Bilder wurden einer eigenen Layer hinzugefügt und die Spotlights beleuchten nur Elemente dieser Layer. Die beiden Abbildungen \ref{fig:unity-island-light-setting} und \ref{unity-island-light-setting-detail} zeigen die dafür gewählten Einstellungen.
@@ -630,7 +644,9 @@ Durch das spezielle Setting im Sonnenuntergang war es zusätzlich notwendig die 
 
 Nach dem vorliegenden Konzept kann nun um beliebige Szenen erweitert werden. Die Szenen müssen mehreren Entwicklungsanforderungen und Grundkonzepten folgen. Die größte Freiheit besteht jedoch darin, dass die Szenen zukünftig auch so programmiert werden können, dass man sich beispielsweise selbständig durch die Szene beweigen könnte.
 
-Erste Voraussetzung ist die Darstellung der Bilder mit Hilfe der bereits .......
+Erste Voraussetzung ist die \textbf{Darstellung der Bilder} mit Hilfe der bereits erwähnten Planes. Diese Planes verwenden das Script ``ImageLoader''\footnote{siehe dazu \ref{subsec:unity-image-loader}}, um die dann bereits geladenen Texturen aus dem SceneChanger zu holen. Damit ist der Aufwand gering, um mehr oder auch weniger Bilder in einer Szene zu integrieren.
+
+Die zweite Voraussetzung ist die Integration der Startup
 
 
 ..... \emph{OFFEN} WEITER, TODO
