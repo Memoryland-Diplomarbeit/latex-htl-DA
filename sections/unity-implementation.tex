@@ -81,7 +81,8 @@ Im ersten Schritt wurde versucht die ..... \emph{OFFEN} ... WEITER, TODO
 Es ist notwendig \emph{Daten vom Frontend mit Unity} auszutauschen. Es gibt derzeit viele entsprechende Mechanismen. Die gewählte \textbf{Methode über URL-Parameter} vermeidet Verschränkungen zwischen der Implementierung des Frontend (und dessen Services in Richtung Backend) und der Implementierung von den Szenen in Unity.
 
 
-Für den gewählten Prozess der \emph{Übergabe der Parameter} über den IFrame mit Hilfe von herkömmlichen Url-Parametern (siehe Listing \ref{lst:unity-url-parameter-in-action}) gab es bereits mehrere Realisierungen verfügbar. Diese verwendeten alle eine Form der Verschränkung von JavaScript Code mit Unity C\# Code. 
+Für den gewählten Prozess der \emph{Übergabe der Parameter} über den IFrame mit Hilfe von herkömmlichen URL-Parametern (siehe Listing \ref{lst:unity-url-parameter-in-action}) gab es bereits mehrere Realisierungen und Erfahrungsberichte. Diese verwendeten alle eine Form der Verschränkung von JavaScript Code mit Unity C\# Code. 
+
 
 
 \begin{lstlisting}[numbers=left,caption={IFrame for Unity in Frontend},label={lst:unity-url-parameter-in-action}]
@@ -89,11 +90,12 @@ this.safeUrl = this.sanitizer
           .bypassSecurityTrustResourceUrl(`/unity/index.html?token=${myToken}& server=${environment.apiConfig.uri}`);
 \end{lstlisting}
 
-Es wurde eine fortgeschrittene Entwicklung einer \emph{UrlParameter}-Klasse aus dem Projekt übernommen und erweitert.\footnote{Der Originalcode wurde von \cite{UrlParameter} übernommen und um eine weitere Funktion erweitert.} Die enthaltenen Funktionen sahen nur nummerische Parameter vor und so war die gewählte Übergabe eines GUID-Token aus dem Frontend vorerst nicht möglich. Die Funktion ``GetString'' (siehe Listing \ref{lst:unity-url-parameter}) wurde daher in die Klasse ``DictionaryStringStringExt'' eingefügt. Es waren ansonsten keine weiteren Änderungen notwendig.
 
-Das vorhandene Singleton-Skript ermöglicht einen \emph{einfachen Zugriff} auf alle URL-Parameter und -Komponenten in einer WebGL-Build-Anwendung. Es muss hierzu eine jslib-Datei verwendet werden, die den JavaScript-Teil aktiviert. Dieses Skript wird beim Importieren in ein Projekt automatisch eine jslib-Datei in den Plugins-Ordner extrahieren, die den Namen „URLParameters.jslib“ trägt.
+Es wurde eine fortgeschrittene Entwicklung einer \textbf{UrlParameter}-Klasse aus dem Projekt übernommen und erweitert.\footnote{Der Originalcode wurde von \cite{UrlParameter} übernommen und um eine weitere Funktion erweitert.} Die enthaltenen Funktionen sahen nur nummerische Parameter vor und so war die gewählte Übergabe eines GUID-Token aus dem Frontend vorerst nicht möglich. Die Funktion ``GetString'' (siehe Listing \ref{lst:unity-url-parameter}) wurde daher in die Klasse \textbf{``DictionaryStringStringExt''} eingefügt. Es waren ansonsten keine weiteren Änderungen notwendig.
 
-Um auf die verschiedenen URI-Teile zuzugreifen, kann man einfach die statischen Methoden dieser Klasse verwenden. Die verfügbaren Eigenschaften sind Protocol, Hostname, Port, Pathname, Search, Hash sowie Host, Origin und Href. Damit kann man mithilfe der Funktion ``URLParameters.GetSearchParameters()'' an beliebiger Stelle in Unity ein Dictionary mit den Url-Parametern laden.
+Das vorhandene \textbf{Singleton-Skript} ermöglicht einen \textbf{einfachen Zugriff} auf alle URL-Parameter und -Komponenten in einer WebGL-Build-Anwendung. Es muss hierzu eine jslib-Datei verwendet werden, die den JavaScript-Teil aktiviert. Dieses Skript wird beim Importieren in ein Projekt automatisch eine jslib-Datei in den Plugins-Ordner extrahieren, die den Namen „URLParameters.jslib“ trägt.
+
+Um auf die verschiedenen URI-Teile zuzugreifen, kann man einfach die statischen Methoden dieser Klasse verwenden. Die verfügbaren Eigenschaften sind Protocol, Hostname, Port, Pathname, Search, Hash sowie Host, Origin und Href. Damit kann man mithilfe der Funktion \textbf{``URLParameters.GetSearchParameters()''} an beliebiger Stelle in Unity ein Dictionary mit den Url-Parametern laden.
 
 \begin{lstlisting}[numbers=left,caption={UrlParameter},label={lst:unity-url-parameter}]
 public static class DictionaryStringStringExt
@@ -141,10 +143,10 @@ public static class DictionaryStringStringExt
 \end{figure}
 
 
-Die Szene ist bereits in Abbildung \ref{fig:unity-ide} zu sehen. Es wurde ein \textbf{leeres Terrain} gebaut und eine \textbf{Unity UI} darübergelegt.\footnote{Die dazu verwendete Technologie Unity UI Toolkit ist in \cite{UnityDocsUIToolkit} beschrieben.} Diese UI dient dazu den Nutzer zu informieren, dass nun die Bilder und die Szene geladen werden. Im Listing \ref{lst:unity-startup-document} sind die wesentlichen Codeteile enthalten. Die Methode \textbf{``OnEnable''} wird aufgerufen, wenn die Startup-Szene die UI aufruft, also zu Beginn des Memoryland. Es werden die UI Komponenten in die Membervariablen geladen und danach sofort die asynchrone Routine zur Überwachung der Fotobeladung im ``SceneChanger'' gestartet. 
+Die Szene ist bereits in Abbildung \ref{fig:unity-ide} zu sehen. Es wurde ein \textbf{leeres Terrain} gebaut und eine \textbf{Unity UI} darübergelegt.\footnote{Die dazu verwendete Technologie Unity UI Toolkit ist in \cite{UnityDocsUIToolkit} beschrieben.} Diese UI dient dazu den Nutzer zu informieren, dass nun die Bilder und die Szene geladen werden. Im Listing \ref{lst:unity-startup-document} sind die wesentlichen Codeteile enthalten. Die Methode \textbf{``OnEnable''} wird aufgerufen, wenn die Startup-Szene die UI aufruft, also zu Beginn des Memoryland. Es werden die UI Komponenten in die Membervariablen geladen und danach sofort die asynchrone Routine zur Überwachung der Fotobeladung im \textbf{``SceneChanger''} gestartet. 
 
 
-Die Während der ``SceneChanger'' (siehe Listing \ref{lst:unity-scene-changer-start}) die Beladung der Texturen betreibt, wartet der \textbf{``StartupDocument''-UI} bereit darauf, dass es diese Aufgabe abschlie\ss{}t. Diese Information wird mittels der asynchronen Funktion ``isValid'' (siehe Listing \ref{lst:unity-scene-changer-public}) überprüft. Sobald die Daten und Fotos geladen sind, steht dort der Szenenname zur Verfügung. Falls nun die Szene bekannt ist (derzeit nur ``forest'' oder ``island''), kann die Szene gestartet werden, ansosnten wird der Benutzer mittels des Informationsfeldes darauf hingewiesen, dass ein Fehler aufgetreten ist.
+Die Während der ``SceneChanger'' (siehe Listing \ref{lst:unity-scene-changer-start}) die Beladung der Texturen betreibt, wartet der \textbf{``StartupDocument''-UI} bereit darauf, dass es diese Aufgabe abschlie\ss{}t. Diese Information wird mittels der asynchronen Funktion \textbf{``isValid''} (siehe Listing \ref{lst:unity-scene-changer-public}) überprüft. Sobald die Daten und Fotos geladen sind, steht dort der Szenenname zur Verfügung. Falls nun die Szene bekannt ist (derzeit nur ``forest'' oder ``island''), kann die Szene gestartet werden, ansosnten wird der Benutzer mittels des Informationsfeldes darauf hingewiesen, dass ein Fehler aufgetreten ist.
 
 
 
@@ -202,7 +204,7 @@ Die Klasse \textbf{``SceneChanger''} existiert länger im Projekt. Zu Beginn hat
 
 Die Funktion \textbf{``Start''} lädt die URL-Parameter mit Hilfe der Klasse aus Abschnitt \ref{subsec:unity-url-parameter} in die enstprechenden statischen Membervariablen. Zu Testzwecken wurde ein ``fallbackResponse'' und ein dazugehöriger Parameter (``fallback'' == ``yes'') eingeführt, sodass Szenen zeitnah und während der Implementierung mit echten Bildern aus dem Backend getestet werden können.
 
-Nach der Beladung der Variablen werden diese verwendet, um die URL zum Aufruf des REST Backend mit dem Token\footnote{siehe dazu vor allem auch die Abschnitts \ref{backend-memoryland-controller} und \ref{subsec:frontend-explore-worlds}} zusammenzusetzen. Die Verwendung des Token ermöglicht den Aufruf der Memorylands auch durch nicht-eingeloggte Benutzer.
+Nach der Beladung der Variablen werden diese verwendet, um die URL zum \textbf{Aufruf des REST Backend} mit dem Token\footnote{siehe dazu vor allem auch die Abschnitts \ref{backend-memoryland-controller} und \ref{subsec:frontend-explore-worlds}} zusammenzusetzen. Die Verwendung des Token ermöglicht den Aufruf der Memorylands auch durch nicht-eingeloggte Benutzer.
 
 
 
@@ -297,9 +299,9 @@ Nach der Beladung der Variablen werden diese verwendet, um die URL zum Aufruf de
 \end{lstlisting}
     
 
-Das Umwandeln des gelieferten JSON im Textformat übernimmt dann die Funktion ``SetInternals''. Es wurden einige serialisierbare Basisklassen für die im JSON enthaltenen Daten erstellt. Diese sind ``MemorylandType'', ``MemorylandConfiguration'' und ``Memoryland''. Die Funktion nimmt den gelieferten String und verwendet die Unity-Basisklasse ``JsonUtility'' um diesen zu C\# Objekten zu konvertieren.
+Das Umwandeln des gelieferten JSON im Textformat übernimmt dann die Funktion \textbf{``SetInternals''}. Es wurden einige serialisierbare Basisklassen für die im JSON enthaltenen Daten erstellt. Diese sind ``MemorylandType'', ``MemorylandConfiguration'' und ``Memoryland''. Die Funktion nimmt den gelieferten String und verwendet die Unity-Basisklasse \textbf{``JsonUtility''} um diesen zu C\# Objekten zu konvertieren.
 
-Danach wird sofort für jede gelieferte Foto-URL die asynchrone Funktion ``LoadTexture'' aufgerufen. Dies ermöglicht ein möglichst rasches Laden der Bilder bei einem verzerrungs- und störungsfreien Ansehen des Memorylands bzw. der entsprechenden Szene. 
+Danach wird sofort für jede gelieferte Foto-URL die asynchrone Funktion \textbf{``LoadTexture''} aufgerufen. Dies ermöglicht ein möglichst rasches Laden der Bilder bei einem verzerrungs- und störungsfreien Ansehen des Memorylands bzw. der entsprechenden Szene. 
 
 \begin{lstlisting}[numbers=left,caption={SceneChanger - SetInternals},label={lst:unity-scene-changer-set-internals}]
     ....   
@@ -374,7 +376,7 @@ Danach wird sofort für jede gelieferte Foto-URL die asynchrone Funktion ``LoadT
     }    
 \end{lstlisting}
     
-Die Bilder bzw. Fotos werden vom Backend in Form von URLs mit SAS-Tokens (mit beschränkter Gültigkeit\footnote{siehe dazu vor allem Abschnitt \ref{subsection:sas-token-generation}}) beim Call gegen das REST Backend geliefert. Diese Bilder werden sofort als Texturen in den Speicher geladen um Verzögerungen und fehlende Darstellungen zu vermeiden. Dies übernimmt die in Listing \ref{lst:unity-scene-changer-load-texture} enthaltene Funktion ``LoadTexture''. Es wird dazu - wie oben für den Call ins Backend - die Unity Basisklasse ``UnityWebRequest'' verwendet.
+Die Bilder bzw. Fotos werden vom Backend in Form von URLs mit SAS-Tokens (mit beschränkter Gültigkeit\footnote{siehe dazu vor allem Abschnitt \ref{subsection:sas-token-generation}}) beim Call gegen das REST Backend geliefert. Diese Bilder werden sofort als Texturen in den Speicher geladen um Verzögerungen und fehlende Darstellungen zu vermeiden. Dies übernimmt die in Listing \ref{lst:unity-scene-changer-load-texture} enthaltene Funktion \textbf{``LoadTexture''}. Es wird dazu - wie oben für den Call ins Backend - die Unity Basisklasse \textbf{``UnityWebRequest''} verwendet.
 
 
 \begin{lstlisting}[numbers=left,caption={SceneChanger - LoadTexture},label={lst:unity-scene-changer-load-texture}]
@@ -412,7 +414,7 @@ Die Bilder bzw. Fotos werden vom Backend in Form von URLs mit SAS-Tokens (mit be
 \end{lstlisting}
     
 
-Schlussendlich bleibt die letzte Funktion des SceneChanger, welche schon von Beginn bestanden hatte: der Szenenwechsel mithilfe von ``StartThisNow''. Sie wird mit Hilfe der Standard-Unity Funktionalität von SceneManager abgebildet. Es wird zusätzlich überprüft, ob diese Szene überhaupt im WebGL Build existiert.\footnote{Die Build-Settings von WebGL können der Abbildung \ref{fig:unity-build-settings} entnommen werden. Dort steht auch eine Liste der enthaltenen Szenen.} Die weiteren Funktionen ``isValid'' und ``GetOneTexture'' werden von anderen Klassen verwendet um die aktuelle Szene bzw. einzelne Fotos (bereits als Texturen) abzurufen.
+Schlussendlich bleibt die letzte Funktion des SceneChanger, welche schon von Beginn bestanden hatte: der Szenenwechsel mithilfe von \textbf{``StartThisNow''}. Sie wird mit Hilfe der Standard-Unity Funktionalität von SceneManager abgebildet. Es wird zusätzlich überprüft, ob diese Szene überhaupt im WebGL Build existiert.\footnote{Die Build-Settings von WebGL können der Abbildung \ref{fig:unity-build-settings} entnommen werden. Dort steht auch eine Liste der enthaltenen Szenen.} Die weiteren Funktionen \textbf{``isValid'' und ``GetOneTexture''} werden von anderen Klassen verwendet um die aktuelle Szene bzw. einzelne Fotos (bereits als Texturen) abzurufen.
 
 
 \begin{lstlisting}[numbers=left,caption={SceneChanger},label={lst:unity-scene-changer-public}]
@@ -475,7 +477,7 @@ Am Beginn des Projektes wurden die Fotos als Texturen vom Backend erst nach dem 
 
 Das Laden der Fotos wurden daher im Rahmen einem weiteren Sprint im Code zeitlich vorverlegt und findet nun während des Startup in der Startup-Szene statt. Dazu wird der Nutzer im Rahmen der Startup-Szene (siehe Abschnitt \ref{subsec:unity-startup-scene}) im gewählten UI über den Ladeprozessfortschritt informiert.
 
-Der hier beschriebene ``ImageLoader'' hat damit nur noch die Aufgabe die entsprechende Texture vom ``SceneChanger'' (siehe Abschnitt \ref{subsec:unity-startup-scene}) zu laden und dann das Format des Plane anzupassen. Die Bilder würden ansonsten verzerrt angezeigt. Dazu wird mit Hilfe eines Vector3 Objekts die Größe und damit Verzerrung des Planes eingestellt. Aufrecht stehende Bilder können in Unity nicht gedreht werden (EXIF-Informationen werden ignoriert), daher musste dies bereits vom Backend übernommen werden.\footnote{siehe hierzu vor allem Abschnitt \ref{subsec:backend-rotate-pictures}} 
+Der hier beschriebene \textbf{``ImageLoader''} hat damit nur noch die Aufgabe die entsprechende Texture vom \textbf{``SceneChanger''} (siehe Abschnitt \ref{subsec:unity-startup-scene}) zu laden und dann das Format des Plane anzupassen. Die Bilder würden ansonsten verzerrt angezeigt. Dazu wird mit Hilfe eines \textbf{``Vector3''} Objekts die Größe und damit Verzerrung des Planes eingestellt. Aufrecht stehende Bilder können in Unity nicht gedreht werden (EXIF-Informationen werden ignoriert), daher musste dies bereits vom Backend übernommen werden.\footnote{siehe hierzu vor allem Abschnitt \ref{subsec:backend-rotate-pictures}} 
 
 
 \begin{lstlisting}[numbers=left,caption={ImageLoader},label={lst:unity-image-loader}]
@@ -555,8 +557,8 @@ public class ImageLoader : MonoBehaviour
 Das Projekt enthält bereits zwei vordefinierte Szenen:
 
 \begin{itemize}
-    \item Die Wald-Szene (MemorylandType == ``forest'') mit 10 Bildern
-    \item Die Insel-Szene (MemorylandType == ``island'') mit 10 Bildern
+    \item Die \textbf{Wald-Szene} (MemorylandType == ``forest'') mit 10 Bildern
+    \item Die \textbf{Insel-Szene} (MemorylandType == ``island'') mit 10 Bildern
 \end{itemize}
 
 
@@ -571,7 +573,7 @@ Das Projekt enthält bereits zwei vordefinierte Szenen:
 
 \subsection{Die Wald-Szene}
 
-Die Erstellung der Wald-Szene war am schwierigsten, da die ersten Entwürfe und die Ideenfindung über diese Szene erfolgte. Es wurde versucht einerseits eine ansprechende und umfangreiche Waldumgebung zu erzeugen. Die Idee, die hinter einer Waldumgebung stand, ist die Darstellung von Fotos und Erinnerungen aus einer Wanderung im Grünen.
+Die Erstellung der Wald-Szene war am schwierigsten, da die ersten Entwürfe und die Ideenfindung über diese Szene erfolgte. Es wurde versucht einerseits eine \textbf{ansprechende und umfangreiche Waldumgebung} zu erzeugen. Die Idee, die hinter einer Waldumgebung stand, ist die Darstellung von Fotos und Erinnerungen aus einer Wanderung im Grünen.
 
 
 
@@ -583,14 +585,17 @@ Die Erstellung der Wald-Szene war am schwierigsten, da die ersten Entwürfe und 
 \end{figure}
 
 
-Diese Wanderungserinnerung ließ sich für die Autoren am klarsten durch einen Wald abrufen. Ein Wald mit vielen verschiedenen Bäumen und Blumen. Die Szene wurde also entsprechend aufgebaut. Dabei wurde zuerst teilweise auf Beispiele aus dem Unterricht zurückgegriffen. Diese waren aber leider zu detailreich, um auch wirklich auf allen Zielplattformen dargestellt werden zu können. Die Anzahl der Details wurde daher reduziert.
+Diese \textbf{Wanderungserinnerung} ließ sich für die Autoren am klarsten durch einen Wald abrufen. Ein Wald mit vielen verschiedenen Bäumen und Blumen. Die Szene wurde also entsprechend aufgebaut. Dabei wurde zuerst teilweise auf Beispiele aus dem Unterricht zurückgegriffen. Diese waren aber leider \textbf{zu detailreich}, um auch wirklich auf allen Zielplattformen dargestellt werden zu können. Die Anzahl der Details wurde daher reduziert.
 
-Die Wanderung selbst wird durch die Verwendung des Konzepts des Dolly Track (siehe Abschnitt \ref{subsec:unity-dolly-track}) durchgeführt. Die Nutzer erleben einen Waldspaziergang mit Bäumen und Blumen, während sie an den Bildern vorüberschreiten.
+Die Wanderung selbst wird durch die Verwendung des Konzepts des \textbf{Dolly Track} (siehe Abschnitt \ref{subsec:unity-dolly-track}) durchgeführt. Die Nutzer erleben einen Waldspaziergang mit Bäumen und Blumen, während sie an den Bildern vorüberschreiten.
 
 
 \subsection{Die Insel-Szene}
 
-Nachdem die umfangreichen Tests der Integration der Unity WebGL in das Frontend und das laufende Backend erfolgreich waren, stand nun der Weg offen für die Entwicklung einer weiteren Ferien-Umgebungs-Szene. Die   
+Nachdem die umfangreichen Tests der Integration der Unity WebGL in das Frontend und das laufende Backend erfolgreich waren, stand nun der Weg offen für die Entwicklung einer \textbf{weiteren Ferien-Umgebungs-Szene}. Die \textbf{Insel-Szene} war mit dem Erlebnis einer \textbf{sandigen Insel mit Sonne, Strand und Meer bei Sonnenuntergang} für die Entwickler die logischste Wahl.   
+
+
+..... \emph{OFFEN} WEITER, TODO
 
 
 \begin{figure} [h t]
