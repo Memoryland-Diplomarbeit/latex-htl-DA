@@ -36,6 +36,7 @@ Der Unity Editor integriert sich mit verschiedenen Source Code Editoren. Die Ent
 
 
 \section{Unity WebGL}
+\label{sec:unity-webgl}
 
 Unity bietet eine besondere Form des Build an: WebGL. Unity WebGL ermöglicht damit die Spiele und interaktiven Anwendungen, die man mit Unity erstellt hat, direkt im Webbrowser aufzurufen, ohne dass zusätzliche Plugins oder Software installiert werden müsste.\footnote{Alle Infos zu Unity WebGL stammen von \cite{UnityDocsWebGL} bzw. \cite{WebGL}}
 
@@ -79,7 +80,7 @@ Im ersten Schritt wurde versucht die ..... \emph{OFFEN} ... WEITER, TODO
 Es ist notwendig Daten vom Frontend mit Unity auszutauschen. Es gibt derzeit viele entsprechende Mechanismen. Die gewählte Methode vermeidet Verschränkungen zwischen der Implementierung des Frontend (und dessen Services in Richtung Backend) und der Implementierung von den Szenen in Unity.
 
 
-Für den gewählten Prozess der Übergabe der Parameter über den IFrame mit Hilfe von herkömmlichen Url-Parametern (siehe Listing \ref{lst:unity-url-parameter-in-action}) gab es bereits mehrere Realisierungen verfügbar. 
+Für den gewählten Prozess der \emph{Übergabe der Parameter} über den IFrame mit Hilfe von herkömmlichen Url-Parametern (siehe Listing \ref{lst:unity-url-parameter-in-action}) gab es bereits mehrere Realisierungen verfügbar. Diese verwendeten alle eine Form der Verschränkung von JavaScript Code mit Unity C\# Code. 
 
 
 \begin{lstlisting}[numbers=left,caption={IFrame for Unity in Frontend},label={lst:unity-url-parameter-in-action}]
@@ -87,9 +88,9 @@ this.safeUrl = this.sanitizer
           .bypassSecurityTrustResourceUrl(`/unity/index.html?token=${myToken}& server=${environment.apiConfig.uri}`);
 \end{lstlisting}
 
-Es wurde eine fortgeschrittene Entwicklung einer UrlParameter-Klasse aus dem Projekt übernommen und erweitert.\footnote{Der Originalcode wurde von \cite{UrlParameter} übernommen und um eine weitere Funktion erweitert.} Die enthaltenen Funktionen sahen nur nummerische Parameter vor und so war die gewählte Übergabe eines GUID-Token aus dem Frontend vorerst nicht möglich. Die Funktion ``GetString'' (siehe Listing \ref{lst:unity-url-parameter}) wurde daher in die Klasse ``DictionaryStringStringExt'' eingefügt. Es waren ansonsten keine weiteren Änderungen notwendig.
+Es wurde eine fortgeschrittene Entwicklung einer \emph{UrlParameter}-Klasse aus dem Projekt übernommen und erweitert.\footnote{Der Originalcode wurde von \cite{UrlParameter} übernommen und um eine weitere Funktion erweitert.} Die enthaltenen Funktionen sahen nur nummerische Parameter vor und so war die gewählte Übergabe eines GUID-Token aus dem Frontend vorerst nicht möglich. Die Funktion ``GetString'' (siehe Listing \ref{lst:unity-url-parameter}) wurde daher in die Klasse ``DictionaryStringStringExt'' eingefügt. Es waren ansonsten keine weiteren Änderungen notwendig.
 
-Das vorhandene Singleton-Skript ermöglicht einen einfachen Zugriff auf alle URL-Parameter und -Komponenten in einer WebGL-Build-Anwendung. Es muss hierzu eine jslib-Datei verwendet werden, die den JavaScript-Teil aktiviert. Dieses Skript wird beim Importieren in ein Projekt automatisch eine jslib-Datei in den Plugins-Ordner extrahieren, die den Namen „URLParameters.jslib“ trägt.
+Das vorhandene Singleton-Skript ermöglicht einen \emph{einfachen Zugriff} auf alle URL-Parameter und -Komponenten in einer WebGL-Build-Anwendung. Es muss hierzu eine jslib-Datei verwendet werden, die den JavaScript-Teil aktiviert. Dieses Skript wird beim Importieren in ein Projekt automatisch eine jslib-Datei in den Plugins-Ordner extrahieren, die den Namen „URLParameters.jslib“ trägt.
 
 Um auf die verschiedenen URI-Teile zuzugreifen, kann man einfach die statischen Methoden dieser Klasse verwenden. Die verfügbaren Eigenschaften sind Protocol, Hostname, Port, Pathname, Search, Hash sowie Host, Origin und Href. Damit kann man mithilfe der Funktion ``URLParameters.GetSearchParameters()'' an beliebiger Stelle in Unity ein Dictionary mit den Url-Parametern laden.
 
@@ -139,10 +140,10 @@ public static class DictionaryStringStringExt
 \end{figure}
 
 
-Die Szene ist bereits in Abbildung \ref{fig:unity-ide} zu sehen. Es wurde ein leeres Terrain gebaut und eine Unity UI darübergelegt.\footnote{Die dazu verwendete Technologie Unity UI Toolkit ist in \cite{UnityDocsUIToolkit} beschrieben.} Diese UI dient dazu den Nutzer zu informieren, dass nun die Bilder und die Szene geladen werden. Im Listing \ref{lst:unity-startup-document} sind die wesentlichen Codeteile enthalten. Die Methode ``OnEnable'' wird aufgerufen, wenn die Startup-Szene die UI aufruft, also zu Beginn des Memoryland. Es werden die UI Komponenten in die Membervariablen geladen und danach sofort die asynchrone Routine zur Überwachung der Fotobeladung im ``SceneChanger'' gestartet. 
+Die Szene ist bereits in Abbildung \ref{fig:unity-ide} zu sehen. Es wurde ein \textbf{leeres Terrain} gebaut und eine \textbf{Unity UI} darübergelegt.\footnote{Die dazu verwendete Technologie Unity UI Toolkit ist in \cite{UnityDocsUIToolkit} beschrieben.} Diese UI dient dazu den Nutzer zu informieren, dass nun die Bilder und die Szene geladen werden. Im Listing \ref{lst:unity-startup-document} sind die wesentlichen Codeteile enthalten. Die Methode \textbf{``OnEnable''} wird aufgerufen, wenn die Startup-Szene die UI aufruft, also zu Beginn des Memoryland. Es werden die UI Komponenten in die Membervariablen geladen und danach sofort die asynchrone Routine zur Überwachung der Fotobeladung im ``SceneChanger'' gestartet. 
 
 
-Die Während der ``SceneChanger'' (siehe unten) die Beladung der Texturen betreibt, wartet der ``StartupDocument''-UI bereit darauf, dass es diese Aufgabe abschlie\ss{}t. Diese Information wird mittels der asynchronen Funktion ``isValid'' überprüft. Sobald die Daten und Fotos geladen sind, steht dort der Szenenname zur Verfügung. Falls nun die Szene bekannt ist (derzeit nur ``forest'' oder ``island''), kann die Szene gestartet werden, ansosnten wird der Benutzer mittels des Informationsfeldes darauf hingewiesen, dass ein Fehler aufgetreten ist.
+Die Während der ``SceneChanger'' (siehe Listing \ref{lst:unity-scene-changer-start}) die Beladung der Texturen betreibt, wartet der \textbf{``StartupDocument''-UI} bereit darauf, dass es diese Aufgabe abschlie\ss{}t. Diese Information wird mittels der asynchronen Funktion ``isValid'' (siehe Listing \ref{lst:unity-scene-changer-public}) überprüft. Sobald die Daten und Fotos geladen sind, steht dort der Szenenname zur Verfügung. Falls nun die Szene bekannt ist (derzeit nur ``forest'' oder ``island''), kann die Szene gestartet werden, ansosnten wird der Benutzer mittels des Informationsfeldes darauf hingewiesen, dass ein Fehler aufgetreten ist.
 
 
 
@@ -196,11 +197,11 @@ Die Während der ``SceneChanger'' (siehe unten) die Beladung der Texturen betrei
 \end{lstlisting}
 
 
-Die Klasse ``SceneChanger'' existiert länger im Projekt. Zu Beginn hatte sie nur die Aufgabe den Szenenwechsel bereitzustellen, inzwischen hat sich das Aufgabengebiet auf das Laden aller Bestandteile der Szenen ausgeweitet. Sie hat daher drei Aufgaben: das \emph{Laden der Memoryland-Informationen} aus dem Backend, die Beladung der Texturenliste (also der \emph{Fotos}) und die Bereitstellung einer \emph{Szenen-Wechsel-Funktion}.
+Die Klasse \textbf{``SceneChanger''} existiert länger im Projekt. Zu Beginn hatte sie nur die Aufgabe den Szenenwechsel bereitzustellen, inzwischen hat sich das Aufgabengebiet auf das Laden aller Bestandteile der Szenen ausgeweitet. Sie hat daher drei Aufgaben: das \textbf{Laden der Memoryland-Informationen} aus dem Backend, die Beladung der Texturenliste (also der \textbf{Fotos}) und die Bereitstellung einer \textbf{Szenen-Wechsel-Funktion}.
 
-Die Funktion ``Start'' lädt die URL-Parameter mit Hilfe der Klasse aus Abschnitt \ref{subsec:unity-url-parameter} in die enstprechenden statischen Membervariablen. Zu Testzwecken wurde ein ``fallbackResponse'' und ein dazugehöriger Parameter (``fallback'' == ``yes'') eingeführt, sodass Szenen zeitnah und während der Implementierung mit echten Bildern aus dem Backend getestet werden können.
+Die Funktion \textbf{``Start''} lädt die URL-Parameter mit Hilfe der Klasse aus Abschnitt \ref{subsec:unity-url-parameter} in die enstprechenden statischen Membervariablen. Zu Testzwecken wurde ein ``fallbackResponse'' und ein dazugehöriger Parameter (``fallback'' == ``yes'') eingeführt, sodass Szenen zeitnah und während der Implementierung mit echten Bildern aus dem Backend getestet werden können.
 
-Nach der Beladung der Variablen werden diese verwendet, um die URL zum Aufruf des REST Backend mit dem Token\footnote{siehe dazu vor allem auch Abschnitt \ref{backend-memoryland-controller}} zusammenzusetzen. Die Verwendung des Token ermöglicht den Aufruf der Memorylands auch durch nicht-eingeloggte Benutzer.
+Nach der Beladung der Variablen werden diese verwendet, um die URL zum Aufruf des REST Backend mit dem Token\footnote{siehe dazu vor allem auch die Abschnitts \ref{backend-memoryland-controller} und \ref{subsec:frontend-explore-worlds}} zusammenzusetzen. Die Verwendung des Token ermöglicht den Aufruf der Memorylands auch durch nicht-eingeloggte Benutzer.
 
 
 

@@ -1,0 +1,360 @@
+\setauthor{Isabel Schnalzenberger}
+
+\section{Technologien}
+
+\subsection{Unity}
+
+Unity ist eine leistungsstarke Laufzeit- und Entwicklungsumgebung (\Gls{ide}) für Spiele, auch als Spiel-Engine (bzw. Gameengine) bekannt, die von Unity Technologies mit Hauptsitz in San Francisco entwickelt wurde. Diese vielseitige Plattform ermöglicht die Erstellung von Spielen und interaktiven 3D-Grafik-Anwendungen für verschiedene Zielplattformen, darunter PCs (Windows und Mac), Spielkonsolen, mobile Geräte und Webbrowser.\footnote{Alle Infos zu Unity stammen von: \cite{UnityDocs}}
+
+\begin{figure} [h t]
+    \centering
+    \includegraphics[scale=0.15]{pics/unity-hub.png}
+    \caption{Entwicklung in Unity: der Unity-Hub}
+    \label{fig:unity-hub}
+\end{figure}
+
+
+\begin{figure} [h t]
+    \centering
+    \includegraphics[scale=0.12]{pics/unity-ide.png}
+    \caption{Entwicklung in Unity: Die Unity IDE}
+    \label{fig:unity-ide}
+\end{figure}
+
+
+Über den Unity-Hub (siehe \ref{fig:unity-hub}) steigt man in den Unity Editor (die IDE, siehe \ref{fig:unity-ide}) ein. Diese Umgebung ist gängigen 3D-Animationsprogrammen und 3D-Entwicklungs-umgebungen nachempfunden. Die Ansicht in der Mitte stellt die aktuelle Sicht auf die Szene dar. Alle gewählten und in der Szene platzierten Objekte befinden sich links in der Hierarchie. Diese wird vor allem für die Auswahl der zu ändernden Objekte verwendet. Auf der rechten Seite befindet sich der Inspektor. Mit seiner Hilfe verändert man einzelne Attribute der sogenannten GameObjects. Es gibt einfach zu ändernde Attribute und veränderliche bzw. durch Programme veränderte Attribute. Die Kombination aus beidem macht Unity so mächtig.\footnote{Alle Infos zum Unity Editor finden sich auch in \cite{UnityDocsEditor}}
+
+
+Der Entschluss diese Technologie zu verwenden fiel vor allem, weil diese Technologie bereits frühzeitig in unserem Lehrplan enthalten ist und damit umfangreiche Kenntnisse vorhanden waren. Der andere, wesentliche Grund liegt in der Erweiterbarkeit der Umgebung die man in Unity schafft. Die Entwicklungsumgebung ist dergestalt, dass man von Beginn an mit mehreren Scenen im Entwurf gearbeitet hat. Jede Szene (Scene) in Unity spiegelt dabei einen Memorylandtype\footnote{siehe dazu vor allem Abschnitt \ref{sec:memoryland-types}}
+
+
+
+\subsection{Visual Studio 2022 und Code}
+
+Der Unity Editor integriert sich mit verschiedenen Source Code Editoren. Die Entwicklung der entsprechenden Klassen weiter unten erfolgte teils in Windows mit Visual Studio 2022 und später auch unter Ubuntu mit Visual Studio Code und anderen Editoren. Die Editoren unterscheiden sich in der Unterstützung der entsprechenden Intellisense und Syntax-Erkennung. Generell ist aber zu sagen, dass die Entwicklung unter Windows angenehmer ist, da hier die volle Bandbreite einer Umgebung zur Verfügung steht, die einerseits die Bibliotheken kennt und die Syntax prüft.
+
+
+
+\section{Unity WebGL}
+
+Unity bietet eine besondere Form des Build an: WebGL. Unity WebGL ermöglicht damit die Spiele und interaktiven Anwendungen, die man mit Unity erstellt hat, direkt im Webbrowser aufzurufen, ohne dass zusätzliche Plugins oder Software installiert werden müsste.\footnote{Alle Infos zu Unity WebGL stammen von \cite{UnityDocsWebGL} bzw. \cite{WebGL}}
+
+
+\begin{wrapfigure}{r}{0.5\textwidth}
+    \centering
+    \includegraphics[scale=0.12]{pics/unity-bulid-settings.png}
+    \caption{Entwicklung in Unity: Die Unity Build Settings}
+    \label{fig:unity-build-settings}
+
+    \vspace{1cm}
+
+    \centering
+    \includegraphics[scale=0.09]{pics/unity-build-webgl-settings.png}
+    \caption{Entwicklung in Unity: Die Unity Build Settings für WebGL}
+    \label{fig:unity-build-webgl-settings}
+\end{wrapfigure}
+
+
+
+WebGL (Web Graphics Library) ist eine JavaScript-API, die 3D-Grafiken im Browser rendern kann. Sie basiert dabei auf OpenGL, einer ``shading language'', welche die Beschreibung einer virutellen Umgebung übernimmt. Unity nutzt diese API, um die für Webbrowser optimierte Ausführung von Inhalten zu ermöglichen. WebGL in Unity unterstützt viele gängige Plattformen wie Desktop-Browser (Chrome, Firefox, Safari, etc.) und erlaubt es diesem Projekt die Anwendung Memoryland schnell und einfach online zu verbreiten.
+
+
+Das Projekt wurde mit den in den Abbildungen \ref{fig:unity-build-settings} und \ref{fig:unity-build-webgl-settings} dargestellten Einstellungen für Unity WebGL entwickelt und der erzeugte JavaScript Code wurde in das Frontend\footnote{im Verzeichnis ``./unity'' siehe Abschnitt \ref{sec:frontend-integration-webgl}} integriert.
+
+
+Die gewählten Einstellungen entsprechen den Empfehlungen der bereits erwähnten Beschreibungen zu Unity WebGL und insbesondere das ``Data Caching'' wurde eingestellt. Leider funktioniert in diesem Projekt derzeit das gewählte Caching nicht perfekt. Unity WebGL lädt die Datendatei laufend neu und dies ist laut verschiedenen Quellen im Netz derzeit ein Fehler in der gewählten Umgebung, der in naher Zukunft behoben werden soll.\footnote{Hauptquellen: \cite{UnityDocsDataCachingIssue} und \cite{UnityDocsDataCachingIssue2}}
+
+
+\section{Implementierung des Unity Projekts}
+
+Im ersten Schritt wurde versucht die ..... \emph{OFFEN} ... TODO
+
+
+
+
+
+\subsection{Url-Parameter}
+\label{subsec:unity-url-parameter}
+
+Es ist notwendig Daten vom Frontend mit Unity auszutauschen. Es gibt derzeit viele entsprechende Mechanismen. Die gewählte Methode vermeidet Verschränkungen zwischen der Implementierung des Frontend (und dessen Services in Richtung Backend) und der Implementierung von den Szenen in Unity.
+
+
+Für den gewählten Prozess der Übergabe der Parameter über den IFrame mit Hilfe von herkömmlichen Url-Parametern (siehe Listing \ref{lst:unity-url-parameter-in-action}) gab es bereits mehrere Realisierungen verfügbar. 
+
+
+\begin{lstlisting}[numbers=left,caption={IFrame for Unity in Frontend},label={lst:unity-url-parameter-in-action}]
+this.safeUrl = this.sanitizer
+          .bypassSecurityTrustResourceUrl(`/unity/index.html?token=${myToken}& server=${environment.apiConfig.uri}`);
+\end{lstlisting}
+
+Es wurde eine fortgeschrittene Entwicklung einer UrlParameter-Klasse aus dem Projekt übernommen und erweitert.\footnote{Der Originalcode wurde von \cite{UrlParameter} übernommen und um eine weitere Funktion erweitert.} Die enthaltenen Funktionen sahen nur nummerische Parameter vor und so war die gewählte Übergabe eines GUID-Token aus dem Frontend vorerst nicht möglich. Die Funktion ``GetString'' (siehe Listing \ref{lst:unity-url-parameter}) wurde daher in die Klasse ``DictionaryStringStringExt'' eingefügt. Es waren ansonsten keine weiteren Änderungen notwendig.
+
+Das vorhandene Singleton-Skript ermöglicht einen einfachen Zugriff auf alle URL-Parameter und -Komponenten in einer WebGL-Build-Anwendung. Es muss hierzu eine jslib-Datei verwendet werden, die den JavaScript-Teil aktiviert. Dieses Skript wird beim Importieren in ein Projekt automatisch eine jslib-Datei in den Plugins-Ordner extrahieren, die den Namen „URLParameters.jslib“ trägt.
+
+Um auf die verschiedenen URI-Teile zuzugreifen, kann man einfach die statischen Methoden dieser Klasse verwenden. Die verfügbaren Eigenschaften sind Protocol, Hostname, Port, Pathname, Search, Hash sowie Host, Origin und Href. Damit kann man mithilfe der Funktion ``URLParameters.GetSearchParameters()'' an beliebiger Stelle in Unity ein Dictionary mit den Url-Parametern laden.
+
+\begin{lstlisting}[numbers=left,caption={UrlParameter},label={lst:unity-url-parameter}]
+public static class DictionaryStringStringExt
+{
+    public static double GetDouble(this Dictionary<string, string> aDict, string aKey, double aDefault)
+    {
+        string str;
+        if (!aDict.TryGetValue(aKey, out str))
+            return aDefault;
+        double val;
+        if (!double.TryParse(str, NumberStyles.Float, CultureInfo.InvariantCulture, out val))
+            return aDefault;
+        return val;
+    }
+    public static int GetInt(this Dictionary<string, string> aDict, string aKey, int aDefault)
+    {
+        string str;
+        if (!aDict.TryGetValue(aKey, out str))
+            return aDefault;
+        int val;
+        if (!int.TryParse(str, NumberStyles.Integer, CultureInfo.InvariantCulture, out val))
+            return aDefault;
+        return val;
+    }
+    public static string GetString(this Dictionary<string, string> aDict, string aKey, string aDefault)
+    {
+        string str;
+        if (!aDict.TryGetValue(aKey, out str))
+            return aDefault;
+        return str;
+    }
+}
+\end{lstlisting}
+
+
+\subsection{Die Startup Szene}
+
+
+
+\begin{figure} [h t]
+    \centering
+    \includegraphics[scale=0.12]{pics/unity-ui-builder.png}
+    \caption{Entwicklung in Unity: Der Unity UI Toolkit}
+    \label{fig:unity-ui-builder}
+\end{figure}
+
+
+Die Szene ist bereits in Abbildung \ref{fig:unity-ide} zu sehen. Es wurde ein leeres Terrain gebaut und eine Unity UI darübergelegt.\footnote{Die dazu verwendete Technologie Unity UI Toolkit ist in \cite{UnityDocsUIToolkit} beschrieben.} Diese UI dient dazu den Nutzer zu informieren, dass nun die Bilder und die Szene geladen werden. Im Listing \ref{lst:unity-startup-document} sind die wesentlichen Codeteile enthalten. Die Methode ``OnEnable'' wird aufgerufen, wenn die Startup-Szene die UI aufruft, also zu Beginn des Memoryland. Es werden die UI Komponenten in die Membervariablen geladen und danach sofort die asynchrone Routine zur Überwachung der Fotobeladung im ``SceneChanger'' gestartet. 
+
+
+Die Während der ``SceneChanger'' (siehe unten) die Beladung der Texturen betreibt, wartet der ``StartupDocument''-UI bereit darauf, dass es diese Aufgabe abschlie\ss{}t. Diese Information wird mittels der asynchronen Funktion ``isValid'' überprüft. Sobald die Daten und Fotos geladen sind, steht dort der Szenenname zur Verfügung. Falls nun die Szene bekannt ist (derzeit nur ``forest'' oder ``island''), kann die Szene gestartet werden, ansosnten wird der Benutzer mittels des Informationsfeldes darauf hingewiesen, dass ein Fehler aufgetreten ist.
+
+
+
+\begin{lstlisting}[numbers=left,caption={StartupDocument für Unity UI Toolkit},label={lst:unity-startup-document}]
+....    
+    public class StartupDocument : MonoBehaviour
+    {
+        private Button _start;
+        private Label _loading;
+        private string chosenScene = null;
+           
+        //Add logic that interacts with the UI controls in the `OnEnable` methods
+        private void OnEnable()
+        {
+            // The UXML is already instantiated by the UIDocument component
+            var uiDocument = GetComponent<UIDocument>();
+    
+            _start = uiDocument.rootVisualElement.Q("start") as Button;
+            _start.SetEnabled(false);
+            _loading = uiDocument.rootVisualElement.Q("loading") as Label;
+            _start.RegisterCallback<ClickEvent>(PrintClickMessage);
+            
+            StartCoroutine(LoadFromLikeCoroutine());
+        }
+    
+        private IEnumerator LoadFromLikeCoroutine()
+        {
+            while (chosenScene == null) {
+            IEnumerator tgt = FindAnyObjectByType<SceneChanger>().IsValid();
+            while (tgt.MoveNext()) 
+            {
+                chosenScene = (string)tgt.Current;
+                yield return chosenScene;
+            }
+            }
+            
+            if (chosenScene != "ERROR") {
+                Debug.Log("Finished!");
+                _loading.text = "Finished Loading " + chosenScene;
+                _start.SetEnabled(true);
+                FindAnyObjectByType<SceneChanger>().StartThisNow();
+            }
+            else 
+            {
+                _loading.text = "Sorry, ERROR Loading this Memoryland. Possibly Token invalid!";
+                Debug.Log("ERROR loading");
+            }
+        }
+        ....
+    }        
+\end{lstlisting}
+
+
+Die Klasse ``SceneChanger'' existiert länger im Projekt. Zu Beginn hatte sie nur die Aufgabe den Szenenwechsel bereitzustellen, inzwischen hat sich das Aufgabengebiet auf das Laden aller Bestandteile der Szenen ausgeweitet. Sie hat daher drei Aufgaben: das Laden der Memoryland-Informationen aus dem Backend, die Beladung der Texturenliste (also der Fotos) und die Bereitstellung einer Szenen-Wechsel-Funktion.
+
+Die Funktion ``Start'' lädt die URL-Parameter mit Hilfe der Klasse aus Abschnitt \ref{subsec:unity-url-parameter} in die enstprechenden statischen Membervariablen. Zu Testzwecken wurde ein ``fallbackResponse'' und ein dazugehöriger Parameter (``fallback'' == ``yes'') eingeführt, sodass Szenen zeitnah und während der Implementierung mit echten Bildern aus dem Backend getestet werden können.
+
+Nach der Beladung der Variablen werden diese verwendet, um die URL zum Aufruf des REST Backend mit dem Token\footnote{siehe dazu vor allem auch Abschnitt \ref{}} zusammenzusetzen. Die Verwendung des Token ermöglicht den Aufruf der Memorylands auch durch nicht-eingeloggte Benutzer.
+
+
+
+
+\begin{lstlisting}[numbers=left,caption={SceneChanger},label={lst:unity-scene-changer-public}]
+....
+    public class SceneChanger : MonoBehaviour
+    {
+    
+    
+        public IEnumerator GetOneTexture(int position)
+        {
+            if (SceneChanger.allUrls == null || SceneChanger.chosenScene == null) // not finished call to backend
+                yield return null;
+                
+            if (SceneChanger.allTextures.ContainsKey(position)) {
+                yield return SceneChanger.allTextures[position];
+            }
+            else 
+            {
+                Debug.Log(position.ToString() + " NOT FOUND in MemoryLand!");
+                yield return null;
+            }
+        }
+    
+    ....    
+        public IEnumerator IsValid()
+        {
+            if (SceneChanger.chosenScene == null) // not finished call to backend
+                yield return null;
+                
+            yield return (SceneChanger.chosenScene);
+        }
+    
+        public void StartThisNow()
+        {
+            // now change scene
+            ChangeScene(SceneChanger.chosenScene);
+        }
+    
+        ....
+    }
+\end{lstlisting}
+
+% startup und load und unity ui toolkit und szenenwechsel
+
+
+\subsection{Einfügen von Images}
+
+Am Beginn des Projektes wurden die Fotos als Texturen vom Backend erst nach dem Start der Szene geladen, also in Form eines Lazy-Load während die Szene bereits abläuft. Dies führte dazu, dass die ersten Fotos noch nicht fertig geladen waren und die Planes noch im Platzhalter-Modus (hier wurde eine blaue Farbe für das Plane gewählt) dargestellt wurden. Dieses Vorgehen war äußerst unpassend für das angestrebte Nutzererlebnis. 
+
+Das Laden der Fotos wurden daher im Rahmen einem weiteren Sprint im Code zeitlich vorverlegt und findet nun während des Startup in der Startup-Szene statt. Dazu wird der Nutzer im Rahmen der Startup-Szene im gewählten UI über den Ladeprozessfortschritt informiert.
+
+
+
+\begin{lstlisting}[numbers=left,caption={ImageLoader},label={lst:unity-image-loader}]
+....
+public class ImageLoader : MonoBehaviour
+{
+    public int urlID = 0;
+    public Renderer thisRenderer;
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        // the following will be called even before the load finished
+        thisRenderer.material.color = Color.blue;
+
+        StartCoroutine(LoadFromLikeCoroutine()); // execute the section independently
+    }
+
+....
+
+    // this section will be run independently
+    private IEnumerator LoadFromLikeCoroutine()
+    {
+	Texture myTexture = null;
+	
+        IEnumerator tgt = FindAnyObjectByType<SceneChanger>().GetOneTexture(urlID);
+        while (tgt.MoveNext()) 
+        {
+        	myTexture = (Texture)tgt.Current;
+        	yield return myTexture;
+        }
+        
+        if (myTexture == null) {
+        	yield return null;
+        }
+
+	if (myTexture == null) {
+            	thisRenderer.material.color = Color.red;          // set red
+		Debug.Log("Image NotFound!");
+		yield return null;
+	}
+	else 
+	{
+		Debug.Log("Loaded");
+		thisRenderer.material.color = Color.white;          // set white
+
+		float scale = 0.3f;
+
+		//thisRenderer.gameObject.
+		if (myTexture.height > myTexture.width)
+		{
+			float f = (float)myTexture.height / (float)myTexture.width * scale;
+			thisRenderer.transform.localScale = new Vector3(scale, scale, f);
+			//thisRenderer.material.SetTextureScale("_MainTex", new Vector2(1f, 0.5f));
+
+		}
+		else
+		{
+			//float f = ((float)myTexture.width * (float)0.5) / ((float)myTexture.height * (float)0.5);
+			float f = (float)myTexture.width / (float)myTexture.height * scale;
+			thisRenderer.transform.localScale = new Vector3(f, scale, scale);
+			//thisRenderer.material.SetTextureScale("_MainTex", new Vector2(0.5f, 1f));
+
+		}
+
+		thisRenderer.material.mainTexture = myTexture ;  // set loaded image
+	}
+    }
+}
+\end{lstlisting}
+
+
+
+
+\section{Erstellung von Szenen bzw. Memoryland-Typen}
+
+Das Projekt enthält bereits zwei vordefinierte Szenen:
+
+\begin{itemize}
+    \item Erster Punkt
+    \item Zweiter Punkt
+    \item Dritter Punkt
+\end{itemize}
+
+
+\subsection{Die Wald-Szene}
+
+Die Erstellung der Wald-Szene war am schwierigsten, da die ersten Entwürfe und die Ideenfindung über diese Szene erfolgte. Es wurde versucht einerseits eine ansprechende und umfangreiche Waldumgebung zu erzeugen. Die Idee, die hinter einer Waldumgebung stand, ist die Darstellung von Fotos und Erinnerungen aus einer Wanderung im Grünen.
+
+Diese Wanderungserinnerung ließ sich für die Autoren am klarsten durch einen Wald abrufen. Ein Wald mit vielen verschiedenen Bäumen und Blumen. Die Szene wurde also entsprechend aufgebaut. Dabei wurde zuerst teilweise auf Beispiele aus dem Unterricht zurückgegriffen. Diese waren aber leider zu detailreich, um auch wirklich auf allen Zielplattformen dargestellt werden zu können. Die Anzahl der Details wurde daher reduziert und auf  .....
+
+
+\subsection{Die Insel-Szene}
+
+Nachdem die umfangreichen Tests der Integration der Unity WebGL in das Frontend und das laufende Backend erfolgreich waren, stand nun der Weg offen für die Entwicklung einer weiteren Ferien-Umgebungs-Szene. Die   
+
+\subsection{Erweiterbarkeit}
+\label{subsec:unity-erweiterbarkeit}
+
+Nach dem vorliegenden Konzept kann nun um beliebige Szenen erweitert werden. Die Szenen müssen mehreren Entwicklungsanforderungen und Grundkonzepten folgen. Die größte Freiheit besteht jedoch darin, dass die Szenen zukünftig auch so programmiert werden können, dass man sich beispielsweise selbständig durch die Szene beweigen könnte.
+
+Erste Voraussetzung ist die Darstellung der Bilder mit Hilfe der bereits .......
+
+
