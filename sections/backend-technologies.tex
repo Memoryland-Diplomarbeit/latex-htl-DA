@@ -14,7 +14,7 @@ Visual Studio bietet eine integrierte Entwicklungsumgebung mit umfangreichen Fun
 Visual Studio Code stellt eine leichtgewichtige Alternative mit Erweiterungsmöglichkeiten 
 dar. Zudem ermöglichen Kommandozeilen-Tools (CLI-Tools) eine flexible Nutzung. JetBrains Rider 
 ist eine weitere IDE, die speziell für .NET optimiert wurde und in diesem Projekt
-aufgrund der Erfahrung der Entwickler genutzt wird. (siehe Kapitel \ref{subsection:jetbrains-rider})
+aufgrund der Erfahrung des Backend-Entwicklers genutzt wird. (siehe Kapitel \ref{subsection:jetbrains-rider})
 
 In dieser Diplomarbeit wurde C\# für das REST-Backend verwendet. Die zentrale Datenverwaltung 
 erfolgte über Entity Framework Core mit einer PostgreSQL-Datenbank. Die Authentifizierung 
@@ -37,7 +37,7 @@ dabei den Aufwand für manuelle Datenzugriffslogik.
 
 Der Datenzugriff erfolgt über ein Modell, das sich aus Entitätsklassen und einem 
 Kontextobjekt zusammensetzt, welches bei uns ``ApplicationDbContext'' heißt. Dieses Kontextobjekt 
-stellt eine Verbindung zur Datenbank her und verwaltet Datenbankabfragen sowie das Speichern 
+stellt eine Verbindung zur Datenbank her und verwaltet Datenbankabfragen, sowie das Speichern 
 von Daten. Entity Framework Core unterstützt verschiedene Ansätze zur Modellerstellung, 
 darunter das Generieren eines Modells aus einer bestehenden Datenbank oder das manuelle 
 Erstellen eines Modells, das anschließend mithilfe von Entity Framework Migrations in 
@@ -60,7 +60,7 @@ skalierbaren Abfragen, verbessert werden.
 
 \subsection{MSAL}
 
-MSAL (Microsoft Authentication Library) ermöglicht Entwickler das Abrufen von Sicherheitstoken 
+MSAL (Microsoft Authentication Library) ermöglicht das Abrufen von Sicherheitstoken 
 von der Microsoft-Identity-Platform, um Benutzer:innen zu authentifizieren und auf gesicherte Web-APIs 
 zuzugreifen. Sie kann verwendet werden, um sicheren Zugriff auf Microsoft Graph, andere 
 Microsoft-APIs, Drittanbieter-Web-APIs oder eigene Web-APIs bereitzustellen. MSAL unterstützt 
@@ -83,20 +83,20 @@ macht.
 
 PostgreSQL ist ein objektrelationales Open-Source-Datenbanksystem. Der Azure Database for 
 PostgreSQL-Dienst von Microsoft bietet eine verwaltete Lösung, bei der Microsoft sich 
-um Wartung, Sicherungen und Hochverfügbarkeit kümmert. Dies ermöglicht es Entwickler, 
-sich auf die Entwicklung ihrer Anwendungen zu konzentrieren, anstatt sich um die 
+um Wartung, Sicherungen und Hochverfügbarkeit kümmert. Dies ermöglicht es, 
+sich auf die Entwicklung der Anwendungen zu konzentrieren, anstatt sich um die 
 Infrastruktur kümmern zu müssen. Besonders im Zusammenhang mit Cloud-Anwendungen 
 bietet PostgreSQL in Azure Vorteile wie automatische Skalierbarkeit, hohe Verfügbarkeit 
 und integrierte Sicherheitsfunktionen.
 
-Für die Diplomarbeit wurde PostgreSQL aufgrund der Erfahrungen der oder die Entwickler gewählt. 
+Für die Diplomarbeit wurde PostgreSQL aufgrund der Erfahrungen des Backend-Entwicklers gewählt. 
 Die Nutzung von Azure Database for PostgreSQL erleichtert dabei die Verwaltung und 
 bietet eine skalierbare Lösung, die den Anforderungen des Projekts gerecht wird.
 \footnote{Alle Informationen zu MSAL stammen von: \cite{MicrosoftCorporations}}
 
 \subsection{Cloud-Dienste mit Azure}
 
-Azure bietet eine Vielzahl von Cloud-Diensten, die Entwickler Tools und Infrastruktur 
+Azure bietet eine Vielzahl von Cloud-Diensten, die Entwickler-Tools und Infrastruktur 
 für ihre Anwendungen zur Verfügung stellen. Diese Dienste umfassen 
 unter anderem unterschiedliche Speicherlösungen für unterschiedliche Arten an Daten, 
 Identity-Management und Webhosting.
@@ -105,8 +105,8 @@ Identity-Management und Webhosting.
 \subsubsection{Azure Blob Storage}
 \label{subsection:azure_blob_storage}
 
-Azure Blob Storage ist ein skalierbarer Speicherdienst. Er wird für unstrukturierte Daten, 
-wie Bilder und Videos oder anderem, verwendet, wobei er das Speichern großer Datenmengen 
+Azure Blob Storage ist ein skalierbarer Speicherdienst. Er wird für unstrukturierte Daten verwendet, 
+wie Bilder und Videos oder anderem, wobei er das Speichern großer Datenmengen 
 ermöglicht und eine kostengünstige Lösung für die Verwaltung und Sicherung von Dateien 
 in der Cloud bietet. 
 
@@ -118,7 +118,7 @@ eine hohe Anzahl an Bildern gespeichert wird, wofür sich Azure Blob Storage eig
 \subsubsection{Azure AD B2C}
 \label{subsection:azure_ad_b2c}
 
-Azure Active Directory B2C (Business to Consumer) ist ein Identity- und Zugriffsmanagement Dienst
+Azure Active Directory B2C (Business to Consumer) ist ein Identity- und Zugriffsmanagement Dienst.
 Für diese Diplomarbeit wurde Azure AD B2C gewählt, um die Authentifizierung der Benutzer:innen
 zentral zu verwalten. Da mit Azure AD B2C eine Integration mit anderen Azure Diensten, sowie mit
 .Net besser von Microsoft unterstützt wird, war eine nahtlose Integration mit Azure AD B2C 
@@ -149,7 +149,7 @@ performant bleibt.
 \label{subsection:azure_static_web_app}
 
 Azure Static Web Apps ist ein Cloud-Dienst zur Bereitstellung von Webanwendungen. 
-Azure Static Web Apps deployt Code-Änderungen aus einem Repository automatisch. Der Dienst 
+Azure Static Web Apps deployed Code-Änderungen aus einem Repository automatisch. Der Dienst 
 ist für Single-Page Applications (SPAs) optimiert und unterstützt Frameworks wie Angular, 
 React, Vue, Svelte und Blazor.
 
@@ -162,17 +162,17 @@ automatisch gebaut und veröffentlicht werden können.
 \label{subsection:jetbrains-rider}
 
 JetBrains Rider ist eine IDE (Integrated Development Environment) für die Entwicklung mit .NET. 
-Rider unterstützt unterschiedliche .NET Framework-, Mono- und .NET Core-Projekte und bietet 
+Rider. Sie unterstützt unterschiedliche .NET Framework-, Mono- und .NET Core-Projekte und bietet 
 Unterstützung für Programmiersprachen wie C\#, VB.NET, F\#, ASP.NET, XAML, JavaScript, 
 TypeScript, HTML, CSS, SQL und JSON.
 
-Weiters besitzt Rider unterschiedliche Funktionen wie intelligenter Code-Vervollständigung, 
+Weiters besitzt Rider unterschiedliche Funktionen wie intelligente Code-Vervollständigung, 
 Refactoring-Werkzeuge und Debugging-Features, die bei der Entwicklung halfen. 
 
 Für diese Diplomarbeit wurde JetBrains Rider als primäre Entwicklungsumgebung für die 
 Backend-Entwicklung mit C\# und Entity Framework Core verwendet. Die IDE erleichtert 
 die Arbeit mit .NET APIs und Datenbanken. Weiters wurde Rider aufgrund der 
-Erfahrungen der Entwickler gewählt.
+Erfahrungen des Backend-Entwicklers gewählt.
 \footnote{Alle Informationen zu JetBrains Rider stammen von: \cite{JetBrains}}
 
 \subsection{CI/CD mit GitHub Actions}
@@ -184,7 +184,7 @@ Code-Commits, Pull Requests oder Releases automatisch ausgeführt werden.
 
 Für diese Diplomarbeit wurde GitHub Actions genutzt, um die automatische Bereitstellung 
 der Anwendung sicherzustellen. Für diese Aufgabe wurde GitHub aufgrund der Erfahrungen
-der Entwickler gewählt.
+des Backend-Entwicklers gewählt.
 \footnote{Alle Informationen zu GitHub Actions stammen von: \cite{GitHuba}}
 
 

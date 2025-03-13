@@ -21,7 +21,7 @@ des Storage Accounts zu benötigen.
 SAS-Tokens haben eine begrenzte Gültigkeitsdauer, was aus Sicherheitsgründen sinnvoll ist, 
 da so der Zugriff auf Ressourcen zeitlich eingeschränkt wird. Das Backend übernimmt hierbei
 die erneute Generierung dieser Tokens, sobald sie benötigt werden. Dadurch wird sichergestellt, 
-dass autorisierte Nutzer weiterhin auf die Ressourcen zugreifen können, ohne dass 
+dass autorisierte Nutzer:innen weiterhin auf die Ressourcen zugreifen können, ohne dass 
 langfristig gültige Tokens ein Sicherheitsrisiko darstellen.
 \footnote{Für Infos, wie Tokens generiert werden, siehe Kapitel \ref{subsection:sas-token-generation}}
 \footnote{Alle Informationen zu SAS-Tokens stammen von: \cite{MicrosoftCorporationa}}
@@ -33,7 +33,7 @@ Um den häufigen Zugriff auf Bilder effizienter zu gestalten, sollte in der Konf
 des Blob Storage der Access Tier die Standardstufe auf ``Hot'' gesetzt werden.
 
 Ein Azure Blob Storage bietet verschiedene Speicherstufen, wie ``Hot'', ``Cool'', ``Cold'',
-oder ``Archive''.Cool ist zum Beispiel geeignet für weniger häufige Zugriffe, und hat
+oder ``Archive''. Cool ist zum Beispiel geeignet für weniger häufige Zugriffe, hat
 niedrigere Speicherkosten, dafür aber höhere Zugriffskosten. 
 
 Für uns ist Hot geeignet, da mit dieser Einstellung die Bilder für den häufigen 
@@ -70,7 +70,7 @@ der auf dem Open-Source-Datenbanksystem PostgreSQL basiert
 \footnote{Weiter Infos zu Azure PostgreSQL: \cite{MicrosoftCorporationf}}. 
 Er bietet eine Lösung für Anwendungen, die eine relationale Datenbank benötigen.
 
-Die PostgreSQL Datenbank war eine schlüssige Entscheidung aufgrund der Erfahrung der Entwickler.
+Die PostgreSQL Datenbank war eine schlüssige Entscheidung aufgrund der Erfahrung des Backend-Entwicklers.
 
 \begin{table}[h t]
     \centering
@@ -92,7 +92,7 @@ während Single Server Windows verwendet.
 \footnote{Warum Linux als Server-Betriebssystem verwendet wurde: \cite{hussain2015survey}}
 \footnote{Alle Informationen zu ``Flexible Server vs. Single Server'': \cite{MicrosoftCorporatione}}
 
-Au\ss{}erdem besitzen Flexible Servers eine grö\ss{}ere maximale Speichergrö\ss{}e, Zonenredundante Hochverfügbarkeit, 
+Au\ss{}erdem besitzen Flexible Servers eine grö\ss{}ere maximale Speichergrö\ss{}e, zonenredundante Hochverfügbarkeit, 
 wodurch Ausfälle besser abgefangen werden können. Obwohl die Kosten etwas höher sein können, 
 sind Flexible Servers aufgrund dieser Punkte die bessere Wahl für unser Projekt.
 
@@ -138,7 +138,7 @@ also im Ordner ``\emph{memoryland}''. \footnote{Infos zu dem Code \ref{lst:stati
 
 Die Einrichtung des Backends für die Diplomarbeit erfordert die Konfiguration 
 der ``\emph{appsettings.json}'' Datei. In dieser Datei stehen mehrere Einstellungen,
-damit Memoryland auf die Unterschiedlichen Dienste zugreifen kann. Die Konfiguration 
+damit Memoryland auf die unterschiedlichen Dienste zugreifen kann. Die Konfiguration 
 umfasst drei Hauptbereiche: Authentifizierung, Datenbank und den Azure Blob Storage.
 
 \subsubsection{Authentifizierung}
@@ -165,9 +165,9 @@ den Namen der entsprechenden Policy.
 
 \subsubsection{Datenbank}
 
-Für die Konfiguration der Datenbank sind die entsprechenden Einstellungen wie in dem folgendem
-Beispiel (siehe Listing \ref{lst:appsettings-db-config}) ebenso in der Datei ``\emph{appsettings.json}'' 
-einzutragen. Es gibt sowohl eine Einstellung für den Deployment-Datenbankanschluss (Default) 
+Für die Konfiguration der Datenbank sind die entsprechenden Einstellungen, wie in dem folgendem
+Beispiel (siehe Listing \ref{lst:appsettings-db-config}), ebenso in der Datei ``\emph{appsettings.json}'' 
+einzutragen. Es gibt sowohl eine Einstellung für den Deployment-Datenbankanschluss (Default), 
 als auch eine für den lokalen Anschluss (DefaultLocal), der für Test-Zwecke verwendet wird. 
 Die UseLocalDb Einstellung gibt an, ob eine lokale Datenbank verwendet werden soll, wobei
 \emph{false} bedeutet, dass die Deployment Datenbank verwendet werden soll.
@@ -185,8 +185,8 @@ Die UseLocalDb Einstellung gibt an, ob eine lokale Datenbank verwendet werden so
 
 \subsubsection{Azure Blob Storage}
 
-Für die Konfiguration des Azure Blob Storage sind die entsprechenden Einstellungen wie in 
-dem folgendem Beispiel (siehe Listing \ref{lst:appsettings-blob-storage-config}) ebenso in der Datei 
+Für die Konfiguration des Azure Blob Storage sind die entsprechenden Einstellungen, wie in 
+dem folgendem Beispiel (siehe Listing \ref{lst:appsettings-blob-storage-config}), ebenso in der Datei 
 ``\emph{appsettings.json}'' einzutragen. Diese Einstellung ist notwendig, um die 
 Anwendung mit dem Azure Blob Storage zu verbinden und den Zugriff auf Bilder und 
 andere Dateien sicherzustellen.
@@ -205,7 +205,7 @@ andere Dateien sicherzustellen.
 
 Auch für das Frontend gibt es wichtige Einstellungen, damit die Single Page Application
 funktioniert. Hierbei steht die Konfiguration in der Datei ``\emph{environment.ts}''.
-Die Konfiguration ist für die Integration der Azure AD B2C Authentifizierung sowie die 
+Die Konfiguration ist für die Integration der Azure AD B2C Authentifizierung, sowie die 
 Verbindung zum Backend und den APIs. Die Datei enthält alle wichtigen Daten für 
 die Authentifizierung und die Verbindung zum Backend. 
 
@@ -289,7 +289,7 @@ Flows zu verbinden und eine sichere Kommunikation mit dem Backend sicherzustelle
 
 All diese Einstellungen werden auch in GitHub (https://github.com/) benötigt.
 Mithilfe von GitHub Actions \footnote{Alle Informationen zu GitHub stammen von hier: \cite{GitHuba}}
-wird unser Frontend bei einem Push oder einer Pull-Request auf den Branch Main, deployed.
+wird unser Frontend bei einem Push oder einer Pull-Request auf den Branch Main deployed.
 Dafür müssen jedoch die folgenden Variablen \ref{tab:github-secrets} mittels GitHub Secrets im GitHub Repo eingetragen werden.
 \footnote{Alle Informationen zu GitHub Secrets stammen von hier: \cite{GitHub}}
 

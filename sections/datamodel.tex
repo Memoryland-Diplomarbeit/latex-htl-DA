@@ -24,7 +24,7 @@ E-Mail spielt in Memoryland nur als eindeutige Identifikation eines:r Benutzers:
 \section{PhotoAlbums}
 
 Diese Tabelle speichert die von Benutzern:innen erstellten Fotoalben. Jedes Album ist eindeutig einem:r 
-Benutzer:in zugeordnet, wodurch sichergestellt wird, dass ausschließlich der jeweilige Besitzer 
+Benutzer:in zugeordnet, wodurch sichergestellt wird, dass ausschließlich der:die jeweilige Besitzer:in 
 Zugriff darauf hat. Anderen Benutzer:innen ist der Zugriff auf die Alben und auf deren Inhalte
 nicht möglich.
 
@@ -98,7 +98,7 @@ ein Token gleichzeitig existieren. Benutzer:innen können mithilfe dieses Tokens
 Memoryland zugreifen und es anzeigen lassen, egal ob ihnen das Memoryland gehört oder nicht.
 
 Ein Token ist eine von der Datenbank generierte \gls{guid}. Eine separate Tabelle für die 
-Tokens wurde aus zwei wesentlichen Gründen angelegt: Zum einen ist diese Struktur eine Lösung
+Tokens wurde aus zwei wesentlichen Gründen angelegt: Zum einen ist diese Struktur eine Lösung,
 die eine automatische Erstellung der Tokens durch die Datenbank ermöglicht, was den 
 Aufwand im Backend reduziert und eine sichere sowie eindeutige Identifikation gewährleistet. 
 Zum anderen folgt die Trennung der Tokens in eine eigene Tabelle dem Prinzip der 

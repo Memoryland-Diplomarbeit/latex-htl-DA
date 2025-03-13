@@ -76,8 +76,8 @@ public async Task UploadPhoto(
 \subsubsection{Probleme bei der Implementierung}
 
 Der HTTP-Header ``\emph{Content-Disposition: inline}'' wurde spezifisch gesetzt,
-da es davor das Problem, dass Bilder automatisch im Browser heruntergeladen wurden.
-``\emph{inline}'' gibt an, dass eine Datei direkt im Browser angezeigt werden kann.
+da es davor das Problem gab, dass Bilder automatisch im Browser heruntergeladen wurden.
+``\emph{inline}'' gibt hierbei an, dass eine Datei direkt im Browser angezeigt werden kann.
 \footnote{Alle Informationen}
 
 \subsection{Rotieren der Bilder bei der Speicherung}
@@ -227,7 +227,7 @@ Benutzer:innen mit der entsprechenden Berechtigung auf diese Route zugreifen kö
 Zunächst wird der:die Benutzer:in mit der Methode ``CheckIfUserAuthenticated'' (Siehe Listing 
 \ref{lst:method-check-user-auth}) überprüft, um sicherzustellen, dass der:die Benutzer:in 
 authentifiziert ist und keine Fehler bei der Authentifizierung aufgetreten sind. 
-Falls keine Email in den Claims angegeben ist, wird Unauthorized zurückgegeben. 
+Falls keine Email in den Claims angegeben ist, wird ``Unauthorized'' zurückgegeben. 
 Zusätzlich erstellt die Methode einen:r Benutzer:in in unserer Datenbank, falls
 der:die Benutzer:in noch nicht existiert.
 
@@ -360,7 +360,7 @@ Wenn man für einen Upload-Prozess von mehreren Bildern eine Transaktion möchte
 ``Transaktion'' für den Upload von Dateien erstellt, sodass, falls der Upload unterbrochen 
 wird, der Prozess später fortgesetzt werden kann, ohne dass bereits hochgeladene Dateien 
 erneut hochgeladen werden müssen. Dafür wird ein Transaktionsobjekt in der Datenbank 
-erstellt. (Siehe Kapitel \ref{chapter:datamodel}) Au\ss{}erdem kann es pro Benutzer:in nur 
+erstellt (Siehe Kapitel \ref{chapter:datamodel}). Au\ss{}erdem kann es pro Benutzer:in nur 
 eine offene Transaktion geben.
 
 Wenn ein:e Benutzer:in eine neue Upload-Transaktion startet, wird eine Transaktion in der 
@@ -368,7 +368,7 @@ Datenbank erstellt. Diese Transaktion ist mit einem Fotoalbum des/r Benutzers:in
 Benutzer:in selbst verknüpft und stellt sicher, dass alle Fotos, die hochgeladen werden, 
 im Kontext dieses Albums gespeichert werden.
 
-Als nächsten können eine Reihe an Bildern nacheinnander hochgeladen werden. 
+Als nächstes können eine Reihe an Bildern nacheinnander hochgeladen werden. 
 Falls der Upload unterbrochen wird, weil beispielsweise die Verbindung abbricht oder der:die 
 Benutzer:in die Sitzung beendet, bleibt die Transaktion vorhanden. Später wird dann im Frontend
 überprüft, welche Fotos schon hochgeladen wurden und die Bilder, welche noch nicht hochgeladen 
